@@ -151,7 +151,7 @@
     <string name="next">הבא</string>
     <string name="previous">הקודם</string>
     <string name="finish">סיום</string>
-    <string name="tutorial_link">הפעלת הדרכה</string>
+    <string name="tutorial_link">הדרכת שימוש</string>
     <string name="guides">מדריכים</string>
     <string name="guides_description">מדריכים</string>
     <string name="my_guides">שלך</string>
@@ -201,8 +201,19 @@
 	    <item>private</item>
     </string-array>
 
+    <string name="explore">מיפוי</string>
+    <string name="explore_description">מיפוי תצפיות בקרבתך</string>
+
+    <string name="restricted_to_current_map_area">מוגבל לאיזור מפה נוכחי</string>
+    <string name="search">חיפוש</string>
+
+    <string-array name="explore_results_empty">
+        <item><![CDATA[<i>חפש תצפיות בקרבתי</i>]]></item>
+        <item><![CDATA[<i>חפש תצפיות שלי</i>]]></item>
+    </string-array>
+
     <string name="alert_message_use_inaturalist">הרשת הראשית של iNaturalist. לחיצה על "אוקיי" תגדיר את מכשירך כחלק מרשת עולמית של של iNaturalist.</string>
-    <string name="alert_message_use_naturalista">CONABIO's Naturalista הינה שותף בל רשת iNaturalist במקסיקו. לחיצה על "אוקיי" תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם.</string>
+    <string name="alert_message_use_naturalista">CONABIO\'s Naturalista הינה שותף בל רשת iNaturalist במקסיקו. לחיצה על "אוקיי" תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם.</string>
     <string name="alert_message_use_naturewatchnz">NatureWatch הינה שותף בל רשת iNaturalist בבניו זילנד. לחיצה על "אוקיי" תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם.</string>
 
 </resources>

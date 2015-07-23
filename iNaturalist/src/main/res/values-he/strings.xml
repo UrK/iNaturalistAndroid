@@ -20,7 +20,6 @@
     <string name="found_observations">נמצאו %1$d תצפיות</string>
     <string name="ready_to_signup">מוכנים להירשם?</string>
     <string name="about_to_signup">You\'re about to visit iNaturalist.org, where you can sign up for a new account. Once you\'ve confirmed your new account by clicking the link in the confirmation email you\'ll receive, you can come back here to enter your username and password.</string>
-    <string name="username_invalid">Username or password was invalid, please sign in again.</string>
     <string name="username_invalid">שם משתמש או סיסמא אינם נכונים. אנא נסו פעם נוספת</string>
     <string name="signed_in_as">נכנס בתור %1$s</string>
     <string name="signing_in">נכנס...</string>
@@ -55,7 +54,6 @@
     <string name="current_position">מיקום נוכחי</string>
     <string name="you_are_here">מיקומכם הנוכחי</string>
     <string name="oh_no">אוי לא! %1$s</string>
-    <string name="need_to_login">You need to log in to view your feed.  Log in now?</string>
     <string name="need_to_login">. להחחבר עכשיו?יש להחבר על מנת לראות את החדשות</string>
 
     <string name="observations">תצפיות</string>
@@ -135,7 +133,6 @@
     <string name="loading_check_list">טוען צ׳ק ליסט...</string>
     <string name="no_check_list">אין זן בצ׳ק ליסט!</string>
     <string name="failed_to_add_obs_to_project">הוספת תצפית \'%1$s\' לפרוייקט \'%2$s\" נכשלה: %3$s</string>
-    <string name="invalid_project_field">Please enter a valid value for field \'%1s\'</string>
     <string name="invalid_project_field">נא להכניס ערך חוקי בשדה \'%1s\'</string>
     <string name="id_please">צריכים עזרה בזיהוי?</string>
     <string name="select_projects">בחירת פרוייקטים</string>
@@ -165,7 +162,6 @@
     <string name="no_internet_guides">חיבור אינטרנט דרוש עבור גישה למדריכים</string>
     <string name="no_internet_projects">חיבור אינטרנט דרוש עבור גישה לפרוייקטים</string>
     <string name="import_metadata">ייבוא נתונים</string>
-    <string name="import_metadata_desc">Do you want to set the date, time, and location of this observation from the photo\'s metadata?</string>
     <string name="import_metadata_desc">האם לקבוע תאריך, שעה ומיקום של התצפית הזאת מתוך נתוני התמונה?</string>
     <string name="language_settings">הגדרות שפה</string>
     <string name="locale_gl">גליסית</string>

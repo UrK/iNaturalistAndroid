@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="acc">Acc</string>
+    <string name="app_name">iNaturalist</string>
+    <string name="google_login">התחברות עם גוגל+</string>
+    <string name="email_address">כתובת מייל</string>
+    <string name="observations_menu_add">הוסף</string>
+    <string name="observations_menu_sync">סינכרון</string>
+    <string name="delete_observation">מחיקת תצפית</string>
+    <string name="observation_deleted">תצפית נמחקה</string>
+    <string name="species_guess_hint">שם של זן</string>
+    <string name="ok">אוקיי</string>
+    <string name="cancel">ביטול</string>
+    <string name="loading">טוען</string>
+    <string name="sync_required">נדרש סנכרון</string>
+    <string name="sync_required_message">%1$d תצפיות, %2$d תמונות לסכנכרן</string>
+    <string name="street">רחוב</string>
+    <string name="satellite">לווין</string>
+    <string name="couldnt_load_nearby_observations">לא נמצאו תצפיות בקרבת מקום: %1$s</string>
+    <string name="found_observations">נמצאו %1$d תצפיות</string>
+    <string name="ready_to_signup">מוכנים להירשם?</string>
+    <string name="about_to_signup">You\'re about to visit iNaturalist.org, where you can sign up for a new account. Once you\'ve confirmed your new account by clicking the link in the confirmation email you\'ll receive, you can come back here to enter your username and password.</string>
+    <string name="username_invalid">Username or password was invalid, please sign in again.</string>
+    <string name="username_invalid">שם משתמש או סיסמא אינם נכונים. אנא נסו פעם נוספת</string>
+    <string name="signed_in_as">נכנס בתור %1$s</string>
+    <string name="signing_in">נכנס...</string>
+    <string name="signed_in">כניסה בוצעה בהצלחה!</string>
+    <string name="signed_in_failed">כניסה נכשלה</string>
+    <string name="username_cannot_be_blank">שם משתמש וסיסמא לא יכולי להישאר ריקים</string>
+    <string name="syncing_observations">מסנכרן תצפיות</string>
+    <string name="syncing_x_observations">מסנכרן %1$d תצפיות...</string>
+    <string name="syncing">מסנכרן...</string>
+    <string name="updating_observations">טוען תצפיות...</string>
+    <string name="updating_x_observations">טוען %1$d מתוך %2$d תצפיות קיימות...</string>
+    <string name="posting_observations">העלאת תצפיות חדשות...</string>
+    <string name="posting_x_observations">העלאת %1$d מתוך %2$d תצפיות חדשות...</string>
+    <string name="observation_sync_complete">סנכרן תצפיות הסתיים בהצלחה</string>
+    <string name="observation_sync_status">%1$d חדש, %2$d עודכנו.</string>
+    <string name="sync_complete">סנכרון בוצע בהצלחה</string>
+    <string name="posting_photos">מעלה תמונות חדשות...</string>
+    <string name="posting_x_photos">מעלה %1$d מתוך %2$d תמונות חדשות...</string>
+    <string name="photo_sync_complete">סנכרון תמונות בוצע בהצלחה</string>
+    <string name="posted_new_x_photos">הועלו %1$d תמונות חדשות.</string>
+    <string name="error_couldnt_connect_to_server">אין חיבור לשרת.</string>
+    <string name="please_sign_in">נא להיכנס</string>
+    <string name="please_sign_in_description">אנא היכנסו באמצעות חשבון iNaturalist או צרו חשבון חדש.</string>
+
+    <string name="photo_not_specified">תמונה לא נבחרה</string>
+    <string name="set_date">בחרו תאריך</string>
+    <string name="set_time">בחרו שעה</string>
+    <string name="image_saved">התמונה נשמרה</string>
+    <string name="something_went_wrong">אופס. משהו השתבש: %1$s</string>
+    <string name="close">סגירה</string>
+    <string name="edit">עריכה</string>
+    <string name="current_position">מיקום נוכחי</string>
+    <string name="you_are_here">מיקומכם הנוכחי</string>
+    <string name="oh_no">אוי לא! %1$s</string>
+    <string name="need_to_login">You need to log in to view your feed.  Log in now?</string>
+    <string name="need_to_login">. להחחבר עכשיו?יש להחבר על מנת לראות את החדשות</string>
+
+    <string name="observations">תצפיות</string>
+    <string name="observations_description">רשימת תצפיות</string>
+    <string name="map">מפה</string>
+    <string name="map_description">מפת תצפיות</string>
+    <string name="updates">עידכונים</string>
+    <string name="updates_description">עידכונים מחברים ב- iNat</string>
+    <string name="settings">הגדרות</string>
+    <string name="settings_description">התחברות/התנתקות</string>
+    <string name="processing">מעבד...</string>
+    <string name="projects">פרוייקטים</string>
+    <string name="projects_description">פרוייקטים</string>
+
+    <string name="delete_photo">למחוק תמונה</string>
+    <string name="menu">תפריט</string>
+    <string name="layers">שכבות</string>
+    <string name="my_location">מיקום שלי</string>
+    <string name="nearby_observations">תצפיות קרובות</string>
+    <string name="add">הוספה</string>
+    <string name="view_on_inat">עבור ל- iNat</string>
+    <string name="reload">ריענון</string>
+    <string name="view_in_browser">הצג בדפדפן</string>
+
+    <string name="add_observation">הוספת תצפית</string>
+    <string name="take_picture">לצלם תמונה</string>
+    <string name="add_photo">הוספת תמונה</string>
+    <string name="save">שמירה</string>
+    <string name="no_observations_yet">עדיין אין תצפיות!</string>
+    <string name="sign_in_to_inat">החברות ללשבון iNaturalist שלך</string>
+    <string name="sign_in">התחברות</string>
+    <string name="or">או</string>
+    <string name="create_new_account">יצירת חשבון חדש</string>
+    <string name="signed_in_as_plain">חיבור בתור</string>
+    <string name="signed_out">התנתקות</string>
+
+    <string name="username">שם משתמש</string>
+    <string name="password">סיסמא</string>
+    <string name="unknown">לא יודע</string>
+    <string name="brief_description">תיאור קצר...</string>
+    <string name="unknown_species">זן לא מוכר</string>
+    <string name="no_description">אין תיאור</string>
+
+    <string name="pull_to_refresh">משוך כדי לרענן...</string>
+    <string name="release_to_refresh">עזוב כדי לרענן...</string>
+    <string name="refreshing">מרענן</string>
+    <string name="sync_x_observations">סנכרון %1$d תצפיות</string>
+    <string name="sync_observations">סנכרון תצפיות</string>
+
+    <string name="pull_to_sync">משוך כדי לסנכרן...</string>
+    <string name="release_to_sync">עזוב כדי לרענן</string>
+    <string name="edit_observation">עריכת תצפית</string>
+    <string name="discard_changes">בטוח? קיימים שינויים לא שמורים שילכו לאיבוד.</string>
+    <string name="yes">כן</string>
+    <string name="no">לא</string>
+    <string name="agree">להסכים?</string>
+    <string name="no_comments">עדיין אין תגובות/זיהוי.</string>
+    <string name="posted_by">פורסם על ידי %1$s ב-  %2$s</string>
+    <string name="you">אתם</string>
+    <string name="loading_comments">טוען תגובות וזיהוי...</string>
+    <string name="add_comment">הוספת תגובה</string>
+    <string name="add_id">הוספת זיהוי</string>
+    <string name="remarks">הערטצ...</string>
+    <string name="change">ערוך</string>
+    <string name="no_taxon_found">זן לא נמצא</string>
+    <string name="enter_taxon_name">הכנסת שם זן</string>
+    <string name="no_projects">לא נמצאו פרוייקטים</string>
+    <string name="no_guides">לא נמצאו מדריכים</string>
+    <string name="loading_projects">טעינת פרוייקטים...</string>
+    <string name="joined_projects">צורף</string>
+    <string name="nearby_projects">בקרבת מקום</string>
+    <string name="featured_projects">נבחרים</string>
+    <string name="project_details">פרטי הפרוייקט</string>
+    <string name="leave">התנתקות</string>
+    <string name="join">התחברות</string>
+    <string name="project_taxa">צ׳ק ליסט של פרוייקט</string>
+    <string name="loading_check_list">טוען צ׳ק ליסט...</string>
+    <string name="no_check_list">אין זן בצ׳ק ליסט!</string>
+    <string name="failed_to_add_obs_to_project">הוספת תצפית \'%1$s\' לפרוייקט \'%2$s\" נכשלה: %3$s</string>
+    <string name="invalid_project_field">Please enter a valid value for field \'%1s\'</string>
+    <string name="invalid_project_field">נא להכניס ערך חוקי בשדה \'%1s\'</string>
+    <string name="id_please">צריכים עזרה בזיהוי?</string>
+    <string name="select_projects">בחירת פרוייקטים</string>
+    <string name="could_not_load_comments">טעינת תגובות/זיהוי נכשלה - כנראה התצפיות נמחקה באתר</string>
+    <string name="not_connected">עליך להתחבר לאינטרנט על מנת לבצע את הפעולה!</string>
+    <string name="search_projects">חיפוש פרוייקטים...</string>
+    <string name="search_guides">חיפוש מדריכים...</string>
+    <string name="save_observation">שמירת תצפית</string>
+    <string name="about">אודות</string>
+    <string name="check_list">צ׳ק ליסט</string>
+    <string name="gps">GPS</string>
+    <string name="geoprivacy">פרטיות</string>
+    <string name="comments_ids">תגובות וזיהוי</string>
+    <string name="delete_confirmation">התצפית תימחק. בטוח?</string>
+    <string name="view_on_inat_confirmation">פתיחת התצפית בדפדפן</string>
+    <string name="next">הבא</string>
+    <string name="previous">הקודם</string>
+    <string name="finish">סיום</string>
+    <string name="tutorial_link">הפעלת הדרכה</string>
+    <string name="guides">מדריכים</string>
+    <string name="guides_description">מדריכים</string>
+    <string name="my_guides">שלך</string>
+    <string name="nearby_guides">בקרבת מקום</string>
+    <string name="all_guides">הכל</string>
+    <string name="no_taxa">לא נמצאו תצפיות עבור מדריך זה!</string>
+    <string name="search_taxa">חיפוש זן...</string>
+    <string name="no_internet_guides">חיבור אינטרנט דרוש עבור גישה למדריכים</string>
+    <string name="no_internet_projects">חיבור אינטרנט דרוש עבור גישה לפרוייקטים</string>
+    <string name="import_metadata">ייבוא נתונים</string>
+    <string name="import_metadata_desc">Do you want to set the date, time, and location of this observation from the photo\'s metadata?</string>
+    <string name="import_metadata_desc">האם לקבוע תאריך, שעה ומיקום של התצפית הזאת מתוך נתוני התמונה?</string>
+    <string name="language_settings">הגדרות שפה</string>
+    <string name="locale_gl">גליסית</string>
+    <string name="locale_eu">בסקית</string>
+    <string name="use_device_language_settings">השתמש בהגדרות שפה של המכשיר</string>
+    <string name="language_restart">הגדרות שפה השתנו. נא להפעיל את האפליקציה מחדש כדי לראות את השינוי</string>
+    <string name="restart_now">איתחול כעת</string>
+    <string name="choose_location">בחירת מיקום</string>
+    <string name="done">סיום</string>
+    <string name="discard_location_changes">האם אתם בטוחים שאתם רוצים לאבד את השינויים הלא שמורים?</string>
+
+    <string name="get_current_location">מציאת מיקום נוכחי</string>
+    <string name="edit_location">עריכת מיקום</string>
+    <string name="please_sign_in_via_settings">נא לבצע התחברות במסך הגדרות על מנת לראות את הפרוייקטים.</string>
+
+    <string name="contact_support"><![CDATA[<a href="mailto:help@inaturalist.org">יצירת קשר עם תמיכה</a>]]></string>
+    <string name="credits">עוצב ופותח על ידי iNaturalist.org עם תמיכה של California Academy of Sciences</string>
+
+    <string name="leave_project">לעזות פרוייקט</string>
+    <string name="leave_project_confirmation">בטוח לעזוב את הפרוייקט?</string>
+
+    <string name="alert_sign_out">בטוח לתנתק? התנתקות תמחק את כל התצפיות על המכשיר. תצפיות שהואלו ל- iNaturalist לא יושפעו.</string>
+    <string name="alert_unsupported_media_type">מצטערים. כרגע אנחנו לא תומכים בהעלאת תמונות מ- Google Drive, Dropbox וכו׳\nשמרו את התמונות במכשיר ונסו שנית.</string>
+
+    <string-array name="id_please_items">
+      <item>כן</item>
+      <item>לא</item>
+    </string-array>
+    <string-array name="geoprivacy_items">
+	    <item>פתוח</item>
+	    <item>נצפה</item>
+	    <item>פרטי</item>
+    </string-array>
+    <string-array name="geoprivacy_values">
+	    <item>open</item>
+	    <item>obscured</item>
+	    <item>private</item>
+    </string-array>
+
+    <string name="alert_message_use_inaturalist">הרשת הראשית של iNaturalist. לחיצה על "אוקיי" תגדיר את מכשירך כחלק מרשת עולמית של של iNaturalist.</string>
+    <string name="alert_message_use_naturalista">CONABIO's Naturalista הינה שותף בל רשת iNaturalist במקסיקו. לחיצה על "אוקיי" תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם.</string>
+    <string name="alert_message_use_naturewatchnz">NatureWatch הינה שותף בל רשת iNaturalist בבניו זילנד. לחיצה על "אוקיי" תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם.</string>
+
+</resources>

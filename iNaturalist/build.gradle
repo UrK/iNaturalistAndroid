@@ -21,8 +21,8 @@ android {
 
     defaultConfig {
         applicationId "org.inaturalist.android"
-        minSdkVersion 10
-        targetSdkVersion 15
+        minSdkVersion 17
+        targetSdkVersion 17
     }
 
     buildTypes {

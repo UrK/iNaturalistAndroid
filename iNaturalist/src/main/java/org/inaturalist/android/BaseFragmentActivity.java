@@ -28,6 +28,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import io.fabric.sdk.android.Fabric;
+
 /**
  * Utility class for implementing the side-menu (navigation drawer) used throughout the app
  *
@@ -48,7 +50,7 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
 	private ActivityHelper mHelper;
 
 	public void onDrawerCreate(Bundle savedInstanceState) {
-		Crashlytics.start(this);
+        Fabric.with(this, new Crashlytics());
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mSideMenu = (LinearLayout) findViewById(R.id.left_drawer);
         mListView = (ListView) findViewById(R.id.menu_items);

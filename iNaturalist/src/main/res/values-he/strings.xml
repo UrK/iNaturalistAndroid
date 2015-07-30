@@ -120,7 +120,7 @@
 <string name="pull_to_sync">"משוך כדי לסנכרן..."</string>
 <string name="release_to_sync">"עזוב כדי לרענן"</string>
 <string name="edit_observation">"עריכת תצפית"</string>
-<string name="discard_changes">"בטוח? קיימים שינויים לא שמורים שילכו לאיבוד."</string>
+<string name="discard_changes">"בטוח? קיימים שינויים לא שמורים שייאבדו."</string>
 <string name="yes">"כן"</string>
 <string name="no">"לא"</string>
 <string name="agree">"להסכים?"</string>

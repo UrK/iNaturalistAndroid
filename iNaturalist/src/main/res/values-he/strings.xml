@@ -41,7 +41,7 @@
 <string name="photo_sync_complete">"סנכרון תמונות בוצע בהצלחה"</string>
 <string name="posted_new_x_photos">"הועלו %1$d תמונות חדשות."</string>
 <string name="error_couldnt_connect_to_server">"אין חיבור לשרת."</string>
-<string name="please_sign_in">"נא להיכנס"</string>
+<string name="please_sign_in">נא להתחבר</string>
 <string name="please_sign_in_description">"אנא היכנסו באמצעות חשבון iNaturalist או צרו חשבון חדש."</string>
 <string name="photo_not_specified">"תמונה לא נבחרה"</string>
 <string name="set_date">"בחרו תאריך"</string>
@@ -120,7 +120,7 @@
 <string name="pull_to_sync">"משוך כדי לסנכרן..."</string>
 <string name="release_to_sync">"עזוב כדי לרענן"</string>
 <string name="edit_observation">"עריכת תצפית"</string>
-<string name="discard_changes">"בטוח? קיימים שינויים לא שמורים שייאבדו."</string>
+<string name="discard_changes">"בטוח? קיימים שינויים לא שמורים שילכו לאיבוד."</string>
 <string name="yes">"כן"</string>
 <string name="no">"לא"</string>
 <string name="agree">"להסכים?"</string>

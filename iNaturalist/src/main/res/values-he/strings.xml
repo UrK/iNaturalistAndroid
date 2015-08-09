@@ -9,7 +9,7 @@
 <string name="delete_observation">"מחיקת תצפית"</string>
 <string name="observation_deleted">"תצפית נמחקה"</string>
 <string name="species_guess_hint">"שם של זן"</string>
-<string name="ok">"אוקיי"</string>
+<string name="ok">"אישור"</string>
 <string name="cancel">"ביטול"</string>
 <string name="loading">"טוען"</string>
 <string name="sync_required">"נדרש סנכרון"</string>
@@ -21,7 +21,7 @@
 <string name="ready_to_signup">"מוכנים להירשם?"</string>
 <string name="about_to_signup">"הנכם מועברים לאתר iNaturalist.org בו תוכלו להיצור חשבון משתמש חדש. לאחר אישור החשבון על ידי מעבר לקישור במייל הרשמה, תוכלו לחזור לכאן ולהזין שם משתמש וסיסמא."</string>
 <string name="username_invalid">"שם משתמש או סיסמא אינם נכונים. אנא נסו פעם נוספת"</string>
-<string name="signed_in_as">"נכנס בתור %1$s"</string>
+<string name="signed_in_as">"מחובר עם חשבון %1$s"</string>
 <string name="signing_in">"נכנס..."</string>
 <string name="signed_in">"כניסה בוצעה בהצלחה!"</string>
 <string name="signed_in_failed">"כניסה נכשלה"</string>
@@ -84,7 +84,7 @@
 <string name="or">"או"</string>
 <string name="create_new_account">"יצירת חשבון חדש"</string>
 <string name="signed_in_as_plain">"חיבור בתור"</string>
-<string name="signed_out">"התנתקות"</string>
+<string name="signed_out">"התנתק/י"</string>
 <string name="view">"תצוגה"</string>
 <string name="username">"שם משתמש"</string>
 <string name="password">"סיסמא"</string>
@@ -92,12 +92,12 @@
 <string name="brief_description">"תיאור קצר..."</string>
 <string name="unknown_species">"זן לא מוכר"</string>
 <string name="no_description">"אין תיאור"</string>
-<string name="com_facebook_dialogloginactivity_ok_button">"אוקיי"</string>
-<string name="com_facebook_loginview_log_out_button">"התנתקות"</string>
+<string name="com_facebook_dialogloginactivity_ok_button">"אישור"</string>
+<string name="com_facebook_loginview_log_out_button">"התנתק/י"</string>
 <string name="com_facebook_loginview_log_in_button">"התחברות"</string>
 <string name="com_facebook_loginview_logged_in_as">"התחברות בתור %1$s"</string>
 <string name="com_facebook_loginview_logged_in_using_facebook">"חיבור באמצעות פייסבוק"</string>
-<string name="com_facebook_loginview_log_out_action">"התנתקות"</string>
+<string name="com_facebook_loginview_log_out_action">"התנתק/י"</string>
 <string name="com_facebook_loginview_cancel_action">"ביטול"</string>
 <string name="com_facebook_logo_content_description">"סמל של פייסבוק"</string>
 <string name="com_facebook_usersettingsfragment_log_in_button">"התחברות&amp;#8230;"</string>
@@ -141,7 +141,7 @@
 <string name="nearby_projects">"בקרבת מקום"</string>
 <string name="featured_projects">"נבחרים"</string>
 <string name="project_details">"פרטי הפרוייקט"</string>
-<string name="leave">"התנתקות"</string>
+<string name="leave">"התנתק/י"</string>
 <string name="join">"התחברות"</string>
 <string name="project_taxa">"צ׳ק ליסט של פרוייקט"</string>
 <string name="loading_check_list">"טוען צ׳ק ליסט..."</string>
@@ -193,7 +193,7 @@
 <string name="leave_project_confirmation">"בטוח לעזוב את הפרוייקט?"</string>
 <string name="discard_location_changes">"האם אתם בטוחים שאתם רוצים לאבד את השינויים הלא שמורים?"</string>
 <string name="edit_location">"עריכת מיקום"</string>
-<string name="get_current_location">"מציאת מיקום נוכחי"</string>
+<string name="get_current_location">"לפי מיקום נוכחי"</string>
 <string name="pull_to_refresh">"משוך כדי לרענן..."</string>
 <string name="release_to_refresh">"עזוב כדי לרענן..."</string>
 <string name="refreshing">"מרענן"</string>
@@ -250,10 +250,10 @@
 <string name="text"><![CDATA[<b>טקסט:</b> %1$s]]></string>
 
 <!-- The dialog content asking the user to switch to another iNat network -->
-<string name="alert_message_use_inaturalist">"הרשת הראשית של iNaturalist. לחיצה על אוקיי תגדיר את מכשירך כחלק מרשת עולמית של של iNaturalist."</string>
-<string name="alert_message_use_naturalista">"CONABIO's Naturalista הינה שותף בל רשת iNaturalist במקסיקו. לחיצה על אוקיי תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם."</string>
-<string name="alert_message_use_naturewatchnz">"NatureWatch הינה שותף בל רשת iNaturalist בבניו זילנד. לחיצה על אוקיי תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם."</string>
-<string name="alert_message_use_inaturalistcanada">"iNaturalist Canada הינה שותף בל רשת iNaturalist בקנדה. לחיצה על אוקיי תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם. "</string>
+<string name="alert_message_use_inaturalist">"הרשת הראשית של iNaturalist. לחיצה על אישור תגדיר את מכשירך כחלק מרשת עולמית של של iNaturalist."</string>
+<string name="alert_message_use_naturalista">"CONABIO's Naturalista הינה שותף בל רשת iNaturalist במקסיקו. לחיצה על אישור תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם."</string>
+<string name="alert_message_use_naturewatchnz">"NatureWatch הינה שותף בל רשת iNaturalist בבניו זילנד. לחיצה על אישור תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם."</string>
+<string name="alert_message_use_inaturalistcanada">"iNaturalist Canada הינה שותף בל רשת iNaturalist בקנדה. לחיצה על אישור תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם. "</string>
 
 <!-- The text shown in a dialog box when the user is about to sign up -->
 <string name="inat_sign_up_inaturalist">"הנכם מועברים לאתר iNaturalist.org בו תוכלו להיצור חשבון משתמש חדש. לאחר אישור החשבון על ידי מעבר לקישור במייל הרשמה, תוכלו לחזור לכאן ולהזין שם משתמש וסיסמא."</string>

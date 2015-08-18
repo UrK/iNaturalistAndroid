@@ -279,4 +279,18 @@
 <string name="error">"שגיאה"</string>
 <string name="could_not_retrieve_guide">"לא ניתן להשיג מדריך. כנראה שיש תקלה תקשורת."</string>
 <string name="select_source">"בחירת מקור"</string>
+
+<string-array name="explore_results_empty">
+<item><![CDATA[<i>חפש תצפיות בקרבת מקום</i>]]></item>
+<item><![CDATA[<i>חפש תצפית שלי</i>]]></item>
+</string-array>
+
+<string-array name="explore_results_with_text">
+<item><![CDATA[חפש <b>יצורים</b> בשם \'<i>%1$s</i>\']]></item>
+<item><![CDATA[חפש <b>אנשים</b> בשם \'<i>%1$s</i>\']]></item>
+<item><![CDATA[חפש <b>מקומות</b> בשם \'<i>%1$s</i>\']]></item>
+<item><![CDATA[חפש <b>פרוייקטים</b> בשם \'<i>%1$s</i>\']]></item>
+</string-array>
+
 </resources>
+

@@ -832,6 +832,12 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
        }
       
        mServiceIntent = new Intent(INaturalistService.ACTION_NEARBY, null, this, INaturalistService.class);
+
+	   /* prevent crash on devices without Google services installed */
+       if (mMap == null) {
+		   return;
+	   }
+
        VisibleRegion vr = mMap.getProjection().getVisibleRegion();
        mServiceIntent.putExtra("minx", vr.farLeft.longitude);
        mServiceIntent.putExtra("maxx", vr.farRight.longitude);

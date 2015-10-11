@@ -1,17 +1,5 @@
 package org.inaturalist.android;
 
-import java.util.ArrayList;
-import java.util.Locale;
-
-import org.inaturalist.android.INaturalistService.LoginType;
-
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.Session.StatusCallback;
-import com.facebook.UiLifecycleHelper;
-import com.facebook.widget.LoginButton;
-import com.flurry.android.FlurryAgent;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
@@ -24,8 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Paint;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -37,21 +23,28 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.Session;
+import com.facebook.Session.StatusCallback;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.widget.LoginButton;
+import com.flurry.android.FlurryAgent;
+
+import org.inaturalist.android.INaturalistService.LoginType;
+
+import java.util.ArrayList;
+
 
 public class INaturalistPrefsActivity extends BaseFragmentActivity {
-	private static final String TAG = "INaturalistPrefsActivity";
+	private static final String TAG = "INaturalistPrefsAct";
 	public static final String REAUTHENTICATE_ACTION = "reauthenticate_action";
 	
     private static final int REQUEST_CODE_LOGIN = 0x1000;
@@ -74,17 +67,11 @@ public class INaturalistPrefsActivity extends BaseFragmentActivity {
     private LoginButton mFacebookLoginButton;
     private Button mGoogleLogin;
 	private View mFBSeparator;
-	private RadioGroup rbPreferredNetworkSelector;	
-	private RadioGroup rbPreferredLocaleSelector;
 	private INaturalistApp mApp;
 	
     private UiLifecycleHelper mUiHelper;
     
     private String mGoogleUsername;
-    
-    private int formerSelectedNetworkRadioButton;
-    private int formerSelectedRadioButton;
-    
     
 	@Override
 	protected void onStart()
@@ -204,25 +191,6 @@ public class INaturalistPrefsActivity extends BaseFragmentActivity {
 			mVersion.setText("");
 		}
 	    
-	    // Add the iNat network settings
-	    rbPreferredNetworkSelector = (RadioGroup)findViewById(R.id.radioNetworks);
-	    
-	    String[] networks = mApp.getINatNetworks();
-	    for (int i = 0; i < networks.length; i++) {
-	    	RadioButton radioButton = new RadioButton(this);
-	    	radioButton.setText(mApp.getStringResourceByName("network_" + networks[i]));
-	    	radioButton.setId(i);
-	    	radioButton.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					onINatNetworkRadioButtonClicked(v);
-				}
-			});
-            rbPreferredNetworkSelector.addView(radioButton);
-	    }
-	    
-	   makeLanguageRadioButtons(); 
-	    
 	    mHelp.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -234,42 +202,42 @@ public class INaturalistPrefsActivity extends BaseFragmentActivity {
 	    
         mFacebookLoginButton = (LoginButton) findViewById(R.id.facebook_login_button);
         mGoogleLogin = (Button) findViewById(R.id.google_login_button);
-        mFBSeparator = (View) findViewById(R.id.facebook_login_button_separator);
+        mFBSeparator = findViewById(R.id.facebook_login_button_separator);
         
         mGoogleLogin.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!isNetworkAvailable()) {
-                    Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_LONG).show(); 
-                    return;
-                }
+			@Override
+			public void onClick(View v) {
+				if (!isNetworkAvailable()) {
+					Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_LONG).show();
+					return;
+				}
 
-                signIn(LoginType.GOOGLE, null, null);
-            }
-        });
+				signIn(LoginType.GOOGLE, null, null);
+			}
+		});
         
-        ArrayList<String> permissions = new ArrayList<String>();
+        ArrayList<String> permissions = new ArrayList<>();
         permissions.add("email");
         mFacebookLoginButton.setReadPermissions(permissions);
         
         mFacebookLoginButton.setSessionStatusCallback(new StatusCallback() {
-            @Override
-            public void call(Session session, SessionState state, Exception exception) {
-                Log.d(TAG, "onSessionStateChange: " + state.toString());
-                if ((state == SessionState.CLOSED_LOGIN_FAILED) && (!isNetworkAvailable())) {
-                    Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_LONG).show(); 
-                    return;
-                } else if ((state == SessionState.OPENED) || (state == SessionState.OPENED_TOKEN_UPDATED)) {
-                    String username = mPreferences.getString("username", null);
-                    if (username == null) {
-                        // First time login
-                        String accessToken = session.getAccessToken();
+			@Override
+			public void call(Session session, SessionState state, Exception exception) {
+				Log.d(TAG, "onSessionStateChange: " + state.toString());
+				if ((state == SessionState.CLOSED_LOGIN_FAILED) && (!isNetworkAvailable())) {
+					Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_LONG).show();
+					return;
+				} else if ((state == SessionState.OPENED) || (state == SessionState.OPENED_TOKEN_UPDATED)) {
+					String username = mPreferences.getString("username", null);
+					if (username == null) {
+						// First time login
+						String accessToken = session.getAccessToken();
 //                        Log.d(TAG, "FB Login: " + accessToken);
-                        new SignInTask(INaturalistPrefsActivity.this).execute(null, accessToken, LoginType.FACEBOOK.toString());
-                    }
-                }
-            }
-        });
+						new SignInTask(INaturalistPrefsActivity.this).execute(null, accessToken, LoginType.FACEBOOK.toString());
+					}
+				}
+			}
+		});
         
 	    toggle();
 	    
@@ -298,94 +266,29 @@ public class INaturalistPrefsActivity extends BaseFragmentActivity {
 		});
         
         mSignUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            	final String inatNetwork = mApp.getInaturalistNetworkMember();
+			@Override
+			public void onClick(View v) {
+				final String inatNetwork = mApp.getInaturalistNetworkMember();
 
-                mHelper.confirm(getString(R.string.ready_to_signup), 
-                		mApp.getStringResourceByName("inat_sign_up_" + inatNetwork),
-                        new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    	String inatHost = mApp.getStringResourceByName("inat_host_" + inatNetwork);
+				mHelper.confirm(getString(R.string.ready_to_signup),
+						mApp.getStringResourceByName("inat_sign_up_" + inatNetwork),
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								String inatHost = mApp.getStringResourceByName("inat_host_" + inatNetwork);
 
-                        Intent i = new Intent(Intent.ACTION_VIEW);
-                        i.setData(Uri.parse("http://" + inatHost + "/users/new"));
-                        startActivity(i);
-                    }
-                });
-            }
-        });
+								Intent i = new Intent(Intent.ACTION_VIEW);
+								i.setData(Uri.parse("http://" + inatHost + "/users/new"));
+								startActivity(i);
+							}
+						});
+			}
+		});
         
 	    if (getIntent().getAction() != null && getIntent().getAction().equals(REAUTHENTICATE_ACTION)) {
 	    	signOut();
 	    	mHelper.alert(getString(R.string.username_invalid));
 	    }
-	    
-	    updateINatNetworkRadioButtonState();
-	    updateRadioButtonState();
-	}
-	
-	private void updateINatNetworkRadioButtonState(){
-	    String[] networks = mApp.getINatNetworks();
-		String network = mApp.getInaturalistNetworkMember();
-
-	    for (int i = 0; i < networks.length; i++) {
-	    	if (networks[i].equals(network)) {
-	    		rbPreferredNetworkSelector.check(i);
-	    		formerSelectedNetworkRadioButton = i;
-	    		break;
-	    	}
-	    }
-	}
-	
-	public void onINatNetworkRadioButtonClicked(View view){		
-	    final boolean checked = ((RadioButton) view).isChecked();
-	    final int selectedRadioButtonId = view.getId();	    	    
-	    final String[] networks = mApp.getINatNetworks();
-	    
-	    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-	        @Override
-	        public void onClick(DialogInterface dialog, int which) {
-	            switch (which){
-	            case DialogInterface.BUTTON_POSITIVE:
-	            	if (checked) {	            	
-	            		mApp.setInaturalistNetworkMember(networks[selectedRadioButtonId]);
-	            		//mPrefEditor.putString("pref_locale", mApp.getStringResourceByName("inat_network_language_" + networks[selectedRadioButtonId]));
-	            		//mPrefEditor.commit();
-	            	}            	
-
-	            	formerSelectedNetworkRadioButton = selectedRadioButtonId;
-	            	mApp.applyLocaleSettings();
-	        	    mApp.restart();
-					finish();
-	                break;
-
-	            case DialogInterface.BUTTON_NEGATIVE:
-	                //No button clicked
-	            	rbPreferredNetworkSelector.check(formerSelectedNetworkRadioButton);	            	
-	                break;
-	            }
-	        }
-	    };
-
-	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    builder.setMessage(mApp.getStringResourceByName("alert_message_use_" + networks[selectedRadioButtonId]))
-	    	.setPositiveButton(getString(R.string.ok), dialogClickListener)
-	        .setNegativeButton(getString(R.string.cancel), dialogClickListener)
-            .setCancelable(false);
-	    
-		LayoutInflater inflater = getLayoutInflater();
-		View titleBarView = inflater.inflate(R.layout.change_network_title_bar, null);	
-		ImageView titleBarLogo = (ImageView) titleBarView.findViewById(R.id.title_bar_logo);
-	
-	    String logoName = mApp.getStringResourceByName("inat_logo_" + networks[selectedRadioButtonId]);
-	    String packageName = getPackageName();
-	    int resId = getResources().getIdentifier(logoName, "drawable", packageName);
-	    titleBarLogo.setImageResource(resId);
-
-	    builder.setCustomTitle(titleBarView);
-	    builder.show();
 	}
 	
 	@Override
@@ -568,27 +471,24 @@ public class INaturalistPrefsActivity extends BaseFragmentActivity {
 
 	    if (googleLogin) {
 	        String googleUsername = null;
-	        Account account = null;
+	        Account account;
 
 	        // See if given account exists
 	        Account[] availableAccounts = AccountManager.get(this).getAccountsByType("com.google");
-	        boolean accountFound = false;
 
-	        if (username != null) {
+			if (username != null) {
 	            googleUsername = username.toLowerCase();
-	            for (int i = 0; i < availableAccounts.length; i++) {
-	                if (availableAccounts[i].name.equalsIgnoreCase(googleUsername)) {
-	                    // Found the account
+				for (Account availableAccount : availableAccounts) {
+					if (availableAccount.name.equalsIgnoreCase(googleUsername)) {
+						// Found the account
 //	                    Log.d(TAG, "googleUsername: " + googleUsername);
-	                    accountFound = true;
-	                    break;
-	                }
-	            }
+						break;
+					}
+				}
 	        }
 
 	        if (availableAccounts.length > 0) {
-	            accountFound = true;
-	            account = availableAccounts[0];
+				account = availableAccounts[0];
 	        } else if (googleUsername == null) {
 	            askForGoogleEmail();
 	            return;
@@ -643,9 +543,6 @@ public class INaturalistPrefsActivity extends BaseFragmentActivity {
 	}
 	
 	private void signOut() {
-        SharedPreferences prefs = getSharedPreferences("iNaturalistPreferences", MODE_PRIVATE);
-        String login = prefs.getString("username", null);
-
 		mPrefEditor.remove("username");
 		mPrefEditor.remove("credentials");
 		mPrefEditor.remove("password");
@@ -667,82 +564,5 @@ public class INaturalistPrefsActivity extends BaseFragmentActivity {
 		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-	}	
-
-
-	public void makeLanguageRadioButtons()
-	{
-		rbPreferredLocaleSelector = (RadioGroup)findViewById(R.id.radioLang);
-
-		String[] locales = LocaleHelper.SupportedLocales;
-		for (int i=0; i < locales.length; i++) {
-			RadioButton rb = (RadioButton) rbPreferredLocaleSelector.getChildAt(i);
-			final int selectedButton = i;
-			final Activity context = this;
-			rb.setOnClickListener (new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					PromptUserToConfirmSelection(context, selectedButton);
-				}
-			});
-		}
 	}
-
-	private void PromptUserToConfirmSelection(Activity context, int index) {
-		final int selectedButton = index;
-		final String locale = LocaleHelper.SupportedLocales[index];
-		final Activity thisActivity = context;
-		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				switch (which) {
-				case DialogInterface.BUTTON_POSITIVE:
-					mPrefEditor.putString("pref_locale", locale);
-					mPrefEditor.commit();
-					formerSelectedRadioButton = selectedButton;
-					mApp.applyLocaleSettings();
-					mApp.restart();
-					finish();
-					break;
-
-				case DialogInterface.BUTTON_NEGATIVE:
-					//No button clicked
-					rbPreferredLocaleSelector.check(rbPreferredLocaleSelector.getChildAt(formerSelectedRadioButton).getId());
-					break;
-				}
-			}
-		};
-
-		AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
-		builder.setMessage(getString(R.string.language_restart))
-		.setPositiveButton(getString(R.string.restart_now), dialogClickListener)
-		.setNegativeButton(getString(R.string.cancel), dialogClickListener)
-		.setCancelable(false).show();;
-
-
-	}
-	private void updateRadioButtonState(){
-		String pref_locale = mPreferences.getString("pref_locale", "");
-		String[] supportedLocales = LocaleHelper.SupportedLocales;
-
-		// if no preference is set, find app default
-		if (pref_locale.equalsIgnoreCase("")) {
-			// Use device locale
-			RadioButton rb = (RadioButton) rbPreferredLocaleSelector.getChildAt(0);
-			rb.setChecked(true);
-			formerSelectedRadioButton = 0;
-		}
-		else {
-			for (int i = 0; i < supportedLocales.length; i++) {
-				if (pref_locale.equalsIgnoreCase(supportedLocales[i])) {
-					RadioButton rb = (RadioButton) rbPreferredLocaleSelector.getChildAt(i);
-					rb.setChecked(true);
-					formerSelectedRadioButton = i;
-					return;
-				}
-			}
-		}
-
-	}	
-
 }

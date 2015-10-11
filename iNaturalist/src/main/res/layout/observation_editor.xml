@@ -10,9 +10,9 @@
         android:layout_height="@dimen/abs__action_bar_default_height"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:background="#111111" >
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/actionbar_background" >
 
         <TextView
             android:id="@+id/save_observation"
@@ -46,7 +46,7 @@
 
         <ImageButton
             android:id="@+id/view_on_inat"
-            android:layout_width="32dp"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
@@ -55,7 +55,7 @@
             android:padding="5dp"
             android:scaleType="fitCenter"
             android:singleLine="true"
-            android:src="@drawable/action" />
+            android:src="@drawable/ic_fa_share_square_o" />
 
         <ImageButton
             android:id="@+id/delete_observation"
@@ -92,13 +92,13 @@
                 >
                 <ImageView
                     android:id="@+id/taxonSelector"
-                    android:layout_width="24dp"
+                    android:layout_width="38dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="3dp"
                     android:layout_marginEnd="10dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/search"
+                    android:src="@drawable/ic_fa_search"
                     />
  
                 <EditText
@@ -166,7 +166,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="start"
-                            android:paddingEnd="5dp"
+                            android:paddingRight="5dp"
                             android:text="Lat"
                             android:textStyle="bold" />
 
@@ -185,7 +185,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingEnd="5dp"
+                            android:paddingRight="5dp"
                             android:text="Lon"
                             android:textStyle="bold" />
 
@@ -230,7 +230,7 @@
 
                     <RelativeLayout
                         android:id="@+id/locationRefreshButton"
-                        style="@android:style/Widget.Button"
+                        style="@style/ButtoniNatAppTheme"
                         android:layout_width="120dp"
                         android:layout_height="60dp"
                         android:layout_margin="0dp"
@@ -250,7 +250,7 @@
                         android:id="@+id/locationStopRefreshButton"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:src="@android:drawable/ic_menu_close_clear_cancel"
+                        android:src="@drawable/ic_action_remove"
                         android:visibility="gone" />
                 </LinearLayout>
             </LinearLayout>

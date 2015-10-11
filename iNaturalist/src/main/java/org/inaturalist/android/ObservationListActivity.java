@@ -53,6 +53,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -84,8 +85,9 @@ public class ObservationListActivity extends BaseFragmentActivity implements OnI
 	private static final int COMMENTS_IDS_REQUEST_CODE = 100;
 
 	private static final int OBSERVATION_LIST_LOADER = 0x01;
-	
-	@Override
+    private INaturalistApp mApp;
+
+    @Override
 	protected void onStart()
 	{
 		super.onStart();
@@ -120,7 +122,9 @@ public class ObservationListActivity extends BaseFragmentActivity implements OnI
             adapter.refreshCursor();
             refreshSyncBar();
 
-            Toast.makeText(getApplicationContext(), mLastMessage, Toast.LENGTH_LONG).show(); 
+            if ((mLastMessage != null) && (mLastMessage.length() > 0)) {
+                Toast.makeText(getApplicationContext(), mLastMessage, Toast.LENGTH_LONG).show();
+            }
         }
     } 	
   
@@ -190,51 +194,62 @@ public class ObservationListActivity extends BaseFragmentActivity implements OnI
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.observation_list);
+
+        setTitle(R.string.observations);
         
         mHelper = new ActivityHelper(this);
-        
+
+        mApp = (INaturalistApp)getApplication();
+
         mSyncObservations = (TextView) findViewById(R.id.sync_observations);
         mSyncObservations.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 if (!isNetworkAvailable()) {
-                    Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_LONG).show(); 
+                    Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_LONG).show();
                     return;
                 } else if (!isLoggedIn()) {
-                	// User not logged-in - redirect to settings screen
-                	startActivity(new Intent(ObservationListActivity.this, INaturalistPrefsActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+                    // User not logged-in - redirect to onboarding screen
+                    startActivity(new Intent(ObservationListActivity.this, OnboardingActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
                     return;
                 }
 
                 Intent serviceIntent = new Intent(INaturalistService.ACTION_SYNC, null, ObservationListActivity.this, INaturalistService.class);
                 startService(serviceIntent);
-                
+
                 mSyncObservations.setVisibility(View.GONE);
-                
+
                 mHelper.loading(getResources().getString(R.string.syncing_observations));
-			}
-		});        
+            }
+        });
         
         if (savedInstanceState != null) {
             mLastMessage = savedInstanceState.getString("mLastMessage");
         }
         
-              
-        refreshSyncBar(); 
-        
+        SharedPreferences pref = getSharedPreferences("iNaturalistPreferences", MODE_PRIVATE);
+        String username = pref.getString("username", null);
+        if (username == null) {
+            if (!mApp.shownOnboarding()) {
+                // Show login/onboarding screen
+                mApp.setShownOnboarding(true);
+                Intent intent = new Intent(this, OnboardingActivity.class);
+                intent.putExtra(OnboardingActivity.SHOW_SKIP, true);
+                startActivity(intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+            }
+        }
+
+        refreshSyncBar();
+
         mTopActionBar = getSupportActionBar();
-        mTopActionBar.setDisplayShowCustomEnabled(true);
-        mTopActionBar.setCustomView(R.layout.observation_list_top_action_bar);
-        mTopActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#111111")));
-        mTitleBar = (TextView) mTopActionBar.getCustomView().findViewById(R.id.action_bar_title);
-        TextView addButton = (TextView) mTopActionBar.getCustomView().findViewById(R.id.add);
+        View addButton = (View) findViewById(R.id.add_observation);
         addButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Intent.ACTION_INSERT, getIntent().getData(), ObservationListActivity.this, ObservationEditor.class));
             }
         });
-        
+
         INaturalistApp app = (INaturalistApp)(getApplication());
         
         app.setNotificationCallback(this);
@@ -330,11 +345,7 @@ public class ObservationListActivity extends BaseFragmentActivity implements OnI
         mPullRefreshListView.setOnItemClickListener(this);
     }
     
-    public void setTitle(String title) {
-    	mTitleBar.setText(title);
-    }
 
-    
     @SuppressLint("NewApi")
 	@Override
     public void onPause() {
@@ -470,7 +481,7 @@ public class ObservationListActivity extends BaseFragmentActivity implements OnI
                 Long photoId = onlinePc.getLong(onlinePc.getColumnIndexOrThrow(ObservationPhoto._PHOTO_ID));
                 String photoUrl = onlinePc.getString(onlinePc.getColumnIndexOrThrow(ObservationPhoto.PHOTO_URL));
                 
-                //if (!mPhotoInfo.containsKey(obsId)) {
+                if (!mPhotoInfo.containsKey(obsId)) {
                     mPhotoInfo.put(
                             obsId,
                             new String[] {
@@ -480,7 +491,7 @@ public class ObservationListActivity extends BaseFragmentActivity implements OnI
                                     null,
                                     null
                             });
-                //}
+                }
                 onlinePc.moveToNext();
             }
             
@@ -510,7 +521,7 @@ public class ObservationListActivity extends BaseFragmentActivity implements OnI
                     new String[]{MediaStore.MediaColumns._ID, MediaStore.Images.ImageColumns.ORIENTATION}, 
                     "_ID IN ("+StringUtils.join(photoIds, ',')+")", 
                     null, 
-                    null);
+                    "_ID");
             if (pc == null) { opc.close(); return; }
             if (pc.getCount() == 0) { pc.close(); opc.close(); return; }
             HashMap<Long,String> orientationsByPhotoId = new HashMap<Long,String>();
@@ -532,7 +543,7 @@ public class ObservationListActivity extends BaseFragmentActivity implements OnI
                 Long updatedAt = opc.getLong(opc.getColumnIndexOrThrow(ObservationPhoto._UPDATED_AT));
                 String photoUrl = opc.getString(opc.getColumnIndexOrThrow(ObservationPhoto.PHOTO_URL));
 
-                //if (!mPhotoInfo.containsKey(obsId)) {
+                if (!mPhotoInfo.containsKey(obsId)) {
                     mPhotoInfo.put(
                             obsId,
                             new String[] {
@@ -542,7 +553,7 @@ public class ObservationListActivity extends BaseFragmentActivity implements OnI
                                 updatedAt.toString(),
                                 syncedAt.toString()
                             });
-                //}
+                }
                 opc.moveToNext();
             }
             
@@ -659,7 +670,7 @@ public class ObservationListActivity extends BaseFragmentActivity implements OnI
                 idCount--;
             }
             Long totalCount = commentsCount + idCount;
-            RelativeLayout clickCatcher = (RelativeLayout) view.findViewById(R.id.commentsIdClickCatcher);
+            ViewGroup clickCatcher = (ViewGroup) view.findViewById(R.id.rightObsPart);
 
             if (totalCount == 0) {
                 // No comments/IDs - don't display the indicator

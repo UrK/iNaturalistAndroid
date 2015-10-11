@@ -4,9 +4,7 @@ import com.crashlytics.android.Crashlytics;
 import com.flurry.android.FlurryAgent;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,19 +22,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.xml.transform.URIResolver;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jraf.android.backport.switchwidget.Switch;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
@@ -62,10 +55,8 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -80,12 +71,9 @@ import android.os.Parcelable;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.text.InputType;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -96,24 +84,20 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -551,7 +535,7 @@ public class ObservationEditor extends SherlockFragmentActivity {
             }
             
             if (mField.is_required) {
-                mFieldName.setTextColor(0xFFFF2F92);
+                mFieldName.setTypeface(null, Typeface.BOLD);
             }
             
             if ((mField.data_type.equals("text")) && (mField.allowed_values != null) && (!mField.allowed_values.equals(""))) {
@@ -862,9 +846,6 @@ public class ObservationEditor extends SherlockFragmentActivity {
 		});        
 
         mIdPlease = (Switch) findViewById(R.id.id_please);
-        String[] options = getResources().getStringArray(R.array.id_please_items);
-        mIdPlease.setTextOn(options[0]);
-        mIdPlease.setTextOff(options[1]);
         mGeoprivacy = (Spinner) findViewById(R.id.geoprivacy);
         mSpeciesGuessTextView = (TextView) findViewById(R.id.speciesGuess);
         mDescriptionTextView = (TextView) findViewById(R.id.description);
@@ -901,7 +882,7 @@ public class ObservationEditor extends SherlockFragmentActivity {
         mTopActionBar.setDisplayShowCustomEnabled(true);
         mTopActionBar.setDisplayHomeAsUpEnabled(true);
         mTopActionBar.setCustomView(R.layout.observation_editor_top_action_bar);
-        mTopActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#111111")));
+        mTopActionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_background));
         mTopActionBar.setIcon(android.R.color.transparent);
         mTopActionBar.setLogo(R.drawable.up_icon);
         ImageButton takePhoto = (ImageButton) mTopActionBar.getCustomView().findViewById(R.id.take_photo);
@@ -1246,6 +1227,7 @@ public class ObservationEditor extends SherlockFragmentActivity {
         } else {
             mCursor.requery();
         }
+
         if (mObservation == null) {
             mObservation = new Observation(mCursor);
         }
@@ -1256,11 +1238,13 @@ public class ObservationEditor extends SherlockFragmentActivity {
 
 
         if (Intent.ACTION_INSERT.equals(getIntent().getAction())) {
-            mObservation.observed_on = new Timestamp(System.currentTimeMillis());
-            mObservation.time_observed_at = mObservation.observed_on;
-            mObservation.observed_on_string = app.formatDatetime(mObservation.time_observed_at);
-            if (mObservation.latitude == null && mCurrentLocation == null) {
-                getLocation();
+            if (mObservation.observed_on == null) {
+                mObservation.observed_on = mObservation.observed_on_was = new Timestamp(System.currentTimeMillis());
+                mObservation.time_observed_at = mObservation.time_observed_at_was = mObservation.observed_on;
+                mObservation.observed_on_string = mObservation.observed_on_string_was = app.formatDatetime(mObservation.time_observed_at);
+                if (mObservation.latitude == null && mCurrentLocation == null) {
+                    getLocation();
+                }
             }
         }
         
@@ -1282,12 +1266,14 @@ public class ObservationEditor extends SherlockFragmentActivity {
     }
 
     private void uiToObservation() {
-        mObservation.species_guess = mSpeciesGuessTextView.getText().toString();
-        mObservation.description = mDescriptionTextView.getText().toString();
+        if (((mObservation.species_guess == null) && (mSpeciesGuessTextView.getText().length() > 0)) || (mObservation.species_guess != null)) mObservation.species_guess = mSpeciesGuessTextView.getText().toString();
+        if (((mObservation.description == null) && (mDescriptionTextView.getText().length() > 0)) || (mObservation.description != null)) mObservation.description = mDescriptionTextView.getText().toString();
         if (mObservedOnStringTextView.getText() == null || mObservedOnStringTextView.getText().length() == 0) {
             mObservation.observed_on_string = null; 
         } else {
             mObservation.observed_on_string = mObservedOnStringTextView.getText().toString();
+            mObservation.observed_on = mDateSetByUser;
+            mObservation.time_observed_at = mTimeSetByUser;
         }
         if (mLatitudeView.getText() == null || mLatitudeView.getText().length() == 0) {
             mObservation.latitude = null;
@@ -1335,17 +1321,23 @@ public class ObservationEditor extends SherlockFragmentActivity {
         }
         if (mObservation.observed_on_string != null) {
             mObservedOnStringTextView.setText(mObservation.observed_on_string);
+            mDateSetByUser = mObservation.observed_on;
         }
         if (mObservation.time_observed_at == null) {
             mTimeObservedAtButton.setText(getString(R.string.set_time));
         } else {
             mTimeObservedAtButton.setText(app.shortFormatTime(mObservation.time_observed_at));
+            mTimeSetByUser = mObservation.time_observed_at;
         }
         if (mObservation.latitude != null) {
             mLatitudeView.setText(mObservation.latitude.toString());
+        } else {
+            mLatitudeView.setText("");
         }
         if (mObservation.longitude != null) {
             mLongitudeView.setText(mObservation.longitude.toString());
+        } else {
+            mLongitudeView.setText("");
         }
         if (mObservation.positional_accuracy == null) {
             mAccuracyView.setText("");
@@ -1489,8 +1481,13 @@ public class ObservationEditor extends SherlockFragmentActivity {
                 mObservedOnStringTextView.setText(app.formatDate(date));
                 mObservedOnButton.setText(app.shortFormatDate(date));
             }
+
+            mDateSetByUser = date;
         }
     };
+
+    private Timestamp mDateSetByUser;
+    private Timestamp mTimeSetByUser;
 
     private TimePickerDialog.OnTimeSetListener mTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
         public void onTimeSet(TimePicker view, int hour, int minute) {
@@ -1519,6 +1516,7 @@ public class ObservationEditor extends SherlockFragmentActivity {
             }
             mObservedOnStringTextView.setText(app.formatDatetime(datetime));
             mTimeObservedAtButton.setText(app.shortFormatTime(datetime));
+            mTimeSetByUser = datetime;
         }
     };
     private ArrayList<Integer> mProjectIds;
@@ -1634,6 +1632,12 @@ public class ObservationEditor extends SherlockFragmentActivity {
         if (location.hasAccuracy()) {
             mAccuracyView.setText(Float.toString(location.getAccuracy()));
             mObservation.positional_accuracy = ((Float) location.getAccuracy()).intValue();
+        }
+
+        if (Intent.ACTION_INSERT.equals(getIntent().getAction())) {
+            mObservation.latitude_was = mObservation.latitude;
+            mObservation.longitude_was = mObservation.longitude;
+            mObservation.positional_accuracy_was = mObservation.positional_accuracy;
         }
     }
 
@@ -1958,6 +1962,11 @@ public class ObservationEditor extends SherlockFragmentActivity {
                 mObservation.latitude = (double) latLng[0];
                 mObservation.longitude = (double) latLng[1];
                 mObservation.positional_accuracy = null;
+            } else {
+                // Nullify the GPS coordinates
+                mObservation.latitude = null;
+                mObservation.longitude = null;
+                mObservation.positional_accuracy = null;
             }
             String datetime = exif.getAttribute(ExifInterface.TAG_DATETIME);
             if (datetime != null) {
@@ -1968,6 +1977,11 @@ public class ObservationEditor extends SherlockFragmentActivity {
                     mObservation.observed_on = timestamp;
                     mObservation.time_observed_at = timestamp;
                     mObservation.observed_on_string = app.formatDatetime(timestamp);
+
+                    mObservedOnStringTextView.setText(app.formatDatetime(timestamp));
+                    mTimeObservedAtButton.setText(app.shortFormatTime(timestamp));
+                    mDateSetByUser = timestamp;
+                    mTimeSetByUser = timestamp;
                 } catch (ParseException e) {
                     Log.d(TAG, "Failed to parse " + datetime + ": " + e);
                 }
@@ -2302,7 +2316,7 @@ public class ObservationEditor extends SherlockFragmentActivity {
      * @param onPositiveClick runnable to call (in UI thread) if positive button pressed. Can be null
      * @param onNegativeClick runnable to call (in UI thread) if negative button pressed. Can be null
      */
-    public static final void confirm(
+    public final void confirm(
             final Activity activity, 
             final int title, 
             final int message,
@@ -2310,26 +2324,20 @@ public class ObservationEditor extends SherlockFragmentActivity {
             final int negativeLabel,
             final Runnable onPositiveClick,
             final Runnable onNegativeClick) {
-
-        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-        dialog.setTitle(title);
-        dialog.setMessage(message);
-        dialog.setCancelable (false);
-        dialog.setPositiveButton(positiveLabel,
-                new DialogInterface.OnClickListener () {
-            public void onClick (DialogInterface dialog, int buttonId) {
-                if (onPositiveClick != null) onPositiveClick.run();
-            }
-        });
-        dialog.setNegativeButton(negativeLabel,
-                new DialogInterface.OnClickListener () {
-            public void onClick (DialogInterface dialog, int buttonId) {
-                if (onNegativeClick != null) onNegativeClick.run();
-            }
-        });
-        dialog.setIcon (android.R.drawable.ic_dialog_alert);
-        dialog.show();
-
+        mHelper.confirm(getString(title), getString(message),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (onPositiveClick != null) onPositiveClick.run();
+                    }
+                },
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (onNegativeClick != null) onNegativeClick.run();
+                    }
+                },
+                positiveLabel, negativeLabel);
     }
 
     

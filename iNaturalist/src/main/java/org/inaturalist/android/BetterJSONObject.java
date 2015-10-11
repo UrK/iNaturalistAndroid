@@ -6,11 +6,6 @@
 
 package org.inaturalist.android;
 
-import android.util.Log;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -21,6 +16,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.util.Log;
 
 
 public class BetterJSONObject implements Serializable {
@@ -41,9 +42,10 @@ public class BetterJSONObject implements Serializable {
 	}
 
 	private void initRegExIfNeeded() {
-		if (mDateFormat == null) mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-		if (mDateTimeFormat == null) mDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
-		if (mDateTimeFormat2 == null) mDateTimeFormat2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZZZ", Locale.US);
+        if (mDateFormat == null) mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        if (mDateTimeFormat == null) mDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
+        if (mDateTimeFormat2 == null) mDateTimeFormat2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZZZ", Locale.US);
+
 	}
 	
 	public JSONObject getJSONObject() {
@@ -145,7 +147,7 @@ public class BetterJSONObject implements Serializable {
 	}
 	
     private void writeObject(ObjectOutputStream oos) throws IOException {
-		oos.defaultWriteObject();
+        oos.defaultWriteObject();
         oos.writeObject(mJSONObject.toString());
     }
 

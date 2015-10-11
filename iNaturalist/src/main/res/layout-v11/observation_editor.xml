@@ -9,7 +9,7 @@
         android:layout_width="fill_parent"
         android:layout_height="@dimen/abs__action_bar_default_height"
         android:layout_alignParentBottom="true"
-        android:background="#111111"
+        android:background="@drawable/actionbar_background"
         android:orientation="horizontal"
         android:paddingLeft="5dp"
         android:paddingRight="5dp" >
@@ -19,10 +19,10 @@
             style="@android:style/TextAppearance.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:background="@drawable/actionbar_btn"
-            android:drawableLeft="@drawable/ic_action_save"
+            android:drawableStart="@drawable/ic_action_save"
             android:gravity="center_vertical"
             android:padding="5dp"
             android:singleLine="true"
@@ -33,10 +33,10 @@
             style="@android:style/TextAppearance.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/comments_ids_background"
             android:gravity="center"
             android:padding="5dp"
@@ -46,23 +46,23 @@
 
         <ImageButton
             android:id="@+id/view_on_inat"
-            android:layout_width="32dp"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toLeftOf="@id/commentIdCount"
+            android:layout_marginStart="10dp"
+            android:layout_toStartOf="@id/commentIdCount"
             android:background="@drawable/actionbar_btn"
             android:padding="5dp"
             android:scaleType="fitCenter"
             android:singleLine="true"
-            android:src="@drawable/action" />
+            android:src="@drawable/ic_fa_share_square_o" />
 
         <ImageButton
             android:id="@+id/delete_observation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/view_on_inat"
+            android:layout_toStartOf="@id/view_on_inat"
             android:background="@drawable/actionbar_btn"
             android:padding="5dp"
             android:singleLine="true"
@@ -92,17 +92,17 @@
                 >
                 <ImageView
                     android:id="@+id/taxonSelector"
-                    android:layout_width="24dp"
+                    android:layout_width="38dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_alignParentRight="true"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/search"
+                    android:src="@drawable/ic_fa_search"
                     />
  
                 <EditText
-                    android:layout_toLeftOf="@id/taxonSelector"
+                    android:layout_toStartOf="@id/taxonSelector"
                     android:id="@+id/speciesGuess"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -131,7 +131,7 @@
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
                     android:layout_gravity="fill_vertical"
-                    android:layout_marginLeft="2dp"
+                    android:layout_marginStart="2dp"
                     android:layout_weight="0.5"
                     android:text="@string/set_date" />
 
@@ -139,7 +139,7 @@
                     android:id="@+id/time_observed_at"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="2dp"
+                    android:layout_marginEnd="2dp"
                     android:layout_weight="0.5"
                     android:text="@string/set_time" />
             </LinearLayout>
@@ -165,7 +165,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="left"
+                            android:gravity="start"
                             android:paddingRight="5dp"
                             android:text="Lat"
                             android:textStyle="bold" />
@@ -230,7 +230,7 @@
 
                     <RelativeLayout
                         android:id="@+id/locationRefreshButton"
-                        style="@android:style/Widget.Holo.Button"
+                        style="@style/ButtoniNatAppTheme"
                         android:layout_width="120dp"
                         android:layout_height="60dp"
                         android:layout_margin="0dp"
@@ -241,7 +241,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            android:drawableLeft="@drawable/ic_action_location_searching"
+                            android:drawableStart="@drawable/ic_action_location_searching"
                             android:gravity="center"
                             android:text="@string/gps" />
                     </RelativeLayout>
@@ -250,7 +250,7 @@
                         android:id="@+id/locationStopRefreshButton"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:src="@android:drawable/ic_menu_close_clear_cancel"
+                        android:src="@drawable/ic_action_remove"
                         android:visibility="gone" />
                 </LinearLayout>
             </LinearLayout>
@@ -259,8 +259,8 @@
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_marginLeft="3dp"
-                android:layout_marginRight="3dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
                 android:layout_weight="1"
                 android:gravity="top"
                 android:hint="@string/brief_description"
@@ -301,15 +301,15 @@
                         style="@android:style/TextAppearance.Medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="7dp"
+                        android:layout_marginStart="7dp"
                         android:text="@string/id_please" />
 
                     <org.jraf.android.backport.switchwidget.Switch
                         android:id="@+id/id_please"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:layout_marginRight="7dp" />
+                        android:layout_gravity="start"
+                        android:layout_marginEnd="7dp" />
                 </TableRow>
 
                 <TableRow>
@@ -318,14 +318,14 @@
                         style="@android:style/TextAppearance.Medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="7dp"
+                        android:layout_marginStart="7dp"
                         android:text="@string/geoprivacy" />
 
                     <Spinner
                         android:id="@+id/geoprivacy"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="7dp"
+                        android:layout_marginEnd="7dp"
                         android:entries="@array/geoprivacy_items"
                         android:entryValues="@array/geoprivacy_values" />
                 </TableRow>

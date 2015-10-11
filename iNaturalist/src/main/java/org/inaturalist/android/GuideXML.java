@@ -2,6 +2,7 @@ package org.inaturalist.android;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Node;
@@ -16,12 +17,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -45,6 +51,9 @@ public class GuideXML extends BaseGuideXMLParser {
     private Context mContext;
     private Map<String, Integer> mTagCounts;
     private Map<String, Set<String>> mTags;
+
+    // Representative photos of the tag values (e.g. what photo should we display for "number of legs=4")
+    private Map<Pair<String, String>, List<GuideTaxonPhotoXML>> mReprTagPhotos;
 
     /**
      * Initialize the GuideXML class with the offline (downloaded) version of it
@@ -86,6 +95,8 @@ public class GuideXML extends BaseGuideXMLParser {
 
             // Parse all taxon tags
             parseTags();
+            // Parse the TaxonImage tags (so we'll know what are the representative image for each tag value)
+            parseImageTags();
         } catch (XPathExpressionException e) {
             e.printStackTrace();
         }
@@ -342,6 +353,52 @@ public class GuideXML extends BaseGuideXMLParser {
         return getValueByXPath("//ngz/size");
     }
 
+    /**
+     * Utility method that parses out all of the guide photos's taxon tags
+     */
+    private void parseImageTags() {
+        ArrayList<Node> nodes = getNodesByXPath("//GuideTaxon/GuidePhoto/tag");
+
+        if (nodes == null) {
+            return;
+        }
+
+        mReprTagPhotos = new HashMap<Pair<String, String>, List<GuideTaxonPhotoXML>>();
+
+        for (Node node: nodes) {
+            String predicateName = getAttribute(node, "predicate");
+            if ((predicateName == null) || (predicateName.length() == 0)) {
+                predicateName = PREDICATE_TAGS;
+            }
+            String value = getAttribute(node, "value");
+            Pair<String, String> key = new Pair<String, String>(predicateName, value);
+            GuideTaxonPhotoXML photo = new GuideTaxonPhotoXML(this, node.getParentNode());
+
+            if (!mReprTagPhotos.containsKey(key)) {
+                mReprTagPhotos.put(key, new ArrayList<GuideTaxonPhotoXML>());
+            }
+
+            List<GuideTaxonPhotoXML> photos = mReprTagPhotos.get(key);
+            photos.add(photo);
+        }
+    }
+
+    /**
+     * Returns the representative photos of a specific tag name + value combo.
+     *
+     * @param tagName the tag name (e.g. number of legs)
+     * @param tagValue the tag value (e.g. 3)
+     * @return the representative photos for that combo (or null if non existent)
+     */
+    public List<GuideTaxonPhotoXML> getTagRepresentativePhoto(String tagName, String tagValue) {
+        Pair<String, String> key = new Pair<String, String>(tagName, tagValue);
+
+        if (!mReprTagPhotos.containsKey(key)) {
+            return null;
+        }
+
+        return mReprTagPhotos.get(key);
+    }
 
     /**
      * Utility method that parses out all of the guide's taxon tags
@@ -407,12 +464,162 @@ public class GuideXML extends BaseGuideXMLParser {
         return new GuideTaxonXML(this, nodes.get(0));
     }
 
-
     /**
-     * Returns the list of guide taxa according to the filter
+     * Used by getRecommendedPredicate
+     * @param data
      * @return
      */
-    public List<GuideTaxonXML> getTaxa(GuideTaxonFilter filter) {
+    private Double getMean(List<Integer> data) {
+        double sum = 0.0;
+        for (Integer a : data) {
+            sum += a;
+        }
+        return sum / data.size();
+    }
+
+    /**
+     * Used by getRecommendedPredicate
+     * @param data
+     * @return
+     */
+    private Double getVariance(Double mean, List<Integer> data) {
+        if (data.size() <= 1) {
+            // Undefined variance when there is one or less item
+            return null;
+        }
+
+        double temp = 0;
+        for(Integer a : data) {
+            temp += (mean - a) * (mean - a);
+        }
+        return temp / data.size();
+    }
+
+    /**
+     * Returns the next recommended predicate name, according to current filter tags and results - find out
+     * the tag name that is the most "useful" one for filtering results. For example, a tag that will
+     * not eliminate the results by much will not be considered a good candidate.
+     * @param filter current filter tags
+     * @param currentResults current search results
+     * @return the next recommended tag name.
+     */
+    public String getRecommendedPredicate(GuideTaxonFilter filter, List<GuideTaxonXML> currentResults) {
+        Map<String, Integer> currentTagCounts = new HashMap<String, Integer>();
+        List<String> selectedPredicates = new ArrayList<String>();
+
+        // Build the list of already-selected predicate names
+        for (String tagName : filter.getAllTags()) {
+            String predicateName = tagName.split("=")[0];
+            selectedPredicates.add(predicateName);
+        }
+
+        // Calculate the tag counts from the remaining taxa results
+        for (GuideTaxonXML taxon : currentResults) {
+            ArrayList<Node> nodes = taxon.getNodesByXPath("tag");
+
+            for (Node node : nodes) {
+                String tagName = node.getTextContent();
+
+                if (!currentTagCounts.containsKey(tagName)) {
+                    currentTagCounts.put(tagName, 0);
+                }
+                int currentCount = currentTagCounts.get(tagName);
+                currentTagCounts.put(tagName, currentCount + 1);
+            }
+        }
+
+        // Next, create a list of tag counts for each predicate
+        Map<String, List<Integer>> predicateTagCounts = new HashMap<String, List<Integer>>();
+
+        for (String tagName : currentTagCounts.keySet()) {
+            int tagCount = currentTagCounts.get(tagName);
+            String predicateName = tagName.split("=")[0];
+
+            if (!predicateTagCounts.containsKey(predicateName)) {
+                predicateTagCounts.put(predicateName, new ArrayList<Integer>());
+            }
+            predicateTagCounts.get(predicateName).add(tagCount);
+        }
+
+
+        // Calculate the mean and variance for each predicate tag count list
+        // (Key = predicate name; values = mean, variance
+        SortedMap<String, Pair<Double, Double>> predicatesMeanAndVariance = new TreeMap<String, Pair<Double, Double>>();
+
+        for (String predicateName : predicateTagCounts.keySet()) {
+            List<Integer> predicateTagCount = predicateTagCounts.get(predicateName);
+
+            if (selectedPredicates.contains(predicateName)) {
+                // Predicate was already selected - skip it
+                continue;
+            }
+
+            // Calculate mean and variance
+            Double mean = getMean(predicateTagCount);
+            Double variance = getVariance(mean, predicateTagCount);
+
+            predicatesMeanAndVariance.put(predicateName, new Pair<Double, Double>(mean, variance));
+
+            Log.e("AAA", predicateName + " = [" + StringUtils.join(predicateTagCount, ",") + "] = " + mean + ", " + variance);
+        }
+
+        // Finally, decide which of the predicates is the next recommended one
+
+         // This comparator is the heart of our algorithm for choosing the next recommended predicate:
+        // We choose the one with the max mean; then, in case of identical means, we choose the one
+        // with the minimum variance (that is not null).
+        Comparator<Map.Entry> predicateComparator = new Comparator<Map.Entry>() {
+            @Override
+            public int compare(Map.Entry entry1, Map.Entry entry2) {
+                Pair<Double, Double> predicate1 = (Pair<Double, Double>) entry1.getValue();
+                Pair<Double, Double> predicate2 = (Pair<Double, Double>) entry2.getValue();
+
+                // First, compare by mean
+                if (predicate1.first > predicate2.first) {
+                    return -1;
+                } else if (predicate2.first > predicate1.first) {
+                    return 1;
+                } else {
+                    // Means are identical - compare by variance
+                    if ((predicate1.second == null) && (predicate2.second != null)) {
+                        return 1;
+                    } else if ((predicate2.second == null) && (predicate1.second != null)) {
+                        return -1;
+                    } else if ((predicate2.second == null) && (predicate1.second == null)) {
+                        return 0;
+                    } else {
+                        return (int)(predicate1.second - predicate2.second);
+                    }
+                }
+            }
+        };
+
+
+        // Sort the predicate mean/variance list
+        List<Map.Entry> list = new LinkedList(predicatesMeanAndVariance.entrySet());
+
+        if (list.size() > 1) {
+            Collections.sort(list, predicateComparator);
+        }
+
+        for (Map.Entry item : list) {
+            Log.e("AAA", item.getKey() + " = " + ((Pair<Double,Double>)item.getValue()).first + ", " + ((Pair<Double,Double>)item.getValue()).second);
+        }
+
+        if (list.size() > 0) {
+            return (String) list.get(0).getKey();
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
+     * Utility method for building an xpath string by a taxon search filter
+     * @param filter
+     * @return
+     */
+    private String buildFilterXpath(GuideTaxonFilter filter) {
         String searchText = filter.getSearchText();
         String xPathExpression;
 
@@ -434,6 +641,17 @@ public class GuideXML extends BaseGuideXMLParser {
             }
             xPathExpression = String.format("%s[%s]", xPathExpression, StringUtils.join(tagExpressions, " and "));
         }
+
+        return xPathExpression;
+    }
+
+
+    /**
+     * Returns the list of guide taxa according to the filter
+     * @return
+     */
+    public List<GuideTaxonXML> getTaxa(GuideTaxonFilter filter) {
+        String xPathExpression = buildFilterXpath(filter);
 
         // Get the list of all GuideTaxon nodes that fit the filter
         ArrayList<Node> nodes = getNodesByXPath(xPathExpression);

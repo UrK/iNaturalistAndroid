@@ -110,7 +110,7 @@
 <string name="com_facebook_choose_friends">בחירת חברים</string>
 <string name="com_facebook_nearby">בקרבת מקום</string>
 <string name="com_facebook_loading">טוען…</string>
-<string name="com_facebook_internet_permission_error_title"></string>
+<string name="com_facebook_internet_permission_error_title">שגיאה בהרשאת אינטרנט ב- AndroidManifest</string>
 <string name="com_facebook_internet_permission_error_message">נדרשת הרשאת גישה לאינטרנט</string>
 <string name="com_facebook_requesterror_web_login">חשבון פייסבוק שלך נעול. נא להתחבר באתר www.facebook.com להמשך</string>
 <string name="com_facebook_requesterror_relogin">נא להתחבר באפליקציה שנית על מנת להמשיך</string>

@@ -769,11 +769,26 @@ public class INaturalistService extends IntentService implements ConnectionCallb
                 return null;
             }
         } else {
-            return null;
+            return autoJoinUserToProjects();
         }
     }
 
-    
+    /** Automatically join current user to projects defined by global configuration */
+    private String autoJoinUserToProjects() throws AuthenticationException {
+        for (int proj : GlobalConfig.getInstance().getAutoJoinProjects()) {
+            joinProject(proj);
+            if (mResponseErrors != null) {
+                try {
+                    return mResponseErrors.getString(0);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return e.getLocalizedMessage();
+                }
+            }
+        }
+        return null;
+    }
+
     private void addComment(int observationId, String body) throws AuthenticationException {
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("comment[parent_id]", new Integer(observationId).toString()));

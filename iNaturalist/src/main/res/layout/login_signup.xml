@@ -75,7 +75,7 @@
                 android:textColor="#FFFFFF"
                 android:hint="@string/email"
                 android:textSize="18sp"
-                android:gravity="center_vertical"
+                android:gravity="center_vertical|start"
                 android:inputType="textEmailAddress"
                 android:lines="1"
                 android:layout_height="match_parent" />
@@ -111,7 +111,7 @@
                 android:textColor="#FFFFFF"
                 android:hint="@string/password"
                 android:textSize="18sp"
-                android:gravity="center_vertical"
+                android:gravity="center_vertical|start"
                 android:inputType="textPassword"
                 android:lines="1"
                 android:layout_height="match_parent" />

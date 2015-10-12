@@ -292,7 +292,7 @@
 </string-array>
 
 
-<string name="username_or_email">Username or Email</string>
+<string name="username_or_email">שם משתמש או דוא״ל</string>
 <string name="forgot">שכחתי</string>
 <string name="or_login_with">או התחברות באמצעות</string>
 <string name="log_in">התחברות</string>
@@ -307,7 +307,7 @@
 <string name="please_sign_in_for_updates">נא להתחבר במסך הגדרות על מנת לצפות בעידכונים</string>
 <string name="quantity">כמות</string>
 <string name="recommended_next_step">צעד מומלץ הבא</string>
-<string name="registering">מבצע הרשמה...</string>
+<string name="registering">מבצע הרשמה…</string>
 <string name="send_email">שלח דוא״ל</string>
 <string name="sign_up">הרשמה</string>
 <string name="sign_up_with">הרשמה באמצעות</string>

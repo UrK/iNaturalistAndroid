@@ -241,7 +241,7 @@ public class ObservationEditor extends SherlockFragmentActivity {
                 projectSelected.setVisibility(View.GONE);
                 
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) projectName.getLayoutParams();
-                params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 1);
+                params.addRule(RelativeLayout.ALIGN_PARENT_START, 1);
                 projectName.setLayoutParams(params);
                 
                 mProjectsTable.addView(view);
@@ -1253,7 +1253,7 @@ public class ObservationEditor extends SherlockFragmentActivity {
             mObservationCommentsIds.setVisibility(View.GONE);
             mViewOnInat.setVisibility(View.GONE);
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mDeleteButton.getLayoutParams();
-            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 1);
+            params.addRule(RelativeLayout.ALIGN_PARENT_END, 1);
             mDeleteButton.setLayoutParams(params);
         }
         

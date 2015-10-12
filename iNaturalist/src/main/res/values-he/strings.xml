@@ -8,7 +8,7 @@
 <string name="observations_menu_sync">"פירסום"</string>
 <string name="delete_observation">"מחיקת תצפית"</string>
 <string name="observation_deleted">"תצפית נמחקה"</string>
-<string name="species_guess_hint">"שם של זן"</string>
+<string name="species_guess_hint">"שם המין"</string>
 <string name="ok">"אישור"</string>
 <string name="cancel">"ביטול"</string>
 <string name="loading">"טוען"</string>

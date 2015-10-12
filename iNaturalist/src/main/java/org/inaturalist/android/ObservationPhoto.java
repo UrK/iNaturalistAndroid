@@ -48,7 +48,7 @@ public class ObservationPhoto implements BaseColumns, Serializable {
     public static final int OBSERVATION_PHOTOS_URI_CODE = 1801;
     public static final int OBSERVATION_PHOTO_ID_URI_CODE = 1686;
     public static HashMap<String, String> PROJECTION_MAP;
-    public static final String AUTHORITY = "org.inaturalist.android.observation_photo";
+    public static final String AUTHORITY = "org.tazpiteva.android.observation_photo";
     public static final Uri    CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/observation_photos");
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.google.observation_photo";
     public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.google.observation_photo";

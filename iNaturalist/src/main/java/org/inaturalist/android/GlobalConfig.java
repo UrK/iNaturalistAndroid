@@ -9,7 +9,8 @@ public class GlobalConfig {
 
     private static final GlobalConfig mInstance = new GlobalConfig();
 
-    private int[] mAutoJoinProjects = {};
+    // Golan Wildlife project- 4527
+    private int[] mAutoJoinProjects = {4527};
 
     // endregion
 

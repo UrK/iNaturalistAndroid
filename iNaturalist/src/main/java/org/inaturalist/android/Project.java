@@ -28,7 +28,7 @@ public class Project implements BaseColumns, Serializable {
     public static final int PROJECT_ID_URI_CODE = 1964;
     
     public static HashMap<String, String> PROJECTION_MAP;
-    public static final String AUTHORITY = "org.inaturalist.android.project";
+    public static final String AUTHORITY = "org.tazpiteva.android.project";
     public static final Uri    CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/projects");
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.google.inatproject";
     public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.google.inatproject";

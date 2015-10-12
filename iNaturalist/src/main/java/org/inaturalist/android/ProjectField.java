@@ -31,7 +31,7 @@ public class ProjectField implements BaseColumns, Serializable {
     public static final int PROJECT_FIELD_ID_URI_CODE = 3964;
     
     public static HashMap<String, String> PROJECTION_MAP;
-    public static final String AUTHORITY = "org.inaturalist.android.project_field";
+    public static final String AUTHORITY = "org.tazpiteva.android.project_field";
     public static final Uri    CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/project_fields");
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.google.project_field";
     public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.google.project_field";

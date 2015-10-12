@@ -101,7 +101,7 @@ public class Observation implements BaseColumns, Serializable {
     public static final int OBSERVATIONS_URI_CODE = 1279;
     public static final int OBSERVATION_ID_URI_CODE = 1164;
     public static HashMap<String, String> PROJECTION_MAP;
-    public static final String AUTHORITY = "org.inaturalist.android.observation";
+    public static final String AUTHORITY = "org.tazpiteva.android.observation";
     public static final Uri    CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/observations");
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.google.observation";
     public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.google.observation";

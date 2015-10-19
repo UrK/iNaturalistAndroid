@@ -84,6 +84,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -766,24 +767,7 @@ public class INaturalistService extends IntentService implements ConnectionCallb
                 return mResponseErrors.getString(0);
             } catch (JSONException e) {
                 e.printStackTrace();
-                return null;
-            }
-        } else {
-            return autoJoinUserToProjects();
-        }
-    }
-
-    /** Automatically join current user to projects defined by global configuration */
-    private String autoJoinUserToProjects() throws AuthenticationException {
-        for (int proj : GlobalConfig.getInstance().getAutoJoinProjects()) {
-            joinProject(proj);
-            if (mResponseErrors != null) {
-                try {
-                    return mResponseErrors.getString(0);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return e.getLocalizedMessage();
-                }
+                return "Unknown error";
             }
         }
         return null;
@@ -1317,6 +1301,10 @@ public class INaturalistService extends IntentService implements ConnectionCallb
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        Intent reply = new Intent(ACTION_JOINED_PROJECTS_RESULT);
+        reply.putExtra(PROJECTS_RESULT, projectId);
+        sendBroadcast(reply);
     } 
     
     public void leaveProject(int projectId) throws AuthenticationException {
@@ -1794,7 +1782,7 @@ public class INaturalistService extends IntentService implements ConnectionCallb
                 mResponseHeaders = response.getAllHeaders();
                 
                 try {
-                	if (json != null) {
+                	if (json != null && json.length() > 0) {
                         JSONObject result = json.getJSONObject(0);
                         if (result.has("errors")) {
                             // Error response

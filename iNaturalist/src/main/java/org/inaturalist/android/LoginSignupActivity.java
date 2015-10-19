@@ -13,7 +13,6 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -23,12 +22,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
 
 import com.facebook.login.widget.LoginButton;
 import com.flurry.android.FlurryAgent;
-
-import org.json.JSONArray;
 
 public class LoginSignupActivity extends Activity implements SignInTask.SignInTaskStatus {
 
@@ -56,6 +52,7 @@ public class LoginSignupActivity extends Activity implements SignInTask.SignInTa
     private LoginButton mFacebookLoginButton;
 
     private UserRegisterReceiver mUserRegisterReceiver;
+    private ProjectJoinReceiver mProjectJoinReceiver;
     private TextView mTerms;
 
     @Override
@@ -71,6 +68,15 @@ public class LoginSignupActivity extends Activity implements SignInTask.SignInTa
         FlurryAgent.onEndSession(this);
     }
 
+    private class ProjectJoinReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            unregisterReceiver(this);
+            mHelper.stopLoading();
+            LoginSignupActivity.this.setResult(RESULT_OK);
+            LoginSignupActivity.this.finish();
+        }
+    }
 
     private class UserRegisterReceiver extends BroadcastReceiver {
         @Override
@@ -384,8 +390,24 @@ public class LoginSignupActivity extends Activity implements SignInTask.SignInTa
     @Override
     public void onLoginSuccessful() {
         mSignInTask.pause();
-        setResult(RESULT_OK);
-        finish();
+
+        int[] projects = GlobalConfig.getInstance().getAutoJoinProjects();
+        if (projects != null && projects.length > 0) {
+
+            mProjectJoinReceiver = new ProjectJoinReceiver();
+            IntentFilter filter = new IntentFilter(INaturalistService.ACTION_JOINED_PROJECTS_RESULT);
+            registerReceiver(mProjectJoinReceiver, filter);
+
+            mHelper.loading(getString(R.string.joining_project));
+
+            Intent serviceIntent = new Intent(INaturalistService.ACTION_JOIN_PROJECT, null, this, INaturalistService.class);
+            serviceIntent.putExtra(INaturalistService.PROJECT_ID, projects[0]);
+            startService(serviceIntent);
+        }
+        else {
+            setResult(RESULT_OK);
+            finish();
+        }
     }
 
     private boolean isNetworkAvailable() {
@@ -402,9 +424,13 @@ public class LoginSignupActivity extends Activity implements SignInTask.SignInTa
             if (mUserRegisterReceiver != null) {
                 unregisterReceiver(mUserRegisterReceiver);
             }
-        } catch (Exception exc) {
-            exc.printStackTrace();
-        }
+        } catch (Exception ignored) { }
+
+        try {
+            if (mProjectJoinReceiver != null) {
+                unregisterReceiver(mProjectJoinReceiver);
+            }
+        } catch (Exception ignored) { }
     }
 
 }

@@ -399,5 +399,7 @@
     <string name="please_sign_in_for_updates">You must be logged in to view your updates.</string>
     <string name="by_using_inat_terms"><![CDATA[By using iNaturalist you agree to the <b><a href="http://www.inaturalist.org/pages/terms">Terms of Service</a></b> and <b><a href="http://www.inaturalist.org/pages/privacy">Privacy Policy</a></b>]]></string>
     <string name="inat_support_email_address">support@golannat.org.il</string>
+
+    <string name="joining_project">Joining project</string>
  </resources>
 

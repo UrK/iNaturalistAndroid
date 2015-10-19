@@ -5,6 +5,7 @@ import com.flurry.android.FlurryAgent;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1087,6 +1088,26 @@ public class ObservationEditor extends SherlockFragmentActivity {
         } else {
             refreshProjectList();
         }
+
+        setupPrivacySpinner();
+    }
+
+    /* Golan project requires to remove private option from geoprivacy. In order to be as close as
+     * possible to the original code, it was decided against modifying the resources, instead using
+     * dynamic spinner adapter modification */
+    private void setupPrivacySpinner() {
+        List<String> geoprivacyNames = new ArrayList<>(Arrays.asList(
+                getResources().getStringArray(R.array.geoprivacy_items)));
+
+        int toRemove = Arrays
+                .asList(getResources().getStringArray(R.array.geoprivacy_values))
+                .indexOf("private");
+
+        geoprivacyNames.remove(toRemove);
+
+        ArrayAdapter<String> geoprivacyAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_dropdown_item_1line, geoprivacyNames);
+        mGeoprivacy.setAdapter(geoprivacyAdapter);
     }
     
     @Override
@@ -1304,7 +1325,8 @@ public class ObservationEditor extends SherlockFragmentActivity {
     private void observationToUi() {
         List<String> values = Arrays.asList(getResources().getStringArray(R.array.geoprivacy_values));
         
-        if (mObservation.geoprivacy != null) {
+        if (mObservation.geoprivacy != null &&
+                mGeoprivacy.getAdapter().getCount() < values.indexOf(mObservation.geoprivacy)) {
             mGeoprivacy.setSelection(values.indexOf(mObservation.geoprivacy));
         } else {
             mGeoprivacy.setSelection(0);

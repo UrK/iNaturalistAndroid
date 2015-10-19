@@ -10,7 +10,7 @@ public class GlobalConfig {
     private static final GlobalConfig mInstance = new GlobalConfig();
 
     // Golan Wildlife project- 4527
-    private int[] mAutoJoinProjects = {4527};
+    private int mAutoJoinProject = 4527;
 
     // endregion
 
@@ -20,8 +20,8 @@ public class GlobalConfig {
         return mInstance;
     }
 
-    public int[] getAutoJoinProjects() {
-        return mAutoJoinProjects;
+    public int getAutoJoinProject() {
+        return mAutoJoinProject;
     }
 
     // endregion

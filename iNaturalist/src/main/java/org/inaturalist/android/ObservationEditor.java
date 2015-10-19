@@ -785,6 +785,11 @@ public class ObservationEditor extends SherlockFragmentActivity {
                 }
                 setResult(RESULT_OK, (new Intent()).setAction(mUri.toString()));
                 getIntent().setAction(Intent.ACTION_INSERT);
+
+                if (GlobalConfig.getInstance().getAutoJoinProject() > 0) {
+                    mProjectIds = new ArrayList<>();
+                    mProjectIds.add(GlobalConfig.getInstance().getAutoJoinProject());
+                }
                 break;
             case ObservationPhoto.OBSERVATION_PHOTOS_URI_CODE:
                 mFileUri = (Uri) intent.getExtras().get("photoUri");

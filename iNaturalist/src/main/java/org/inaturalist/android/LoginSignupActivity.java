@@ -391,10 +391,8 @@ public class LoginSignupActivity extends Activity implements SignInTask.SignInTa
     public void onLoginSuccessful() {
         mSignInTask.pause();
 
-        int[] projects = GlobalConfig.getInstance().getAutoJoinProjects();
-
         /* on registration join the new user to specified projects right away */
-        if (mIsSignup && projects != null && projects.length > 0) {
+        if (mIsSignup && GlobalConfig.getInstance().getAutoJoinProject() > 0) {
 
             mProjectJoinReceiver = new ProjectJoinReceiver();
             IntentFilter filter = new IntentFilter(INaturalistService.ACTION_JOINED_PROJECTS_RESULT);
@@ -403,7 +401,7 @@ public class LoginSignupActivity extends Activity implements SignInTask.SignInTa
             mHelper.loading(getString(R.string.joining_project));
 
             Intent serviceIntent = new Intent(INaturalistService.ACTION_JOIN_PROJECT, null, this, INaturalistService.class);
-            serviceIntent.putExtra(INaturalistService.PROJECT_ID, projects[0]);
+            serviceIntent.putExtra(INaturalistService.PROJECT_ID, GlobalConfig.getInstance().getAutoJoinProject());
             startService(serviceIntent);
         }
         else {

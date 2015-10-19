@@ -326,6 +326,12 @@ public class ProjectSelectorActivity extends SherlockActivity implements OnItemC
     public void onItemClick(AdapterView<?> arg0, View view, int arg2, long arg3) {
         BetterJSONObject project = (BetterJSONObject) view.getTag();
         Integer projectId = Integer.valueOf(project.getInt("id"));
+
+        /* prevent operations on auto-joined projects, so the user will not be able to deselect
+         * this project */
+        if (projectId == GlobalConfig.getInstance().getAutoJoinProject()) {
+            return;
+        }
         
         TextView projectDescription = (TextView) view.findViewById(R.id.project_description);
         ImageView projectSelected = (ImageView) view.findViewById(R.id.project_selected);

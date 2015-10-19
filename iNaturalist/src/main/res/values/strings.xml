@@ -401,5 +401,6 @@
     <string name="inat_support_email_address">support@golannat.org.il</string>
 
     <string name="joining_project">Joining project</string>
- </resources>
+    <string name="no_results">No Results</string>
+</resources>
 

@@ -359,6 +359,8 @@ public class TaxonSearchActivity extends SherlockListActivity {
         }
 
         setListAdapter(mAdapter);
+
+//        getListView().setEmptyView(findViewById(R.id.taxon_search_empty));
     }
     
     @Override

@@ -35,5 +35,4 @@
                 android:textColor="#000000"
                 android:text="TextView" />
       </LinearLayout>
-
 </RelativeLayout>

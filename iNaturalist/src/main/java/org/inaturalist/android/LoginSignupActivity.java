@@ -392,7 +392,9 @@ public class LoginSignupActivity extends Activity implements SignInTask.SignInTa
         mSignInTask.pause();
 
         int[] projects = GlobalConfig.getInstance().getAutoJoinProjects();
-        if (projects != null && projects.length > 0) {
+
+        /* on registration join the new user to specified projects right away */
+        if (mIsSignup && projects != null && projects.length > 0) {
 
             mProjectJoinReceiver = new ProjectJoinReceiver();
             IntentFilter filter = new IntentFilter(INaturalistService.ACTION_JOINED_PROJECTS_RESULT);

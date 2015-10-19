@@ -67,7 +67,9 @@ public class OnboardingActivity extends Activity implements SignInTask.SignInTas
 	    mPrefEditor = mPreferences.edit();
 
         mBackgroundImage = (ViewFlipper) findViewById(R.id.background_image);
-        mBackgroundImage.startFlipping();
+        if (mBackgroundImage.getChildCount() > 1) {
+            mBackgroundImage.startFlipping();
+        }
 
         View closeButton = (View) findViewById(R.id.close);
         closeButton.setOnClickListener(new View.OnClickListener() {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <string name="acc">Acc</string>
-<string name="app_name">תצפיטבע Tazpiteva</string>
+<string name="app_name">תצפיטבע</string>
 <string name="google_login">התחברות עם גוגל+</string>
 <string name="email_address">כתובת מייל</string>
 <string name="observations_menu_add">הוסף</string>

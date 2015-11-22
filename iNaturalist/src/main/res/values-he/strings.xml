@@ -315,5 +315,10 @@
 <string name="joining_project">מצרף לפרוייקט</string>
 <string name="no_results">אין תוצאות</string>
 
-</resources>
+<string-array name="geoprivacy_items">
+    <item>פומבית</item>
+    <item>חבויה</item>
+    <item>פרטית</item>
+</string-array>
 
+</resources>

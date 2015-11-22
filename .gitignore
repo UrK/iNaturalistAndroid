@@ -9,3 +9,4 @@ build
 *.apk
 local.properties
 
+signing_keys.properties

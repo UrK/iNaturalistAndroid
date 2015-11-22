@@ -9,13 +9,26 @@
         android:layout_width="fill_parent"
         android:inAnimation="@anim/fade_in"
         android:outAnimation="@anim/fade_out"
+        android:autoStart="true"
         android:flipInterval="6000"
         android:layout_height="fill_parent">
 
         <ImageView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:src="@drawable/signup_background_golan"
+            android:src="@drawable/signup_background_1"
+            android:scaleType="fitXY"
+            />
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:src="@drawable/signup_background_2"
+            android:scaleType="fitXY"
+            />
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:src="@drawable/signup_background_3"
             android:scaleType="fitXY"
             />
 

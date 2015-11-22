@@ -1,6 +1,7 @@
 package org.inaturalist.android;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,6 +51,18 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.util.EntityUtils;
+import org.apache.sanselan.ImageReadException;
+import org.apache.sanselan.ImageWriteException;
+import org.apache.sanselan.Sanselan;
+import org.apache.sanselan.common.IImageMetadata;
+import org.apache.sanselan.formats.jpeg.JpegImageMetadata;
+import org.apache.sanselan.formats.jpeg.exifRewrite.ExifRewriter;
+import org.apache.sanselan.formats.tiff.TiffImageMetadata;
+import org.apache.sanselan.formats.tiff.constants.TagInfo;
+import org.apache.sanselan.formats.tiff.constants.TiffConstants;
+import org.apache.sanselan.formats.tiff.write.TiffOutputDirectory;
+import org.apache.sanselan.formats.tiff.write.TiffOutputField;
+import org.apache.sanselan.formats.tiff.write.TiffOutputSet;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,7 +97,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -98,6 +110,7 @@ public class INaturalistService extends IntentService implements ConnectionCallb
     
     public static final String IS_SHARED_ON_APP = "is_shared_on_app";
 
+    public static final String USER = "user";
     public static final String IDENTIFICATION_ID = "identification_id";
     public static final String OBSERVATION_ID = "observation_id";
     public static final String OBSERVATION_RESULT = "observation_result";
@@ -149,6 +162,7 @@ public class INaturalistService extends IntentService implements ConnectionCallb
     public static String ACTION_GET_MY_GUIDES = "get_my_guides";
     public static String ACTION_GET_NEAR_BY_GUIDES = "get_near_by_guides";
     public static String ACTION_TAXA_FOR_GUIDE = "get_taxa_for_guide";
+    public static String ACTION_GET_USER_DETAILS = "get_user_details";
     public static String ACTION_SYNC = "sync";
     public static String ACTION_NEARBY = "nearby";
     public static String ACTION_AGREE_ID = "agree_id";
@@ -164,6 +178,7 @@ public class INaturalistService extends IntentService implements ConnectionCallb
     public static String ACTION_MY_GUIDES_RESULT = "my_guides_results";
     public static String ACTION_NEAR_BY_GUIDES_RESULT = "near_by_guides_results";
     public static String ACTION_TAXA_FOR_GUIDES_RESULT = "taxa_for_guides_results";
+    public static String ACTION_GET_USER_DETAILS_RESULT = "get_user_details_result";
     public static String ACTION_GUIDE_XML_RESULT = "guide_xml_result";
     public static String ACTION_GUIDE_XML = "guide_xml";
     public static String GUIDES_RESULT = "guides_result";
@@ -310,6 +325,13 @@ public class INaturalistService extends IntentService implements ConnectionCallb
 
                 Intent reply = new Intent(ACTION_GUIDE_XML_RESULT);
                 reply.putExtra(GUIDE_XML_RESULT, guideXMLFilename);
+                sendBroadcast(reply);
+
+             } else if (action.equals(ACTION_GET_USER_DETAILS)) {
+                BetterJSONObject user = getUserDetails();
+
+                Intent reply = new Intent(ACTION_GET_USER_DETAILS_RESULT);
+                reply.putExtra(USER, user);
                 sendBroadcast(reply);
 
              } else if (action.equals(ACTION_TAXA_FOR_GUIDE)) {
@@ -769,10 +791,12 @@ public class INaturalistService extends IntentService implements ConnectionCallb
                 e.printStackTrace();
                 return "Unknown error";
             }
+        } else {
+            return null;
         }
-        return null;
     }
 
+    
     private void addComment(int observationId, String body) throws AuthenticationException {
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("comment[parent_id]", new Integer(observationId).toString()));
@@ -1015,6 +1039,18 @@ public class INaturalistService extends IntentService implements ConnectionCallb
 
     }
 
+    private BetterJSONObject getUserDetails() throws AuthenticationException {
+        String url = HOST + "/users/edit.json";
+        JSONArray json = get(url, true);
+        try {
+            if (json == null) return null;
+            if (json.length() == 0) return null;
+			return new BetterJSONObject(json.getJSONObject(0));
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+    }
 
     private SerializableJSONArray getTaxaForGuide(Integer guideId) throws AuthenticationException {
         String url = HOST + "/guide_taxa.json?guide_id=" + guideId.toString();
@@ -1305,7 +1341,7 @@ public class INaturalistService extends IntentService implements ConnectionCallb
         Intent reply = new Intent(ACTION_JOINED_PROJECTS_RESULT);
         reply.putExtra(PROJECTS_RESULT, projectId);
         sendBroadcast(reply);
-    } 
+    }
     
     public void leaveProject(int projectId) throws AuthenticationException {
         delete(String.format("%s/projects/%d/leave.json", HOST, projectId), null);
@@ -1819,6 +1855,131 @@ public class INaturalistService extends IntentService implements ConnectionCallb
         return null;
     }
 
+
+    // EXIF-copying code taken from: https://bricolsoftconsulting.com/copying-exif-metadata-using-sanselan/
+    public static boolean copyExifData(File sourceFile, File destFile, List<TagInfo> excludedFields) {
+        String tempFileName = destFile.getAbsolutePath() + ".tmp";
+        File tempFile = null;
+        OutputStream tempStream = null;
+
+        try {
+            tempFile = new File (tempFileName);
+
+            TiffOutputSet sourceSet = getSanselanOutputSet(sourceFile, TiffConstants.DEFAULT_TIFF_BYTE_ORDER);
+            TiffOutputSet destSet = getSanselanOutputSet(destFile, sourceSet.byteOrder);
+
+            // If the EXIF data endianess of the source and destination files
+            // differ then fail. This only happens if the source and
+            // destination images were created on different devices. It's
+            // technically possible to copy this data by changing the byte
+            // order of the data, but handling this case is outside the scope
+            // of this implementation
+            if (sourceSet.byteOrder != destSet.byteOrder) return false;
+
+            destSet.getOrCreateExifDirectory();
+
+            // Go through the source directories
+            List<?> sourceDirectories = sourceSet.getDirectories();
+            for (int i=0; i<sourceDirectories.size(); i++) {
+                TiffOutputDirectory sourceDirectory = (TiffOutputDirectory)sourceDirectories.get(i);
+                TiffOutputDirectory destinationDirectory = getOrCreateExifDirectory(destSet, sourceDirectory);
+
+                if (destinationDirectory == null) continue; // failed to create
+
+                // Loop the fields
+                List<?> sourceFields = sourceDirectory.getFields();
+                for (int j=0; j<sourceFields.size(); j++) {
+                    // Get the source field
+                    TiffOutputField sourceField = (TiffOutputField) sourceFields.get(j);
+
+                    // Check exclusion list
+                    if (excludedFields != null && excludedFields.contains(sourceField.tagInfo)) {
+                        destinationDirectory.removeField(sourceField.tagInfo);
+                        continue;
+                    }
+
+                    // Remove any existing field
+                    destinationDirectory.removeField(sourceField.tagInfo);
+
+                    // Add field
+                    destinationDirectory.add(sourceField);
+                }
+            }
+
+            // Save data to destination
+            tempStream = new BufferedOutputStream(new FileOutputStream(tempFile));
+            new ExifRewriter().updateExifMetadataLossless(destFile, tempStream, destSet);
+            tempStream.close();
+
+            // Replace file
+            if (destFile.delete()) {
+                tempFile.renameTo(destFile);
+            }
+
+            return true;
+
+        } catch (ImageReadException exception) {
+            exception.printStackTrace();
+
+        } catch (ImageWriteException exception) {
+            exception.printStackTrace();
+
+        } catch (IOException exception) {
+            exception.printStackTrace();
+
+        } finally {
+            if (tempStream != null) {
+                try {
+                    tempStream.close();
+                } catch (IOException e) {
+                }
+            }
+
+            if (tempFile != null) {
+                if (tempFile.exists()) tempFile.delete();
+            }
+        }
+
+        return false;
+    }
+
+    private static TiffOutputSet getSanselanOutputSet(File jpegImageFile, int defaultByteOrder)
+            throws IOException, ImageReadException, ImageWriteException {
+        TiffImageMetadata exif = null;
+        TiffOutputSet outputSet = null;
+
+        IImageMetadata metadata = Sanselan.getMetadata(jpegImageFile);
+        JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
+        if (jpegMetadata != null) {
+            exif = jpegMetadata.getExif();
+
+            if (exif != null) {
+                outputSet = exif.getOutputSet();
+            }
+        }
+
+        // If JPEG file contains no EXIF metadata, create an empty set
+        // of EXIF metadata. Otherwise, use existing EXIF metadata to
+        // keep all other existing tags
+        if (outputSet == null)
+            outputSet = new TiffOutputSet(exif==null?defaultByteOrder:exif.contents.header.byteOrder);
+
+        return outputSet;
+    }
+
+    private static TiffOutputDirectory getOrCreateExifDirectory(TiffOutputSet outputSet, TiffOutputDirectory outputDirectory) {
+        TiffOutputDirectory result = outputSet.findDirectory(outputDirectory.type);
+        if (result != null)
+            return result;
+        result = new TiffOutputDirectory(outputDirectory.type);
+        try {
+            outputSet.addDirectory(result);
+        } catch (ImageWriteException e) {
+            return null;
+        }
+        return result;
+    }
+
     /**
      * Resizes an image to max size of 2048x2048
      * @param filename the image filename
@@ -1856,17 +2017,14 @@ public class INaturalistService extends IntentService implements ConnectionCallb
 			Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
 
 			// Save resized image
-			File imageFile = new File(getExternalCacheDir(), UUID.randomUUID().toString());
+			File imageFile = new File(getExternalCacheDir(), UUID.randomUUID().toString() + ".jpeg");
 			OutputStream os = new FileOutputStream(imageFile);
 			resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
 			os.flush();
 			os.close();
 
-            ExifInterface inputExif = new ExifInterface(filename);
-            int orientation = inputExif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-            ExifInterface outputExif = new ExifInterface(imageFile.getAbsolutePath());
-            outputExif.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(orientation));
-            outputExif.saveAttributes();
+            // Copy all EXIF data from original image into resized image
+            copyExifData(new File(filename), new File(imageFile.getAbsolutePath()), null);
 
             return imageFile.getAbsolutePath();
 

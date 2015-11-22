@@ -15,7 +15,6 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
 import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
@@ -32,8 +31,6 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -174,6 +171,11 @@ public class SignInTask extends AsyncTask<String, Void, String> {
         } catch (Exception exc) {
             // Ignore
         }
+
+        if (mFacebookAccessTokenTracker != null) {
+            mFacebookAccessTokenTracker.stopTracking();
+        }
+
         if (result != null) {
             Toast.makeText(mActivity, mActivity.getString(R.string.signed_in), Toast.LENGTH_SHORT).show();
         } else {
@@ -210,6 +212,7 @@ public class SignInTask extends AsyncTask<String, Void, String> {
         Intent serviceIntent = new Intent(INaturalistService.ACTION_FIRST_SYNC, null, mActivity, INaturalistService.class);
         mActivity.startService(serviceIntent);
     }
+
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (mFacebookCallbackManager != null) {

@@ -145,8 +145,8 @@
     <string name="project_taxa">צ׳ק ליסט של פרוייקט</string>
     <string name="loading_check_list">טוען צ׳ק ליסט…</string>
     <string name="no_check_list">אין זן בצ׳ק ליסט!</string>
-    <string name="failed_to_add_obs_to_project">הוספת תצפית '%1$s' לפרוייקט '%2$s\" נכשלה: %3$s</string>
-    <string name="invalid_project_field">נא להכניס ערך חוקי בשדה '%1s'</string>
+    <string name="failed_to_add_obs_to_project">הוספת תצפית %1$s לפרוייקט %2$s נכשלה: %3$s</string>
+    <string name="invalid_project_field">נא להכניס ערך חוקי בשדה %1s</string>
     <string name="id_please">צריכים עזרה בזיהוי?</string>
     <string name="select_projects">בחירת פרוייקטים</string>
     <string name="could_not_load_comments">טעינת תגובות/זיהוי נכשלה - כנראה התצפיות נמחקה באתר</string>
@@ -249,7 +249,7 @@
 
     <!-- The dialog content asking the user to switch to another iNat network -->
     <string name="alert_message_use_inaturalist">הרשת הראשית של iNaturalist. לחיצה על אישור תגדיר את מכשירך כחלק מרשת עולמית של של iNaturalist.</string>
-    <string name="alert_message_use_naturalista">CONABIO's Naturalista הינה שותף בל רשת iNaturalist במקסיקו. לחיצה על אישור תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם.</string>
+    <string name="alert_message_use_naturalista">CONABIO\'s Naturalista הינה שותף בל רשת iNaturalist במקסיקו. לחיצה על אישור תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם.</string>
     <string name="alert_message_use_naturewatchnz">NatureWatch הינה שותף בל רשת iNaturalist בבניו זילנד. לחיצה על אישור תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם.</string>
     <string name="alert_message_use_inaturalistcanada">iNaturalist Canada הינה שותף בל רשת iNaturalist בקנדה. לחיצה על אישור תתאים את חווית המשתמש שלך ותשתף את הנתונים בהתאם. </string>
 

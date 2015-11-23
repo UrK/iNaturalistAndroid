@@ -193,7 +193,7 @@
     <string name="choose_location">Choose Location</string>
     <string name="done">Done</string>
     <string name="please_sign_in_via_settings">You must be logged in to view your joined projects.</string>
-    <string name="contact_support"><![CDATA[<a href="mailto:help@inaturalist.org">Contact support</a>]]></string>
+    <string name="contact_support"><![CDATA[<a href="mailto:kobig@megolan.org.il">Contact support</a>]]></string>
     <string name="credits">Designed and built by iNaturalist.org with support from the California Academy of Sciences</string>
     <string name="leave_project">Leave Project</string>
     <string name="leave_project_confirmation">Are you sure you want to leave this project?</string>
@@ -398,9 +398,27 @@
     <string name="please_sign_in_via_settings_for_guides">You must be logged in to view your guides.</string>
     <string name="please_sign_in_for_updates">You must be logged in to view your updates.</string>
     <string name="by_using_inat_terms"><![CDATA[By using iNaturalist you agree to the <b><a href="http://www.inaturalist.org/pages/terms">Terms of Service</a></b> and <b><a href="http://www.inaturalist.org/pages/privacy">Privacy Policy</a></b>]]></string>
-    <string name="inat_support_email_address">support@golannat.org.il</string>
-
     <string name="joining_project">Joining project</string>
     <string name="no_results">No Results</string>
-</resources>
+
+    <string name="activity">Activity</string>
+    <string name="not_logged_in">N/A</string>
+    <string name="observation_count">%1$d observations</string>
+    <string name="observation_count_single">%1$d observation</string>
+    <string name="camera">Take Photo</string>
+    <string name="upload_photo">Choose Image</string>
+    <string name="menu_text">Skip Photo</string>
+    <string name="first">1st</string>
+    <string name="make_first">Make 1st</string>
+    <string name="help_id_this_species">Help Me ID this Species</string>
+    <string name="notes">Notes</string>
+    <string name="location_is">Location is</string>
+    <string name="is_captive">It is captive or cultivated</string>
+    <string name="location_visibility">Location Visibility</string>
+    <string name="set_location">Set Location</string>
+    <string name="coordinates_lat">Lat:</string>
+    <string name="coordinates_lon">Lon:</string>
+    <string name="coordinates_acc">Acc. </string>
+    <string name="required">* Required</string>
+ </resources>
 

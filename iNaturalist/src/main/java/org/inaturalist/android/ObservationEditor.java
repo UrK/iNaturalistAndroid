@@ -263,8 +263,10 @@ public class ObservationEditor extends SherlockFragmentActivity {
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) projectName.getLayoutParams();
                 params.addRule(RelativeLayout.ALIGN_PARENT_START, 1);
                 projectName.setLayoutParams(params);
-                
-                mProjectsTable.addView(view);
+
+                if (mProjectsTable != null) {
+                    mProjectsTable.addView(view);
+                }
             }
         }
     }

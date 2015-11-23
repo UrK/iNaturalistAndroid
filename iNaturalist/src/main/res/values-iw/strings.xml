@@ -317,4 +317,24 @@
     <string name="recommended_next_step">הצעד המומלץ הבא</string>
     <string name="registering">נרשם…</string>
     <string name="could_not_register_user">לא יכול להרשם</string>
+    <string name="activity">חדשות</string>
+    <string name="not_logged_in">N/A</string>
+    <string name="observation_count">%1$d תצפיות</string>
+    <string name="observation_count_single">%1$d תצפית</string>
+    <string name="camera">צילום</string>
+    <string name="upload_photo">בחירת תמונה</string>
+    <string name="menu_text">לדלג על תמונה</string>
+    <string name="first">ראשון</string>
+    <string name="make_first">העבר למקום ראשון</string>
+    <string name="help_id_this_species">עזרו לי לזהות את המין</string>
+    <string name="notes">הערות</string>
+    <string name="location_is">מיקום הינו</string>
+    <string name="is_captive">בשבי או מתורבת</string>
+    <string name="location_visibility">פרטיות מיקום</string>
+    <string name="set_location">לקבוע מיקום</string>
+    <string name="coordinates_lat">Lat:</string>
+    <string name="coordinates_lon">Lon:</string>
+    <string name="coordinates_acc">Acc. </string>
+    <string name="required">* שדה חובה</string>
+
 </resources>

@@ -420,5 +420,6 @@
     <string name="coordinates_lon">Lon:</string>
     <string name="coordinates_acc">Acc. </string>
     <string name="required">* Required</string>
+    <string name="inat_support_email_address">kobig@megolan.org.il</string>
  </resources>
 

@@ -157,7 +157,7 @@
     <string name="about">אודות</string>
     <string name="check_list">צ׳ק ליסט</string>
     <string name="gps">GPS</string>
-    <string name="geoprivacy">פרטיות</string>
+    <string name="geoprivacy">פרטיות מיקום</string>
     <string name="comments_ids">תגובות וזיהוי</string>
     <string name="delete_confirmation">התצפית תימחק. בטוח?</string>
     <string name="view_on_inat_confirmation">פתיחת התצפית בדפדפן</string>
@@ -291,8 +291,8 @@
     </string-array>
 
     <string-array name="geoprivacy_items">
-        <item>פתוחה</item>
-        <item>מעורפלת</item>
+        <item>ללא</item>
+        <item>מוסתר</item>
         <item>פרטית</item>
     </string-array>
 

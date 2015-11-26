@@ -203,7 +203,7 @@
     <string name="alert_title_use">השתמשו</string>
     <string name="inat_network_settings">הגדרות רשת של iNaturalist</string>
     <string name="network_restart">הגדרות רשת השנתו. נא להפעיל את האפליקציה מחדש.</string>
-    <string name="explore">מיפוי</string>
+    <string name="explore">מפה</string>
     <string name="explore_description">מיפוי תצפיות בקרבתך</string>
     <string name="restricted_to_current_map_area">מוגבל לאיזור מפה נוכחי</string>
     <string name="search">חיפוש</string>
@@ -317,7 +317,7 @@
     <string name="recommended_next_step">הצעד המומלץ הבא</string>
     <string name="registering">נרשם…</string>
     <string name="could_not_register_user">לא יכול להרשם</string>
-    <string name="activity">חדשות</string>
+    <string name="activity">עדכונים</string>
     <string name="not_logged_in">N/A</string>
     <string name="observation_count">%1$d תצפיות</string>
     <string name="observation_count_single">%1$d תצפית</string>

@@ -315,35 +315,35 @@
 <string name="no_results">لا يوجد نتائج للبحث</string>
 
 <string-array name="geoprivacy_items">
-    <item>פתוחה</item>
-    <item>מעורפלת</item>
-    <item>פרטית</item>
+    <item>مفتوح</item>
+    <item>ضبابي</item>
+    <item>خصوصي</item>
 </string-array>
 
-<string name="geoprivacy">פרטיות מיקום</string>
-<string name="facebook">Facebook</string>
-<string name="gplus">Google+</string>
-<string name="use_my_license"><![CDATA[כן, אפשר למדענים להשתמש בתוכן שאני מעלה. <b>למד עוד</b>]]></string>
-<string name="content_licensing">רישוי תוכן</string>
-<string name="content_licensing_description">בחר אופציה זו אם לאפשר שימוש חופשי בתמונות שאתה מעלה. ניתן לשנות הגדרה זו מאוחר יותר, אך זו האופציה הטובה ביותר לשיתוף עם חוקרים.</string>
-<string name="activity">עדכונים</string>
+<string name="geoprivacy">خصوصية الموقع</string>
+<string name="facebook">الفيسبوك</string>
+<string name="gplus">جوجل+</string>
+<string name="use_my_license"><![CDATA[ نعم، ممكن للعلماء استخدام المحتوى الذي انشره <b>معرفة المزيد</b>]]></string>
+<string name="content_licensing">ترخيص المحتوى</string>
+<string name="content_licensing_description">حدد هذا الخيار للسماح باستخدام  الصور التي تقوم بتحميلها. يمكنك تغيير هذا في وقت لاحق، ولكن هذا هو الخيار الأفضل لتبادل مع المحققين.</string>
+<string name="activity">تحديثات</string>
 <string name="not_logged_in">N/A</string>
-<string name="observation_count">%1$d תצפיות</string>
-<string name="observation_count_single">%1$d תצפית</string>
-<string name="camera">צילום</string>
-<string name="upload_photo">בחירת תמונה</string>
-<string name="menu_text">לדלג על תמונה</string>
-<string name="first">ראשון</string>
-<string name="make_first">העבר למקום ראשון</string>
-<string name="help_id_this_species">עזרו לי לזהות את המין</string>
-<string name="notes">הערות</string>
-<string name="location_is">מיקום הינו</string>
-<string name="is_captive">בשבי או מתורבת</string>
-<string name="location_visibility">פרטיות מיקום</string>
-<string name="set_location">לקבוע מיקום</string>
+<string name="observation_count">%1$d ارصاد</string>
+<string name="observation_count_single">%1$d رصد</string>
+<string name="camera">تصوير</string>
+<string name="upload_photo">اختيار صورة</string>
+<string name="menu_text">تخطي صوره</string>
+<string name="first">أول</string>
+<string name="make_first">ارجع للموقع الاول</string>
+<string name="help_id_this_species">مساعدتي لتحديد الجنس  </string>
+<string name="notes">تعقيبات</string>
+<string name="location_is">الموقع</string>
+<string name="is_captive">أسير او مروض</string>
+<string name="location_visibility">خصوصية الموقع</string>
+<string name="set_location">تحديد المكان</string>
 <string name="coordinates_lat">Lat:</string>
 <string name="coordinates_lon">Lon:</string>
-<string name="coordinates_acc">Acc. </string>
-<string name="required">* שדה חובה</string>
+<string name="coordinates_acc">Acc.</string>
+<string name="required">* حقل اجباري</string>
 
 </resources>

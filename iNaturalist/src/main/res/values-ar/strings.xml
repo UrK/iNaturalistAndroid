@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
 <string name="acc">Acc</string>
-<string name="app_name">תצפיטבע</string>
+<string name="app_name">=تطسبيطفع</string>
 <string name="google_login">تسجيل الدخول بواسطة جوجل+</string>
 <string name="email_address">البريد الإلكتروني</string>
 <string name="observations_menu_add">اضف</string>
@@ -315,7 +315,7 @@
 <string name="no_results">لا يوجد نتائج للبحث</string>
 
 <string-array name="geoprivacy_items">
-    <item>مفتوح</item>
+    <item>גלוי</item>
     <item>ضبابي</item>
     <item>خصوصي</item>
 </string-array>

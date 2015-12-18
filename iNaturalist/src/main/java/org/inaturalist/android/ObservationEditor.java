@@ -1,7 +1,5 @@
 package org.inaturalist.android;
 
-<<<<<<< HEAD
-=======
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.cocosw.bottomsheet.BottomSheet;
@@ -43,7 +41,6 @@ import com.actionbarsherlock.view.MenuItem;
 
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
->>>>>>> upstream
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;

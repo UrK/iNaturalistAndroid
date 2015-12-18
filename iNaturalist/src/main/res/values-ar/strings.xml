@@ -345,5 +345,6 @@
 <string name="coordinates_lon">Lon:</string>
 <string name="coordinates_acc">Acc.</string>
 <string name="required">* حقل اجباري</string>
+<string name="downloading_observations">מוריד תצפיות</string>
 
 </resources>

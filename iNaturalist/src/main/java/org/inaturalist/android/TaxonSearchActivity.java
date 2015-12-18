@@ -17,10 +17,12 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.flurry.android.FlurryAgent;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewCallback;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -67,6 +69,8 @@ public class TaxonSearchActivity extends SherlockListActivity {
     private INaturalistApp mApp;
     private boolean mShowUnknown;
 
+    private long mLastTime = 0;
+
     @Override
 	protected void onStart()
 	{
@@ -91,6 +95,7 @@ public class TaxonSearchActivity extends SherlockListActivity {
     private ArrayList<JSONObject> autocomplete(String input) {
         ArrayList<JSONObject> resultList = null;
 
+        logTime("autocomplete 1");
         if (!isNetworkAvailable()) {
             return new ArrayList<JSONObject>();
         }
@@ -125,6 +130,7 @@ public class TaxonSearchActivity extends SherlockListActivity {
             }
         }
 
+        logTime("autocomplete 2");
         try {
             JSONArray predsJsonArray = new JSONArray(jsonResults.toString());
 
@@ -137,6 +143,7 @@ public class TaxonSearchActivity extends SherlockListActivity {
             Log.e(LOG_TAG, "Cannot process JSON results", e);
         }
 
+        logTime("autocomplete 3");
         return resultList;
     } 
     
@@ -189,7 +196,8 @@ public class TaxonSearchActivity extends SherlockListActivity {
                 @Override
                 protected FilterResults performFiltering(CharSequence constraint) {
                     FilterResults filterResults = new FilterResults();
-                    
+
+                    logTime("performFiltering 1");
                     if (constraint != null) {
                         if (constraint.length() == 0) {
                             filterResults.values = new ArrayList<JSONObject>();
@@ -213,46 +221,65 @@ public class TaxonSearchActivity extends SherlockListActivity {
                             filterResults.count = results.size();
                         }
                     }
-                    
+
+                    logTime("performFiltering 2");
                     toggleLoading(false);
                     
                     return filterResults;
                 }
 
                 @Override
-                protected void publishResults(CharSequence constraint, FilterResults results) {
-                    if (results != null && results.count > 0 && results.values != null) {
-                        mResultList = (ArrayList<JSONObject>) results.values;
-                        if (mShowUnknown) mResultList.add(0, null);
-                        notifyDataSetChanged();
-                    }
-                    else {
-                        if ((results != null) && (results.values != null)) {
-                            mResultList = (ArrayList<JSONObject>) results.values;
-                            if ((mResultList.size() == 0) && (mCurrentSearchString != null) && (mCurrentSearchString.length() > 0)) {
-                                // No results - add in the current search string as a custom observation
-                                JSONObject customObs = new JSONObject();
-                                try {
-                                    customObs.put("is_custom", true);
-                                    customObs.put("name", mCurrentSearchString);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                protected void publishResults(CharSequence constraint, final FilterResults results) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (results != null && results.count > 0 && results.values != null) {
+                                mResultList = (ArrayList<JSONObject>) results.values;
+                                if (mShowUnknown) mResultList.add(0, null);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        notifyDataSetChanged();
+                                    }
+                                });
+                            }
+                            else {
+                                if ((results != null) && (results.values != null)) {
+                                    mResultList = (ArrayList<JSONObject>) results.values;
+                                    if ((mResultList.size() == 0) && (mCurrentSearchString != null) && (mCurrentSearchString.length() > 0)) {
+                                        // No results - add in the current search string as a custom observation
+                                        JSONObject customObs = new JSONObject();
+                                        try {
+                                            customObs.put("is_custom", true);
+                                            customObs.put("name", mCurrentSearchString);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                        mResultList.add(customObs);
+                                    }
+
+                                    if (mShowUnknown) mResultList.add(0, null);
+
                                 }
-                                mResultList.add(customObs);
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        notifyDataSetInvalidated();
+                                    }
+                                });
                             }
 
-                            if (mShowUnknown) mResultList.add(0, null);
-
                         }
-                        
-                        notifyDataSetInvalidated();
-                    }
+                    }).start();
+
                 }};
                 
                 return filter;
         }
         
         public View getView(int position, View convertView, ViewGroup parent) {
+            logTime("GetView 1 - " + position);
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view = inflater.inflate(R.layout.taxon_result_item, parent, false); 
             JSONObject item = mResultList.get(position);
@@ -321,13 +348,24 @@ public class TaxonSearchActivity extends SherlockListActivity {
                     idName.setText(displayName);
                     idTaxonName.setText(item.getString("name"));
                     idTaxonName.setTypeface(null, Typeface.ITALIC);
-                    UrlImageViewHelper.setUrlDrawable(idPic, item.getString("image_url"));
+                    UrlImageViewHelper.setUrlDrawable(idPic, item.getString("image_url"), new UrlImageViewCallback() {
+                        @Override
+                        public void onLoaded(ImageView imageView, Bitmap loadedBitmap, String url, boolean loadedFromCache) {
+                            imageView.setImageBitmap(ImageUtils.getRoundedCornerBitmap(loadedBitmap, 4));
+                        }
+
+                        @Override
+                        public Bitmap onPreSetBitmap(ImageView imageView, Bitmap loadedBitmap, String url, boolean loadedFromCache) {
+                            return loadedBitmap;
+                        }
+                    });
                 }
                 view.setTag(item);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
+            logTime("GetView 2 - " + position);
             return view;
         }
 
@@ -350,23 +388,30 @@ public class TaxonSearchActivity extends SherlockListActivity {
        setResult(RESULT_CANCELED);
        finish();
    }
+
+    private void logTime(String msg) {
+        Log.e("TaxonSearchActivity", (System.currentTimeMillis() - mLastTime) + ": " + msg);
+        mLastTime = System.currentTimeMillis();
+    }
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
+        logTime("onCreate 1");
+
         if (mApp == null) { mApp = (INaturalistApp) getApplicationContext(); }
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setIcon(android.R.color.transparent);
         
         LayoutInflater li = LayoutInflater.from(this);
         View customView = li.inflate(R.layout.taxon_search_action_bar, null);
         actionBar.setCustomView(customView);
-        actionBar.setLogo(R.drawable.up_icon);
+        actionBar.setLogo(R.drawable.ic_arrow_back_gray_24dp);
        
         setContentView(R.layout.taxon_search);
         
@@ -381,7 +426,8 @@ public class TaxonSearchActivity extends SherlockListActivity {
         
         autoCompView.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(final CharSequence s, int start, int before, int count) {
+                logTime("onTextChange");
                 if (mAdapter != null) mAdapter.getFilter().filter(s);
             }
             @Override
@@ -405,11 +451,11 @@ public class TaxonSearchActivity extends SherlockListActivity {
                     imm.showSoftInput(autoCompView, InputMethodManager.SHOW_IMPLICIT);
                 }
             }, 100);
-        } else {
-        	autoCompView.setText("");
         }
 
+        logTime("onCreate 2");
         setListAdapter(mAdapter);
+        logTime("onCreate 3");
     }
     
     @Override
@@ -424,15 +470,17 @@ public class TaxonSearchActivity extends SherlockListActivity {
                 // Get the taxon display name according to configuration of the current iNat network
                 String inatNetwork = mApp.getInaturalistNetworkMember();
                 String networkLexicon = mApp.getStringResourceByName("inat_lexicon_" + inatNetwork);
+                int taxonNamePosition = Integer.MAX_VALUE;
                 try {
                     JSONArray taxonNames = item.getJSONArray("taxon_names");
                     for (int i = 0; i < taxonNames.length(); i++) {
                         JSONObject taxonName = taxonNames.getJSONObject(i);
                         String lexicon = taxonName.getString("lexicon");
-                        if (lexicon.equals(networkLexicon)) {
+                        int currentTaxonNamePosition = taxonName.getInt("position");
+                        if ((lexicon.equals(networkLexicon)) && (currentTaxonNamePosition < taxonNamePosition)) {
                             // Found the appropriate lexicon for the taxon
                             displayName = taxonName.getString("name");
-                            break;
+                            taxonNamePosition = currentTaxonNamePosition;
                         }
                     }
                 } catch (JSONException e3) {

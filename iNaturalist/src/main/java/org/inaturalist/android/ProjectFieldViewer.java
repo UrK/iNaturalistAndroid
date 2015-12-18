@@ -52,6 +52,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class ProjectFieldViewer {
     private static final String TAG = "ProjectFieldViewer";
@@ -77,6 +78,8 @@ public class ProjectFieldViewer {
     private ArrayAdapter<String> mSpinnerAdapter;
     private TaxonReceiver mTaxonReceiver;
     private TextView mFieldDescription;
+    private FocusedListener mFocusedListener;
+    private boolean mIsFocusing;
 
     @SuppressLint("ValidFragment")
     private class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
@@ -316,6 +319,22 @@ public class ProjectFieldViewer {
         mIdTaxonName.setTypeface(null, Typeface.ITALIC);
     }
 
+    public void setFocus() {
+        if (mEditText.getVisibility() == View.VISIBLE) {
+            mIsFocusing = true;
+            mEditText.requestFocus();
+            mEditText.setSelection(mEditText.getText().length());
+        }
+    }
+    
+    public interface FocusedListener {
+        void onFocused();
+    }
+    
+    public void setOnFocusedListener(FocusedListener listener) {
+        mFocusedListener = listener;
+    }
+
     public View getView() {
         ViewGroup row = (ViewGroup) LayoutInflater.from(mContext).inflate(mIsConfirmation ? R.layout.project_field_confirmation : R.layout.project_field, null);
         row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
@@ -323,6 +342,21 @@ public class ProjectFieldViewer {
         mFieldName = (TextView) row.findViewById(R.id.field_name);
         mFieldDescription = (TextView) row.findViewById(R.id.field_description);
         mEditText = (EditText) row.findViewById(R.id.edit_text);
+        mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean focused) {
+                if (focused) {
+                    if (mFocusedListener != null) {
+                        if (mIsFocusing) {
+                            mIsFocusing = false;
+                        } else {
+                            mFocusedListener.onFocused();
+                        }
+                    }
+                }
+            }
+        });
+
         mSpinner = (Spinner) row.findViewById(R.id.spinner);
         mDateContainer = (RelativeLayout) row.findViewById(R.id.date_container);
         mSetDate = (ImageView) row.findViewById(R.id.set_date);

@@ -19,18 +19,16 @@
         android:layout_height="wrap_content">
         <RelativeLayout
             android:id="@+id/take_photo"
-            android:background="#4E4E4E"
-            android:layout_width="48dp"
-            android:layout_height="48dp">
-            <ImageView
-                android:layout_width="46dp"
-                android:layout_height="46dp"
-                android:background="#EDEDED"
-                android:layout_marginLeft="1dp"
-                android:layout_marginTop="1dp"
-                android:src="@drawable/ic_add_black_24dp"
-                android:padding="10dp"
-                />
+            android:background="@drawable/circular_add_photo"
+            android:layout_width="50dp"
+            android:layout_height="50dp">
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/ic_add_a_photo_black_24dp"
+                    android:layout_centerInParent="true"
+                    android:alpha="0.6"
+                    />
         </RelativeLayout>
 
         <org.lucasr.twowayview.TwoWayView
@@ -75,11 +73,13 @@
             android:layout_alignParentRight="true"
             android:clickable="false"
             android:focusable="false"
+            android:background="#00000000"
             />
     </RelativeLayout>
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
+        android:layout_marginLeft="64dp"
         android:background="#dfdfdf"
         />
 
@@ -104,10 +104,13 @@
 
 
         <org.jraf.android.backport.switchwidget.Switch
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/id_please"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
+            android:textColor="#ffffff"
+            app:switchTextAppearance="@style/SwitchTextStyle"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true" />
 
@@ -139,6 +142,7 @@
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
+        android:layout_marginLeft="64dp"
         android:background="#dfdfdf"
         />
 
@@ -172,12 +176,14 @@
             android:layout_toRightOf="@id/notes_icon"
             android:isScrollContainer="true"
             android:hint="@string/notes"
+            android:background="#00000000"
             />
 
     </RelativeLayout>
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
+        android:layout_marginLeft="64dp"
         android:background="#dfdfdf"
         />
 
@@ -231,6 +237,7 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:background="#dfdfdf"
+        android:layout_marginLeft="64dp"
         />
 
     <RelativeLayout
@@ -354,6 +361,7 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:background="#dfdfdf"
+        android:layout_marginLeft="64dp"
         />
 
     <RelativeLayout
@@ -402,6 +410,7 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:background="#dfdfdf"
+        android:layout_marginLeft="64dp"
         />
 
 
@@ -435,6 +444,7 @@
             android:layout_toRightOf="@id/is_captive_icon"
             />
 
+        <!--
         <CheckBox
             android:id="@+id/is_captive_checkbox"
             android:layout_width="wrap_content"
@@ -442,12 +452,39 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             />
+            -->
+
+        <RelativeLayout
+            android:id="@+id/is_captive_checkbox"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingLeft="40dp"
+            android:layout_width="60dp"
+            android:layout_height="20dp">
+            <ImageView
+                android:id="@+id/is_captive_on_icon"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:src="@drawable/ic_action_accept"
+                android:background="#74ac00"
+                android:tint="#ffffff"
+                android:visibility="gone"
+                />
+            <ImageView
+                android:id="@+id/is_captive_off_icon"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:src="@drawable/ic_check_box_white_24dp"
+                android:background="@drawable/border"
+                />
+        </RelativeLayout>
 
     </RelativeLayout>
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:background="#dfdfdf"
+        android:layout_marginLeft="64dp"
         />
 
     <RelativeLayout
@@ -469,9 +506,22 @@
             android:tint="#686868"
             />
 
+        <TextView
+            android:layout_alignParentRight="true"
+            android:id="@+id/project_count"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="0"
+            android:textSize="16sp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:gravity="right"
+            />
+
 
         <TextView
             android:layout_toRightOf="@id/projects_icon"
+            android:layout_toLeftOf="@id/project_count"
             android:id="@+id/select_projects"
             android:layout_height="wrap_content"
             android:layout_width="fill_parent"
@@ -485,6 +535,7 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:background="#dfdfdf"
+        android:layout_marginLeft="64dp"
         />
 
 </LinearLayout>

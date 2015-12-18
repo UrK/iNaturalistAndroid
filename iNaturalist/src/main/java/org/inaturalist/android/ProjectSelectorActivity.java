@@ -26,6 +26,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.media.projection.MediaProjection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -34,6 +35,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -45,11 +48,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ProjectSelectorActivity extends SherlockFragmentActivity implements OnItemClickListener {
     
     private static final String TAG = "INAT:ProjectSelectorActivity";
     public static final String PROJECT_IDS = "project_ids";
+    public static final String PROJECT_FIELDS = "project_fields";
     public static final String IS_CONFIRMATION = "is_confirmation";
 
     private ImageButton mSaveButton;
@@ -70,6 +75,13 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
     private HashMap<Integer, ProjectFieldValue> mProjectFieldValues = null;
 
     private HashMap<Integer, List<ProjectFieldViewer>> mProjectFieldViewers;
+
+    private boolean mShownSearchBox;
+
+    private int mLastProjectFieldFocused = -1;
+    private int mLastProjectIdFocused = -1;
+    private int mLastProjectFieldIndex;
+    private int mLastProjectFieldTop;
 
     private class ProjectReceiver extends BroadcastReceiver {
         private ArrayList<JSONObject> mProjects;
@@ -111,10 +123,27 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
             if (projectList.length() > 0) {
                 mLoadingProjects.setVisibility(View.GONE);
                 mProjectList.setVisibility(View.VISIBLE);
+
+                if (mIsConfirmation) {
+                    mProjectList.setDividerHeight(0);
+                }
                 
                 mAdapter = new ProjectAdapter(ProjectSelectorActivity.this, mProjects);
                 mProjectList.setAdapter(mAdapter);
                 mProjectList.setOnItemClickListener(ProjectSelectorActivity.this);
+                mProjectList.setOnScrollListener(new AbsListView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(AbsListView absListView, int i) {
+                        if (mSearchText.getVisibility() != View.VISIBLE) {
+                            mSearchText.setVisibility(View.VISIBLE);
+                            mSearchText.startAnimation(AnimationUtils.loadAnimation(ProjectSelectorActivity.this, R.anim.slide_in_from_top));
+                            mShownSearchBox = true;
+                        }
+                    }
+
+                    @Override
+                    public void onScroll(AbsListView absListView, int i, int i1, int i2) { }
+                });
                 
             } else {
                 mLoadingProjects.setText(R.string.no_projects);
@@ -148,9 +177,16 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
                 return true;
 
             case R.id.save_projects:
+                saveProjectFieldValues();
+
+                if (!validateProjectFields()) {
+                    return false;
+                }
+
                 Intent intent = new Intent();
                 Bundle bundle = new Bundle();
                 bundle.putIntegerArrayList(PROJECT_IDS, mObservationProjects);
+                bundle.putSerializable(PROJECT_FIELDS, mProjectFieldValues);
                 intent.putExtras(bundle);
 
                 setResult(RESULT_OK, intent);
@@ -192,15 +228,19 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
             mObservationId = (int) intent.getIntExtra(INaturalistService.OBSERVATION_ID, 0);
             mObservationProjects = intent.getIntegerArrayListExtra(INaturalistService.PROJECT_ID);
             mIsConfirmation = intent.getBooleanExtra(ProjectSelectorActivity.IS_CONFIRMATION, false);
+            mProjectFieldValues = (HashMap<Integer, ProjectFieldValue>) intent.getSerializableExtra(ProjectSelectorActivity.PROJECT_FIELDS);
         } else {
             mObservationId = (int) savedInstanceState.getInt(INaturalistService.OBSERVATION_ID, 0);
             mObservationProjects = savedInstanceState.getIntegerArrayList(INaturalistService.PROJECT_ID);
             mIsConfirmation = savedInstanceState.getBoolean(ProjectSelectorActivity.IS_CONFIRMATION);
+            mShownSearchBox = savedInstanceState.getBoolean("mShownSearchBox");
+            mProjectFieldValues = (HashMap<Integer, ProjectFieldValue>) savedInstanceState.getSerializable(ProjectSelectorActivity.PROJECT_FIELDS);
         }
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setIcon(android.R.color.transparent);
+
 
         if (!mIsConfirmation) {
             actionBar.setDisplayShowCustomEnabled(true);
@@ -234,7 +274,7 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
 
         mLoadingProjects = (TextView) findViewById(R.id.project_list_empty);
         mProjectList = (ListView) findViewById(R.id.project_list);
-        
+
         mSearchText = (EditText) findViewById(R.id.search_filter);
         mSearchText.setHint(R.string.search_projects);
         mSearchText.addTextChangedListener(new TextWatcher() {
@@ -249,6 +289,11 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
             @Override
             public void afterTextChanged(Editable s) { }
         });
+
+        if (mShownSearchBox) {
+            mSearchText.setVisibility(View.VISIBLE);
+        }
+
         
         Intent serviceIntent = new Intent(INaturalistService.ACTION_GET_JOINED_PROJECTS, null, ProjectSelectorActivity.this, INaturalistService.class);
         startService(serviceIntent);  
@@ -259,19 +304,10 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
         outState.putInt(INaturalistService.OBSERVATION_ID, mObservationId);
         outState.putIntegerArrayList(INaturalistService.PROJECT_ID, mObservationProjects);
         outState.putBoolean(ProjectSelectorActivity.IS_CONFIRMATION, mIsConfirmation);
+        outState.putBoolean("mShownSearchBox", mShownSearchBox);
 
-        for (List<ProjectFieldViewer> fields : mProjectFieldViewers.values()) {
-            for (ProjectFieldViewer viewer : fields) {
-                String value = viewer.getValue();
-                ProjectFieldValue fieldValue = mProjectFieldValues.get(viewer.getField().field_id);
-                if (fieldValue == null) {
-                    fieldValue = new ProjectFieldValue();
-                }
-                fieldValue.value = value;
-                mProjectFieldValues.put(viewer.getField().field_id, fieldValue);
-            }
-        }
-        outState.putSerializable("mProjectFieldValues", mProjectFieldValues);
+        saveProjectFieldValues();
+        outState.putSerializable(PROJECT_FIELDS, mProjectFieldValues);
 
         super.onSaveInstanceState(outState);
     }
@@ -295,6 +331,24 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
         super.onResume();
         if (mApp == null) {
             mApp = (INaturalistApp) getApplicationContext();
+        }
+    }
+
+    // Update project field values from UI
+    private void saveProjectFieldValues() {
+        for (Integer projectId : mProjectFieldViewers.keySet()) {
+            List<ProjectFieldViewer> viewers = mProjectFieldViewers.get(projectId);
+            for (ProjectFieldViewer viewer : viewers) {
+                String newValue = viewer.getValue();
+                int fieldId = viewer.getField().field_id;
+                ProjectFieldValue fieldValue = mProjectFieldValues.get(fieldId);
+                if (fieldValue == null) {
+                    fieldValue = new ProjectFieldValue();
+                    fieldValue.field_id = fieldId;
+                    mProjectFieldValues.put(fieldId, fieldValue);
+                }
+                fieldValue.value = newValue;
+            }
         }
     }
 
@@ -345,10 +399,6 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
             };
         }
 
-        public void addItemAtBeginning(JSONObject newItem) {
-            mItems.add(0, newItem);
-        }
-
         @Override
         public int getCount() {
             return mItems.size();
@@ -370,8 +420,11 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
             final View view = inflater.inflate(mIsConfirmation ? R.layout.project_selector_confirmation_item : R.layout.project_selector_item, parent, false);
             BetterJSONObject item = new BetterJSONObject(mItems.get(position));
 
+            saveProjectFieldValues();
+
             TextView projectName = (TextView) view.findViewById(R.id.project_name);
-            projectName.setText(item.getString("title"));
+            final String projectTitle = item.getString("title");
+            projectName.setText(projectTitle);
 
             TextView projectDescription = (TextView) view.findViewById(R.id.project_description);
             final String noHTMLDescription = Html.fromHtml(item.getString("description")).toString();
@@ -396,16 +449,22 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
             }
 
             if (mIsConfirmation) {
-                ((ViewGroup)view.findViewById(R.id.project_pic_container)).setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mHelper.alert(noHTMLDescription);
-                    }
-                });
+                if (noHTMLDescription.length() > 0) {
+                    ((ViewGroup) view.findViewById(R.id.project_pic_container)).setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            mHelper.alert(projectTitle, noHTMLDescription);
+                        }
+                    });
+                } else {
+                    // No description - Hide the info button
+                    view.findViewById(R.id.project_pic_info).setVisibility(View.GONE);
+                }
             }
 
-            view.setTag(item);
+            view.setTag(R.id.TAG_PROJECT, item);
             final int projectId = item.getInt("id");
+            view.setTag(R.id.TAG_IS_CHECKED, mObservationProjects.contains(Integer.valueOf(projectId)));
             if (mObservationProjects.contains(Integer.valueOf(projectId))) {
                 // Checked on
                 if (mIsConfirmation) {
@@ -435,9 +494,9 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
                         projectFieldsTable.setVisibility(View.GONE);
                     }
 
-                    for (ProjectField field : fields) {
+                    for (final ProjectField field : fields) {
                         ProjectFieldValue fieldValue = mProjectFieldValues.get(field.field_id);
-                        ProjectFieldViewer fieldViewer = new ProjectFieldViewer(ProjectSelectorActivity.this, field, fieldValue, true);
+                        final ProjectFieldViewer fieldViewer = new ProjectFieldViewer(ProjectSelectorActivity.this, field, fieldValue, true);
 
                         viewers.add(fieldViewer);
 
@@ -445,8 +504,22 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
                             view.findViewById(R.id.is_required).setVisibility(View.VISIBLE);
                         }
 
+                        fieldViewer.setOnFocusedListener(new ProjectFieldViewer.FocusedListener() {
+                            @Override
+                            public void onFocused() {
+                                mLastProjectFieldFocused = field.field_id;
+                                mLastProjectIdFocused = projectId;
+
+                                mLastProjectFieldIndex = mProjectList.getFirstVisiblePosition();
+                                View v = mProjectList.getChildAt(0);
+                                mLastProjectFieldTop = (v == null) ? 0 : (v.getTop() - mProjectList.getPaddingTop());
+                            }
+                        });
+
                         projectFieldsTable.addView(fieldViewer.getView());
                     }
+
+                    focusProjectField();
 
                 } else {
                     ImageView projectSelected = (ImageView) view.findViewById(R.id.project_selected);
@@ -472,10 +545,36 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
         }
     }
 
+    private void focusProjectField() {
+        if ((mLastProjectIdFocused == -1) || (mLastProjectFieldFocused == -1)) {
+            return;
+        }
+
+        for (final int projectId : mProjectFieldViewers.keySet()) {
+            List<ProjectFieldViewer> fields = mProjectFieldViewers.get(projectId);
+            for (final ProjectFieldViewer fieldViewer : fields) {
+                final ProjectField field = fieldViewer.getField();
+                if ((mLastProjectFieldFocused == field.field_id) && (mLastProjectIdFocused == projectId)) {
+                    mLastProjectIdFocused = -1;
+                    mLastProjectFieldFocused = -1;
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            fieldViewer.setFocus();
+                            mProjectList.setSelectionFromTop(mLastProjectFieldIndex, mLastProjectFieldTop);
+                        }
+                    }, 5);
+                }
+            }
+        }
+    }
+
 
     @Override
     public void onItemClick(AdapterView<?> arg0, View view, int arg2, long arg3) {
-        BetterJSONObject project = (BetterJSONObject) view.getTag();
+        BetterJSONObject project = (BetterJSONObject) view.getTag(R.id.TAG_PROJECT);
         Integer projectId = Integer.valueOf(project.getInt("id"));
         
         /* prevent operations on auto-joined projects, so the user will not be able to deselect
@@ -507,5 +606,28 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
                 }
             }
         }
+    }
+
+    private boolean validateProjectFields() {
+        if (mIsConfirmation) {
+            HashMap<Integer, List<ProjectFieldViewer>> finalProjectFields = new HashMap<Integer, List<ProjectFieldViewer>>();
+            // Only save the checked-on (selected) project fields
+            for (int projectId : mObservationProjects) {
+                finalProjectFields.put(projectId, mProjectFieldViewers.get(projectId));
+            }
+            for (int projectId : finalProjectFields.keySet()) {
+                List<ProjectFieldViewer> fields = finalProjectFields.get(projectId);
+                for (ProjectFieldViewer fieldViewer : fields) {
+                    if (!fieldViewer.isValid()) {
+                        Toast.makeText(this, String.format(getString(R.string.invalid_project_field), fieldViewer.getField().name), Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                }
+            }
+
+            mProjectFieldViewers = finalProjectFields;
+        }
+
+        return true;
     }
 }

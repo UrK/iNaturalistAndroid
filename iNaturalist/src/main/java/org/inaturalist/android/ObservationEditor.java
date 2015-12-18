@@ -1,5 +1,49 @@
 package org.inaturalist.android;
 
+<<<<<<< HEAD
+=======
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.cocosw.bottomsheet.BottomSheet;
+import com.crashlytics.android.Crashlytics;
+import com.flurry.android.FlurryAgent;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewCallback;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jraf.android.backport.switchwidget.Switch;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.lucasr.twowayview.TwoWayView;
+
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
+
+import com.ptashek.widgets.datetimepicker.DateTimePicker;
+
+>>>>>>> upstream
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -141,6 +185,7 @@ public class ObservationEditor extends SherlockFragmentActivity {
     private INaturalistApp app;
     private ActivityHelper mHelper;
     private boolean mCanceled = false;
+    private boolean mIsCaptive = false;
     
     private ActionBar mTopActionBar;
     private ImageButton mDeleteButton;
@@ -163,7 +208,7 @@ public class ObservationEditor extends SherlockFragmentActivity {
 	public static final String OBSERVATION_PROJECT = "observation_project";
     
     private List<ProjectFieldViewer> mProjectFieldViewers;
-    private Switch mIdPlease;
+    private CompoundButton mIdPlease;
     private Spinner mGeoprivacy;
     private String mSpeciesGuess;
     private TableLayout mProjectsTable;
@@ -182,6 +227,8 @@ public class ObservationEditor extends SherlockFragmentActivity {
     private String mTaxonPicUrl;
     private boolean mIsTaxonUnknown;
     private boolean mIsCustomTaxon;
+    private TextView mProjectCount;
+    private Long mFirstPositionPhotoId;
 
     @Override
 	protected void onStart()
@@ -194,9 +241,16 @@ public class ObservationEditor extends SherlockFragmentActivity {
 	@Override
 	protected void onStop()
 	{
-		super.onStop();		
-		FlurryAgent.onEndSession(this);
-	}	
+        // http://stackoverflow.com/questions/20776925/failed-binder-transaction-after-starting-an-activity#20803653
+        // Remove what could be a giant array for users with a lot of projects. If you don't,
+        // activities launched from this view (e.g. TaxonSearchActivity) are likely to experience a
+        // lag before interactivity due to a FAILED BINDER TRANSACTION
+        if (mProjects != null) {
+            mProjects.removeAll(mProjects);
+        }
+        super.onStop();
+        FlurryAgent.onEndSession(this);
+	}
 
     private class ProjectReceiver extends BroadcastReceiver {
         @Override
@@ -229,9 +283,12 @@ public class ObservationEditor extends SherlockFragmentActivity {
     }
 
     private void refreshProjectList() {
-        if (!mIsConfirmation) {
-            mProjectsTable.removeAllViews();
+        if (mIsConfirmation) {
+            mProjectCount.setText(String.valueOf(mProjectIds.size()));
+            return;
         }
+
+        mProjectsTable.removeAllViews();
 
         if (mProjects == null) {
             return;
@@ -393,6 +450,8 @@ public class ObservationEditor extends SherlockFragmentActivity {
             mPictureTaken = savedInstanceState.getBoolean("mPictureTaken", false);
             mPreviousTaxonSearch = savedInstanceState.getString("mPreviousTaxonSearch");
             mTaxonPicUrl = savedInstanceState.getString("mTaxonPicUrl");
+            mIsCaptive = savedInstanceState.getBoolean("mIsCaptive", false);
+            mFirstPositionPhotoId = savedInstanceState.getLong("mFirstPositionPhotoId");
         }
 
 
@@ -425,9 +484,24 @@ public class ObservationEditor extends SherlockFragmentActivity {
                     });
                 }
             });
+
+
+            findViewById(R.id.is_captive_checkbox).setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mIsCaptive = !mIsCaptive;
+                    if (mIsCaptive) {
+                        findViewById(R.id.is_captive_on_icon).setVisibility(View.VISIBLE);
+                        findViewById(R.id.is_captive_off_icon).setVisibility(View.GONE);
+                    } else {
+                        findViewById(R.id.is_captive_on_icon).setVisibility(View.GONE);
+                        findViewById(R.id.is_captive_off_icon).setVisibility(View.VISIBLE);
+                    }
+                }
+            });
         }
 
-        mIdPlease = (Switch) findViewById(R.id.id_please);
+        mIdPlease = (CompoundButton) findViewById(R.id.id_please);
         mGeoprivacy = (Spinner) findViewById(R.id.geoprivacy);
         mSpeciesGuessTextView = (TextView) findViewById(R.id.speciesGuess);
         mSpeciesGuessIcon = (ImageView) findViewById(R.id.species_guess_icon);
@@ -450,6 +524,7 @@ public class ObservationEditor extends SherlockFragmentActivity {
         mViewOnInat = (ImageButton) findViewById(R.id.view_on_inat);
         mObservationCommentsIds = (TextView) findViewById(R.id.commentIdCount);
         mProjectSelector = findViewById(R.id.select_projects);
+        mProjectCount = (TextView) findViewById(R.id.project_count);
         mProjectFieldsTable = (TableLayout) findViewById(R.id.project_fields);
         mProjectsTable = (TableLayout) findViewById(R.id.projects);
 
@@ -459,6 +534,7 @@ public class ObservationEditor extends SherlockFragmentActivity {
                 Intent intent = new Intent(ObservationEditor.this, ProjectSelectorActivity.class);
                 intent.putExtra(INaturalistService.OBSERVATION_ID, (mObservation.id == null ? mObservation._id : mObservation.id));
                 intent.putExtra(ProjectSelectorActivity.IS_CONFIRMATION, mIsConfirmation);
+                intent.putExtra(ProjectSelectorActivity.PROJECT_FIELDS, mProjectFieldValues);
                 intent.putIntegerArrayListExtra(INaturalistService.PROJECT_ID, mProjectIds);
                 startActivityForResult(intent, PROJECT_SELECTOR_REQUEST_CODE);
             }
@@ -691,6 +767,8 @@ public class ObservationEditor extends SherlockFragmentActivity {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         
         
         if (mProjectIds == null) {
@@ -732,30 +810,11 @@ public class ObservationEditor extends SherlockFragmentActivity {
         if ((intent != null) && (!mPictureTaken)) {
             if (intent.getBooleanExtra(TAKE_PHOTO, false)) {
                 // Immediately take a photo
-                mFileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
-                mFileUri = getPath(ObservationEditor.this, mFileUri);
-
-                final Intent galleryIntent = new Intent();
-
-                galleryIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-                galleryIntent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
-                this.startActivityForResult(galleryIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-
-                // In case a new/existing photo was taken - make sure we won't retake it in case the activity pauses/resumes.
-                mPictureTaken = true;
+                takePhoto();
 
             } else if (intent.getBooleanExtra(CHOOSE_PHOTO, false)) {
                 // Immediately choose an existing photo
-                mFileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
-                mFileUri = getPath(ObservationEditor.this, mFileUri);
-
-                final Intent galleryIntent = new Intent();
-                galleryIntent.setType("image/*");
-                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                this.startActivityForResult(galleryIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-
-                // In case a new/existing photo was taken - make sure we won't retake it in case the activity pauses/resumes.
-                mPictureTaken = true;
+                choosePhoto();
             }
         }
 
@@ -782,6 +841,35 @@ public class ObservationEditor extends SherlockFragmentActivity {
         mGeoprivacy.setAdapter(geoprivacyAdapter);
     }
 
+    private void takePhoto() {
+        mFileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
+        mFileUri = getPath(ObservationEditor.this, mFileUri);
+
+        final Intent galleryIntent = new Intent();
+
+        Crashlytics.log(Log.ERROR, TAG, "takePhoto: " + mFileUri);
+
+        galleryIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+        galleryIntent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
+        this.startActivityForResult(galleryIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+
+        // In case a new/existing photo was taken - make sure we won't retake it in case the activity pauses/resumes.
+        mPictureTaken = true;
+    }
+
+    private void choosePhoto() {
+        mFileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
+        mFileUri = getPath(ObservationEditor.this, mFileUri);
+
+        final Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        this.startActivityForResult(galleryIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+
+        // In case a new/existing photo was taken - make sure we won't retake it in case the activity pauses/resumes.
+        mPictureTaken = true;
+    }
+    
     @Override
     public void onBackPressed() {
         onBack();
@@ -848,6 +936,8 @@ public class ObservationEditor extends SherlockFragmentActivity {
         outState.putBoolean("mPictureTaken", mPictureTaken);
         outState.putString("mPreviousTaxonSearch", mPreviousTaxonSearch);
         outState.putString("mTaxonPicUrl", mTaxonPicUrl);
+        outState.putBoolean("mIsCaptive", mIsCaptive);
+        outState.putLong("mFirstPositionPhotoId", mFirstPositionPhotoId != null ? mFirstPositionPhotoId : -1);
         super.onSaveInstanceState(outState);
     }
 
@@ -917,6 +1007,12 @@ public class ObservationEditor extends SherlockFragmentActivity {
                     fieldValue.value = newValue;
                     mProjectFieldValues.put(field.field_id, fieldValue);
                 }
+            }
+        } else {
+            for (int fieldId : mProjectFieldValues.keySet()) {
+                ProjectFieldValue fieldValue = mProjectFieldValues.get(fieldId);
+                fieldValue.observation_id = obsId;
+                mProjectFieldsUpdated = true;
             }
         }
     }
@@ -1013,9 +1109,8 @@ public class ObservationEditor extends SherlockFragmentActivity {
         }
 
         if (mIsConfirmation) {
-            boolean isCaptive = ((CheckBox)findViewById(R.id.is_captive_checkbox)).isChecked();
-            if ((mObservation.captive != null) || ((mObservation.captive == null) && (isCaptive))) {
-                mObservation.captive = isCaptive;
+            if ((mObservation.captive != null) || ((mObservation.captive == null) && (mIsCaptive))) {
+                mObservation.captive = mIsCaptive;
             }
         }
     }
@@ -1091,7 +1186,14 @@ public class ObservationEditor extends SherlockFragmentActivity {
                 mObservationCommentsIds.setBackgroundResource(R.drawable.comments_ids_background_highlighted);
             }
         } else {
-            ((CheckBox)findViewById(R.id.is_captive_checkbox)).setChecked(mObservation.captive);
+            mIsCaptive = mObservation.captive;
+            if (mIsCaptive) {
+                findViewById(R.id.is_captive_on_icon).setVisibility(View.VISIBLE);
+                findViewById(R.id.is_captive_off_icon).setVisibility(View.GONE);
+            } else {
+                findViewById(R.id.is_captive_on_icon).setVisibility(View.GONE);
+                findViewById(R.id.is_captive_off_icon).setVisibility(View.VISIBLE);
+            }
 
             if (mObservation.place_guess != null) {
                 ((TextView) findViewById(R.id.location_guess)).setText(mObservation.place_guess);
@@ -1109,7 +1211,7 @@ public class ObservationEditor extends SherlockFragmentActivity {
         if (mCursor == null) { return true; }
         Cursor c = getContentResolver().query(mUri, new String[] {Observation._ID}, null, null, null);
         if (c.getCount() == 0) { return true; }
-        if (mImageCursor != null && mImageCursor.getCount() > 0) { return false; }
+        //if (mImageCursor != null && mImageCursor.getCount() > 0) { return false; }
 
         if (!mIsConfirmation) {
             if (mSpeciesGuessTextView.length() == 0
@@ -1161,6 +1263,11 @@ public class ObservationEditor extends SherlockFragmentActivity {
         if (deleteLocal) {
             try {
                 getContentResolver().delete(mUri, null, null);
+
+                if (mImageCursor != null && mImageCursor.getCount() > 0) {
+                    // Delete any observation photos taken with it
+                    getContentResolver().delete(ObservationPhoto.CONTENT_URI, "_observation_id=?", new String[]{mObservation._id.toString()});
+                }
             } catch (NullPointerException e) {
                 Log.e(TAG, "Failed to delete observation: " + e);
             }
@@ -1484,10 +1591,6 @@ public class ObservationEditor extends SherlockFragmentActivity {
      */
     
     private void saveProjectFields() {
-        if (mIsConfirmation) {
-            return;
-        }
-
         for (ProjectFieldValue fieldValue : mProjectFieldValues.values()) {
             if (fieldValue.value == null) {
                 continue;
@@ -1572,6 +1675,21 @@ public class ObservationEditor extends SherlockFragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (mIsConfirmation) {
+            (new Handler()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ((EditText) mSpeciesGuessTextView).clearFocus();
+                    mDescriptionTextView.clearFocus();
+
+                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (getCurrentFocus() != null)
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                }
+            }, 10);
+        }
+
 
         if (requestCode == OBSERVATION_PHOTOS_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
@@ -1644,6 +1762,9 @@ public class ObservationEditor extends SherlockFragmentActivity {
 
                     if (mIsConfirmation) {
                         ((EditText)mSpeciesGuessTextView).clearFocus();
+                        mDescriptionTextView.clearFocus();
+
+                        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                         if (!mIsCustomTaxon) {
                             UrlImageViewHelper.setUrlDrawable(mSpeciesGuessIcon, mTaxonPicUrl, R.drawable.ic_species_guess_black_24dp, new UrlImageViewCallback() {
                                 @Override
@@ -1651,6 +1772,7 @@ public class ObservationEditor extends SherlockFragmentActivity {
                                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
                                         mSpeciesGuessIcon.setAlpha(1.0f);
                                     }
+                                    imageView.setImageBitmap(ImageUtils.getRoundedCornerBitmap(loadedBitmap));
                                 }
 
                                 @Override
@@ -1678,17 +1800,25 @@ public class ObservationEditor extends SherlockFragmentActivity {
             }
         } else if (requestCode == PROJECT_SELECTOR_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                if (!mIsConfirmation) {
-                    ArrayList<Integer> projectIds = data.getIntegerArrayListExtra(ProjectSelectorActivity.PROJECT_IDS);
-                    mProjectIds = projectIds;
+                ArrayList<Integer> projectIds = data.getIntegerArrayListExtra(ProjectSelectorActivity.PROJECT_IDS);
+                HashMap<Integer, ProjectFieldValue> values = (HashMap<Integer, ProjectFieldValue>) data.getSerializableExtra(ProjectSelectorActivity.PROJECT_FIELDS);
+                mProjectIds = projectIds;
+                mProjectFieldValues = values;
 
-                    refreshProjectFields();
-                    refreshProjectList();
-                }
+                refreshProjectFields();
+                refreshProjectList();
+
             }
         } else if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+
+            int random = (new Random()).nextInt();
+            Crashlytics.log(Log.ERROR, TAG, "onActivityResult: " + random + ": CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE: " + resultCode);
+
             if (resultCode == RESULT_OK) {
                 final boolean isCamera;
+
+                Crashlytics.log(Log.ERROR, TAG, "onActivityResult:  " + random + ": data: " + (data == null ? "null" : data) + "; scheme: " + (data == null ? "null" : data.getScheme()) + "; action: " + (data == null ? "null" : data.getAction()));
+
                 if ((data == null) || (data.getScheme() == null)) {
                     isCamera = true;
                 } else {
@@ -1699,6 +1829,8 @@ public class ObservationEditor extends SherlockFragmentActivity {
                         isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                     }
                 }
+
+                Crashlytics.log(Log.ERROR, TAG, "onActivityResult: " + random + ": isCamera: " + isCamera);
 
                 Uri selectedImageUri;
                 if(isCamera) {
@@ -1712,6 +1844,7 @@ public class ObservationEditor extends SherlockFragmentActivity {
                     }
                 }
 
+                Crashlytics.log(Log.ERROR, TAG, "onActivityResult: " + random + ": mFileUri: " + mFileUri + "; selectedImageUri: " + selectedImageUri);
                 Log.v(TAG, String.format("%s: %s", isCamera, selectedImageUri));
 
                 if (isCamera) {
@@ -1721,7 +1854,9 @@ public class ObservationEditor extends SherlockFragmentActivity {
                 
                 updateImageOrientation(selectedImageUri);
                 Uri createdUri = createObservationPhotoForPhoto(selectedImageUri);
-                
+
+                Crashlytics.log(Log.ERROR, TAG, "onActivityResult:  " + random + ": createdUri: " + createdUri);
+
                 if (createdUri == null) {
                 	mHelper.alert(getResources().getString(R.string.alert_unsupported_media_type));
                 	mFileUri = null;
@@ -1730,10 +1865,15 @@ public class ObservationEditor extends SherlockFragmentActivity {
 
                 updateImages();
                 if (!isCamera) {
-                    if (!mIsConfirmation) {
-                        promptImportPhotoMetadata(selectedImageUri);
-                    }
+                    promptImportPhotoMetadata(selectedImageUri);
                }
+
+                try {
+                    Crashlytics.logException(new Exception("takePhoto"));
+                    Crashlytics.getInstance().crash();
+                } catch (Exception exc) {
+
+                }
                 
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
@@ -1813,14 +1953,18 @@ public class ObservationEditor extends SherlockFragmentActivity {
 
     private Uri createObservationPhotoForPhoto(Uri photoUri) {
         ObservationPhoto op = new ObservationPhoto();
-        Long photoId;
+        Long photoId = null;
+        int random = (new Random()).nextInt();
         try {
         	photoId = ContentUris.parseId(photoUri);
         } catch (Exception exc) {
         	// Not a supported media type (e.g. Google Drive)
         	exc.printStackTrace();
+            Crashlytics.log(Log.ERROR, TAG, "createObservationPhotoForPhoto: " + random + ": photoUri: " + photoUri + ": error: " + exc);
         	return null;
         }
+
+        Crashlytics.log(Log.ERROR, TAG, "createObservationPhotoForPhoto: " + random + ": photoId: " + photoId);
 
         ContentValues cv = op.getContentValues();
         cv.put(ObservationPhoto._OBSERVATION_ID, mObservation._id);
@@ -2152,6 +2296,8 @@ public class ObservationEditor extends SherlockFragmentActivity {
 
         public void setAsFirstPhoto(int position) {
             Long photoId = getItemId(position);
+            mFirstPositionPhotoId = photoId;
+
 
             // Set current photo to be positioned first
             mCursor.moveToPosition(position);
@@ -2233,21 +2379,23 @@ public class ObservationEditor extends SherlockFragmentActivity {
                             matrix.setRotate((float) orientation, bitmapImage.getWidth() / 2, bitmapImage.getHeight() / 2);
                             bitmapImage = Bitmap.createBitmap(bitmapImage, 0, 0, bitmapImage.getWidth(), bitmapImage.getHeight(), matrix, true);
                         }
-                        imageView.setImageBitmap(mIsConfirmation ? ImageUtils.centerCropBitmap(bitmapImage) : bitmapImage);
+                        imageView.setImageBitmap(mIsConfirmation ? ImageUtils.getRoundedCornerBitmap(ImageUtils.centerCropBitmap(bitmapImage)) : bitmapImage);
                     }
                 }
             }
 
             if (mIsConfirmation) {
-                RadioButton isFirst = (RadioButton) container.findViewById(R.id.observation_is_first);
+                View isFirst = container.findViewById(R.id.observation_is_first);
                 Integer obsPhotoPosition = mCursor.getInt(mCursor.getColumnIndexOrThrow(ObservationPhoto.POSITION));
 
                 if ((obsPhotoPosition != null) && (obsPhotoPosition == 0)) {
-                    isFirst.setChecked(true);
-                    isFirst.setText(R.string.first);
+                    container.findViewById(R.id.is_first_on).setVisibility(View.VISIBLE);
+                    container.findViewById(R.id.is_first_off).setVisibility(View.GONE);
+                    container.findViewById(R.id.is_first_text).setVisibility(View.VISIBLE);
                 } else {
-                    isFirst.setChecked(false);
-                    isFirst.setText("");
+                    container.findViewById(R.id.is_first_on).setVisibility(View.GONE);
+                    container.findViewById(R.id.is_first_off).setVisibility(View.VISIBLE);
+                    container.findViewById(R.id.is_first_text).setVisibility(View.GONE);
                 }
 
                 imageView.setOnClickListener(new OnClickListener() {
@@ -2262,14 +2410,14 @@ public class ObservationEditor extends SherlockFragmentActivity {
                 });
 
                 isFirst.setTag(new Integer(position));
-                isFirst.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                isFirst.setOnClickListener(new OnClickListener() {
                     @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean value) {
-                        if (value) {
-                            int position = (Integer)compoundButton.getTag();
+                    public void onClick(View view) {
+                        Integer position = (Integer) view.getTag();
+                        Long photoId = getItemId(position);
 
+                        if ((mFirstPositionPhotoId == null) || (mFirstPositionPhotoId != photoId)) {
                             setAsFirstPhoto(position);
-
                         }
                     }
                 });
@@ -2402,7 +2550,26 @@ public class ObservationEditor extends SherlockFragmentActivity {
     }	
 
     
-    private void openImageIntent(Activity activity, Uri captureImageOutputFile, int requestCode) {
+    private void openImageIntent(final Activity activity, Uri captureImageOutputFile, int requestCode) {
+
+        if (mIsConfirmation) {
+            new BottomSheet.Builder(activity).sheet(R.menu.observation_confirmation_photo_menu).listener(new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent;
+                    switch (which) {
+                        case R.id.camera:
+                            takePhoto();
+                            break;
+                        case R.id.upload_photo:
+                            choosePhoto();
+                            break;
+                    }
+                }
+            }).show();
+
+            return;
+        }
 
         // Camera
         final List<Intent> cameraIntents = new ArrayList<Intent>();

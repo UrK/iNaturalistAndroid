@@ -195,7 +195,7 @@
     <string name="pull_to_refresh">משוך כדי לרענן…</string>
     <string name="release_to_refresh">עזוב כדי לרענן…</string>
     <string name="refreshing">מרענן</string>
-    <string name="sync_x_observations">סנכרון %1$d תצפיות</string>
+    <string name="sync_x_observations">לחץ לפרסום תצפיות</string>
     <string name="sync_observations">סנכרון תצפיות</string>
     <string name="alert_sign_out">בטוח לתנתק? התנתקות תמחק את כל התצפיות על המכשיר. תצפיות שהואלו ל- iNaturalist לא יושפעו.</string>
 <string name="alert_unsupported_media_type">"מצטערים. כרגע אנחנו לא תומכים בהעלאת תמונות מ- Google Drive, Dropbox וכו׳
@@ -297,14 +297,14 @@
     </string-array>
 
     <string name="send_email">שלח אימייל…</string>
-    <string name="login_with">בצע לוגין עם</string>
+    <string name="login_with">בצע כניסה עם</string>
     <string name="facebook">Facebook</string>
     <string name="gplus">Google+</string>
     <string name="email">אימייל</string>
     <string name="sign_up_with">הרשם עם</string>
     <string name="skip">דלג  ›</string>
     <string name="already_have_account">האם יש לך כבר חשבון קיים?</string>
-    <string name="log_in">לוגין</string>
+    <string name="log_in">כניסה</string>
     <string name="sign_up">הרשם</string>
     <string name="min_6_chars">6 תווים לפחות</string>
     <string name="use_my_license"><![CDATA[כן, אפשר למדענים להשתמש בתוכן שאני מעלה. <b>למד עוד</b>]]></string>
@@ -312,7 +312,7 @@
     <string name="content_licensing_description">בחר אופציה זו אם לאפשר שימוש חופשי בתמונות שאתה מעלה. ניתן לשנות הגדרה זו מאוחר יותר, אך זו האופציה הטובה ביותר לשיתוף עם חוקרים.</string>
     <string name="username_or_email">שם משתמש או אימייל</string>
     <string name="forgot">שכחת סיסמה?</string>
-    <string name="or_login_with">או בצע לוגין עם:</string>
+    <string name="or_login_with">או בצע כניסה עם:</string>
     <string name="quantity">כמות</string>
     <string name="recommended_next_step">הצעד המומלץ הבא</string>
     <string name="registering">נרשם…</string>

@@ -213,7 +213,8 @@
         android:layout_marginBottom="100dp"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_marginEnd="5dp"
@@ -309,7 +310,8 @@
         android:textColor="#88FFFFFF"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/facebook_login_button"

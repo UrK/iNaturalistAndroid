@@ -119,6 +119,7 @@
             android:focusable="true"
             android:clickable="true"
             android:id="@+id/login_with_facebook"
+            android:visibility="gone"
             >
 
             <RelativeLayout
@@ -169,6 +170,7 @@
             android:focusable="true"
             android:clickable="true"
             android:id="@+id/login_with_gplus"
+            android:visibility="gone"
             >
             <RelativeLayout
                 android:layout_width="45dp"

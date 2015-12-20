@@ -244,6 +244,8 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
                 startActivityIfNew(new Intent(BaseFragmentActivity.this, WebActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
             }
         });
+        findViewById(R.id.menu_activity).setVisibility(View.GONE);
+        
         findViewById(R.id.menu_settings).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

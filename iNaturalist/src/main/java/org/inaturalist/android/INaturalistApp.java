@@ -52,7 +52,7 @@ public class INaturalistApp extends Application {
     public static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     public static SimpleDateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd h:mm:ss a z");
     public static SimpleDateFormat SHORT_DATE_FORMAT = new SimpleDateFormat("d MMM yyyy");
-    public static SimpleDateFormat SHORT_TIME_FORMAT = new SimpleDateFormat("h:mm a z");
+    public static SimpleDateFormat SHORT_TIME_FORMAT = new SimpleDateFormat("HH:mm");
     private static Integer SYNC_NOTIFICATION = 3;
     private static Context context;
     private Locale locale = null;

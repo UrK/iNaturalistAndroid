@@ -113,6 +113,7 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
                 @Override
                 public int compare(JSONObject lhs, JSONObject rhs) {
                     try {
+//                        GlobalConfig.getInstance().getAutoJoinProject()
                         return lhs.getString("title").compareTo(rhs.getString("title"));
                     } catch (JSONException e) {
                         return 0;

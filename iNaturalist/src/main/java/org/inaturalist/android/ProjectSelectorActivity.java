@@ -113,7 +113,13 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
                 @Override
                 public int compare(JSONObject lhs, JSONObject rhs) {
                     try {
-//                        GlobalConfig.getInstance().getAutoJoinProject()
+                        if (lhs.getInt("id") == GlobalConfig.getInstance().getAutoJoinProject() &&
+                                rhs.getInt("id") != GlobalConfig.getInstance().getAutoJoinProject()) {
+                            return -1;
+                        } else if (lhs.getInt("id") != GlobalConfig.getInstance().getAutoJoinProject() &&
+                                rhs.getInt("id") == GlobalConfig.getInstance().getAutoJoinProject()) {
+                            return 1;
+                        }
                         return lhs.getString("title").compareTo(rhs.getString("title"));
                     } catch (JSONException e) {
                         return 0;

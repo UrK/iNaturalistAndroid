@@ -203,12 +203,10 @@
 
   <string-array name="geoprivacy_items">
     <item>Ouvrir</item>
-    <item>Obscurci</item>
     <item>Privé</item>
   </string-array>
   <string-array name="geoprivacy_values">
     <item>ouvrir</item>
-    <item>obscurci</item>
     <item>privé</item>
   </string-array>
   <string name="alert_sign_out">Désirez-vous vraiment vous déconnecter? Toutes vos observations sur cet appareil seront supprimées. Les observations que vous avez téléversées sur iNaturalist ne seront pas touchées.</string>

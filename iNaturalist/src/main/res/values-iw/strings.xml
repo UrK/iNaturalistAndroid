@@ -293,7 +293,6 @@
     <string-array name="geoprivacy_items">
         <item>גלוי</item>
         <item>מוסתר</item>
-        <item>פרטית</item>
     </string-array>
 
     <string name="send_email">שלח אימייל…</string>
@@ -324,7 +323,7 @@
     <string name="camera">צילום</string>
     <string name="upload_photo">בחירת תמונה</string>
     <string name="menu_text">לדלג על תמונה</string>
-    <string name="first">ראשי</string>
+    <string name="first"></string>
     <string name="make_first">העבר למקום ראשון</string>
     <string name="help_id_this_species">עזרו לי לזהות את המין</string>
     <string name="notes">הערות</string>

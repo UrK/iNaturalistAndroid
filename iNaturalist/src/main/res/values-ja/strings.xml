@@ -202,12 +202,10 @@
   <string name="sync_observations">観察記録を同期</string>
   <string-array name="geoprivacy_items">
     <item>オープン</item>
-    <item>不明瞭</item>
     <item>プライベート</item>
   </string-array>
   <string-array name="geoprivacy_values">
     <item>オープン</item>
-    <item>不明瞭</item>
     <item>プライベート</item>
   </string-array>
   <string name="alert_sign_out">本当にサインアウトしてもよろしいですか？サインアウトするとこのデバイス上の全ての観察情報が削除されます。iNaturalist上にアップロードした観察情報には影響しません。</string>

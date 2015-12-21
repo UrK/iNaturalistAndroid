@@ -202,12 +202,10 @@
   <string name="sync_observations">Synkronisera observationer</string>
   <string-array name="geoprivacy_items">
     <item>Öppna</item>
-    <item>Dold</item>
     <item>Privat</item>
   </string-array>
   <string-array name="geoprivacy_values">
     <item>Öppna</item>
-    <item>dold</item>
     <item>privat</item>
   </string-array>
   <string name="alert_sign_out">Är du säker på att du vill logga ut? Detta raderar alla dina observationer på den här mobila enheten. Det påverkar inte observationer som du redan har laddat upp till iNaturalist.</string>

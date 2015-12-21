@@ -202,12 +202,10 @@
   <string name="sync_observations">Sincronizza Osservazioni</string>
   <string-array name="geoprivacy_items">
     <item>Aperto</item>
-    <item>Oscurato</item>
     <item>Privato</item>
   </string-array>
   <string-array name="geoprivacy_values">
     <item>aperto</item>
-    <item>oscurato</item>
     <item>privato</item>
   </string-array>
   <string name="alert_sign_out">Sei sicuro di volere uscire? Tutte le tue osservazioni su questo dispositivo verrano cancellate. Le osservazione che hai caricato su iNaturalist non ne saranno affette.</string>

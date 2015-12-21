@@ -817,26 +817,6 @@ public class ObservationEditor extends SherlockFragmentActivity {
         }
 
         if (mIsConfirmation) updateObservationVisibilityDescription();
-
-        setupPrivacySpinner();
-    }
-
-    /* Golan project requires to remove private option from geoprivacy. In order to be as close as
-     * possible to the original code, it was decided against modifying the resources, instead using
-     * dynamic spinner adapter modification */
-    private void setupPrivacySpinner() {
-        List<String> geoprivacyNames = new ArrayList<>(Arrays.asList(
-                getResources().getStringArray(R.array.geoprivacy_items)));
-
-        int toRemove = Arrays
-                .asList(getResources().getStringArray(R.array.geoprivacy_values))
-                .indexOf("private");
-
-        geoprivacyNames.remove(toRemove);
-
-        ArrayAdapter<String> geoprivacyAdapter = new ArrayAdapter<String>(
-                this, android.R.layout.simple_dropdown_item_1line, geoprivacyNames);
-        mGeoprivacy.setAdapter(geoprivacyAdapter);
     }
 
     private void takePhoto() {

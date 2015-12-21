@@ -257,12 +257,10 @@ para el Conocimiento y Uso de la Biodiversidad (CONABIO).</string>
     </string-array>
     <string-array name="geoprivacy_items">
       <item>Abierta</item>
-      <item>Oscurecida</item>
       <item>Privada</item>
     </string-array>
     <string-array name="geoprivacy_values">
       <item>abierta</item>
-      <item>oscurecida</item>
       <item>privada</item>
     </string-array>
 

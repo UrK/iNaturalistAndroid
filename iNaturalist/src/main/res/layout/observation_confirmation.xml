@@ -261,6 +261,8 @@
             android:layout_alignParentEnd="true"
             android:layout_toRightOf="@id/observed_on"
             android:layout_toEndOf="@id/observed_on"
+            android:paddingRight="3dp"
+            android:paddingEnd="3dp"
             android:text="@string/set_time"
             android:layout_centerVertical="true"
             android:textSize="16sp"

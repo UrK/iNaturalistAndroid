@@ -476,7 +476,8 @@
         android:paddingEnd="16dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        android:layout_height="60dp">
+        android:layout_height="60dp"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/is_captive_icon"
@@ -548,6 +549,7 @@
         android:background="#dfdfdf"
         android:layout_marginLeft="64dp"
         android:layout_marginStart="64dp"
+        android:visibility="gone"
         />
 
     <RelativeLayout

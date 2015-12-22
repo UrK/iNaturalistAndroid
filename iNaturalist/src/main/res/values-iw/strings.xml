@@ -330,7 +330,7 @@
     <string name="location_is">מיקום הינו</string>
     <string name="is_captive">בשבי או מתורבת</string>
     <string name="location_visibility">פרטיות מיקום</string>
-    <string name="set_location">לקבוע מיקום</string>
+    <string name="set_location">מיקום</string>
     <string name="coordinates_lat">Lat:</string>
     <string name="coordinates_lon">Lon:</string>
     <string name="coordinates_acc">Acc. </string>

@@ -68,6 +68,7 @@ public class TaxonSearchActivity extends SherlockListActivity {
     
     private INaturalistApp mApp;
     private boolean mShowUnknown;
+    private EditText mAutoCompView;
 
     private long mLastTime = 0;
 
@@ -106,6 +107,7 @@ public class TaxonSearchActivity extends SherlockListActivity {
             StringBuilder sb = new StringBuilder(INaturalistService.HOST + "/taxa/search.json");
             sb.append("?q=");
             sb.append(URLEncoder.encode(input, "utf8"));
+            sb.append(String.format("&locale=%s", getResources().getConfiguration().locale.getLanguage()));
 
             URL url = new URL(sb.toString());
             conn = (HttpURLConnection) url.openConnection();
@@ -422,33 +424,37 @@ public class TaxonSearchActivity extends SherlockListActivity {
         mProgress.setVisibility(View.GONE);
         
         mAdapter = new TaxonAutoCompleteAdapter(getApplicationContext(), R.layout.taxon_result_item);
-        final EditText autoCompView = (EditText) customView.findViewById(R.id.search_text);
-        
-        autoCompView.addTextChangedListener(new TextWatcher() {
+        mAutoCompView = (EditText) customView.findViewById(R.id.search_text);
+
+        mAutoCompView.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(final CharSequence s, int start, int before, int count) {
                 logTime("onTextChange");
                 if (mAdapter != null) mAdapter.getFilter().filter(s);
             }
+
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
-            public void afterTextChanged(Editable s) { }
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         String initialSearch = intent.getStringExtra(SPECIES_GUESS);
         mShowUnknown = intent.getBooleanExtra(SHOW_UNKNOWN, false);
 
         if ((initialSearch != null) && (initialSearch.trim().length() > 0)) {
-        	autoCompView.setText(initialSearch);
-        	autoCompView.setSelection(initialSearch.length());
-            autoCompView.requestFocus();
+            mAutoCompView.setText(initialSearch);
+            mAutoCompView.setSelection(initialSearch.length());
+            mAutoCompView.requestFocus();
 
             (new Handler()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(autoCompView, InputMethodManager.SHOW_IMPLICIT);
+                    imm.showSoftInput(mAutoCompView, InputMethodManager.SHOW_IMPLICIT);
                 }
             }, 100);
         }
@@ -471,13 +477,16 @@ public class TaxonSearchActivity extends SherlockListActivity {
                 String inatNetwork = mApp.getInaturalistNetworkMember();
                 String networkLexicon = mApp.getStringResourceByName("inat_lexicon_" + inatNetwork);
                 int taxonNamePosition = Integer.MAX_VALUE;
+
                 try {
                     JSONArray taxonNames = item.getJSONArray("taxon_names");
                     for (int i = 0; i < taxonNames.length(); i++) {
                         JSONObject taxonName = taxonNames.getJSONObject(i);
                         String lexicon = taxonName.getString("lexicon");
                         int currentTaxonNamePosition = taxonName.getInt("position");
-                        if ((lexicon.equals(networkLexicon)) && (currentTaxonNamePosition < taxonNamePosition)) {
+
+                        if ((currentTaxonNamePosition < taxonNamePosition) &&
+                                taxonName.getString("name").contains(mAutoCompView.getText().toString())) {
                             // Found the appropriate lexicon for the taxon
                             displayName = taxonName.getString("name");
                             taxonNamePosition = currentTaxonNamePosition;

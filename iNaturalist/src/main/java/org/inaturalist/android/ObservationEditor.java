@@ -1845,14 +1845,6 @@ public class ObservationEditor extends SherlockFragmentActivity {
                 if (!isCamera) {
                     promptImportPhotoMetadata(selectedImageUri);
                }
-
-                try {
-                    Crashlytics.logException(new Exception("takePhoto"));
-                    Crashlytics.getInstance().crash();
-                } catch (Exception exc) {
-
-                }
-                
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
             } else {

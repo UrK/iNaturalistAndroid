@@ -314,7 +314,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 			}
 		});
         mLoading = (View) mTopActionBar.getCustomView().findViewById(R.id.loading);
-        
+
         mSearchToggle = (View) mTopActionBar.getCustomView().findViewById(R.id.search);
         mSearchToggle.setOnClickListener(new OnClickListener() {
 			@Override
@@ -322,6 +322,10 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 				if (mSearchBar.getVisibility() == View.GONE) {
 					mSearchBar.setVisibility(View.VISIBLE);
 					mSearchBarBackground.setVisibility(View.VISIBLE);
+
+					mSearchText.requestFocus();
+					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 				} else {
 					mSearchBar.setVisibility(View.GONE);
 					mSearchBarBackground.setVisibility(View.GONE);
@@ -338,7 +342,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 			public void onClick(View v) {
 				mSearchToggle.performClick();
 			}
-        });
+	        });
 	       
         mSearchResults = (ListView)findViewById(R.id.search_results);
         mSearchResults.setOnItemClickListener(new OnItemClickListener() {

@@ -450,14 +450,15 @@ public class TaxonSearchActivity extends SherlockListActivity {
             mAutoCompView.setSelection(initialSearch.length());
             mAutoCompView.requestFocus();
 
-            (new Handler()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(mAutoCompView, InputMethodManager.SHOW_IMPLICIT);
-                }
-            }, 100);
         }
+
+        (new Handler()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            }
+        }, 100);
 
         logTime("onCreate 2");
         setListAdapter(mAdapter);

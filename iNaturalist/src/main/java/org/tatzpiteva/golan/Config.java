@@ -81,7 +81,18 @@ public class Config {
             parcel.writeInt(smart_flag.getValue());
             parcel.writeInt(menu_flag.getValue());
         }
+
+        @Override
+        public String toString() {
+            return "<Config.AutoProject: id=" + id + ", title=" + title + ", smart_flag=" + smart_flag + ">";
+        }
+
     }
 
     Collection<AutoProject> autoProjects;
+
+    @Override
+    public String toString() {
+        return "<Config: autoProjects=" + autoProjects + ">";
+    }
 }

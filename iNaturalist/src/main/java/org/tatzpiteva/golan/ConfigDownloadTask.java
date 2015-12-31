@@ -46,6 +46,9 @@ public class ConfigDownloadTask extends AsyncTask<String, Void, Config> {
     @Override
     protected Config doInBackground(String... urls) {
         URL url;
+
+        Log.d(TAG, "Downloading remote configuration from " + urls[0]);
+
         try {
             url = new URL(urls[0]);
         } catch (MalformedURLException e) {
@@ -86,6 +89,8 @@ public class ConfigDownloadTask extends AsyncTask<String, Void, Config> {
     @Override
     protected void onPostExecute(Config config) {
         super.onPostExecute(config);
+
+        Log.d(TAG, "Remote configuration downloaded: " + config);
 
         /* no listener, nothing to do here */
         if (mListener == null) {

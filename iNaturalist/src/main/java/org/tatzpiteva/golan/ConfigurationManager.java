@@ -53,7 +53,7 @@ public class ConfigurationManager {
             }
         };
 
-        new ConfigDownloadTask(mDownloadListener).doInBackground(API_SERVER_CURRENT);
+        new ConfigDownloadTask(mDownloadListener).execute(API_SERVER_CURRENT);
     }
 
     public static ConfigurationManager getInstance() {
@@ -108,7 +108,9 @@ public class ConfigurationManager {
         String strConfig = context.getSharedPreferences(TAG, Context.MODE_PRIVATE).getString(SHARED_PREFS_CONFIG, null);
         if (strConfig != null) {
             try {
-                return ConfigParser.parseConfig(strConfig);
+                Config rv = ConfigParser.parseConfig(strConfig);
+                Log.d(TAG, "Loaded cached configuration");
+                return rv;
             } catch (IOException | JSONException e) {
                 return null;
             }

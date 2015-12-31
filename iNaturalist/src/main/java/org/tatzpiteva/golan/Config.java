@@ -45,6 +45,8 @@ public class Config {
         public SmartFlag smart_flag;
         public SmartFlag menu_flag;
 
+        public AutoProject() { }
+
         protected AutoProject(Parcel in) {
             id = in.readString();
             title = in.readString();

@@ -14,6 +14,8 @@ import java.util.List;
  * Parser of JSON configuration file
  */
 public class ConfigParser {
+    private static final String TAG = "ConfigParser";
+
     public static Config parseConfig(String jsonBuffer) throws IOException, JSONException {
         JSONArray jarr = new JSONArray(jsonBuffer);
 

@@ -32,17 +32,20 @@ public class ConfigurationManager {
 
     // region Properties
 
+    @Nullable
     private static ConfigurationManager mInstance;
 
+    @Nullable
     private Config config;
 
+    @Nullable
     private Context context;
 
     // endregion
 
     // region Lifecycle
 
-    private ConfigurationManager(Context context) {
+    private ConfigurationManager(@SuppressWarnings("NullableProblems") @NonNull Context context) {
         this.context = context;
         this.config = loadCachedConfig();
 
@@ -84,6 +87,10 @@ public class ConfigurationManager {
         super.finalize();
     }
 
+    public void destroy() {
+        context = null;
+    }
+
     // endregion
 
     // region Utilities
@@ -98,6 +105,9 @@ public class ConfigurationManager {
     }
 
     private void cacheConfig(@NonNull String stringData) {
+        if (context == null) {
+            return;
+        }
         SharedPreferences prefs = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(SHARED_PREFS_CONFIG, stringData);
@@ -105,6 +115,9 @@ public class ConfigurationManager {
     }
 
     private Config loadCachedConfig() {
+        if (context == null) {
+            return null;
+        }
         String strConfig = context.getSharedPreferences(TAG, Context.MODE_PRIVATE).getString(SHARED_PREFS_CONFIG, null);
         if (strConfig != null) {
             try {
@@ -116,6 +129,15 @@ public class ConfigurationManager {
             }
         }
         return null;
+    }
+
+    // endregion
+
+    // region Getters/setters
+
+    @NonNull
+    public Config getConfig() {
+        return config != null ? config : new Config();
     }
 
     // endregion

@@ -27,6 +27,8 @@ import android.widget.Toast;
 import com.facebook.login.widget.LoginButton;
 import com.flurry.android.FlurryAgent;
 
+import org.tatzpiteva.golan.ConfigurationManager;
+
 public class LoginSignupActivity extends Activity implements SignInTask.SignInTaskStatus {
 
     private static String TAG = "LoginSignupActivity";
@@ -404,7 +406,7 @@ public class LoginSignupActivity extends Activity implements SignInTask.SignInTa
         mSignInTask.pause();
 
         /* on registration join the new user to specified projects right away */
-        if (mIsSignup && GlobalConfig.getInstance().getAutoJoinProject() > 0) {
+        if (mIsSignup && ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject() > 0) {
 
             mProjectJoinReceiver = new ProjectJoinReceiver();
             IntentFilter filter = new IntentFilter(INaturalistService.ACTION_JOINED_PROJECTS_RESULT);
@@ -413,7 +415,11 @@ public class LoginSignupActivity extends Activity implements SignInTask.SignInTa
             mHelper.loading(getString(R.string.joining_project));
 
             Intent serviceIntent = new Intent(INaturalistService.ACTION_JOIN_PROJECT, null, this, INaturalistService.class);
-            serviceIntent.putExtra(INaturalistService.PROJECT_ID, GlobalConfig.getInstance().getAutoJoinProject());
+
+            serviceIntent.putExtra(
+                    INaturalistService.PROJECT_ID,
+                    ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject());
+            
             startService(serviceIntent);
         }
         else {

@@ -10,6 +10,9 @@ import java.util.Collection;
  */
 public class Config {
 
+    /** Golan Wildlife project */
+    private static final int DEFAULT_AUTO_USER_JOIN_PROJECT_ID = 4527;
+
     public enum SmartFlag {
         NOT_CHECKED(0),
         DEFAULT_READ_WRITE(1),
@@ -39,7 +42,7 @@ public class Config {
      * Single project which appears in configuration
      */
     public static class AutoProject implements Parcelable {
-        public String id;
+        public int id;
         public String title;
         public String slug;
         public SmartFlag smart_flag;
@@ -48,7 +51,7 @@ public class Config {
         public AutoProject() { }
 
         protected AutoProject(Parcel in) {
-            id = in.readString();
+            id = in.readInt();
             title = in.readString();
             slug = in.readString();
             smart_flag = SmartFlag.fromInt(in.readInt());
@@ -75,7 +78,7 @@ public class Config {
         @Override
         public void writeToParcel(Parcel parcel, int i) {
 
-            parcel.writeString(id);
+            parcel.writeInt(id);
             parcel.writeString(title);
             parcel.writeString(slug);
             parcel.writeInt(smart_flag.getValue());
@@ -89,10 +92,30 @@ public class Config {
 
     }
 
-    Collection<AutoProject> autoProjects;
+    private Collection<AutoProject> autoProjects;
+    private int autoUserJoinProject;
 
     @Override
     public String toString() {
         return "<Config: autoProjects=" + autoProjects + ">";
     }
+
+    public Config() {
+        this(null);
+    }
+
+    public Config(Collection<AutoProject> autoProjects) {
+        this(autoProjects, DEFAULT_AUTO_USER_JOIN_PROJECT_ID);
+    }
+
+    public Config(Collection<AutoProject> autoProjects, int autoUserJoinProjectId) {
+        this.autoUserJoinProject = autoUserJoinProjectId;
+        this.autoProjects = autoProjects;
+    }
+
+    public Collection<AutoProject> getAutoProjects() {
+        return autoProjects;
+    }
+
+    public int getAutoUserJoinProject() { return autoUserJoinProject; }
 }

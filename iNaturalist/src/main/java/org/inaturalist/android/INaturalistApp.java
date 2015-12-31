@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.inaturalist.android.INaturalistService.LoginType;
+import org.tatzpiteva.golan.ConfigurationManager;
 
 import android.app.Activity;
 import android.app.Application;
@@ -77,6 +78,7 @@ public class INaturalistApp extends Application {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
         FacebookSdk.sdkInitialize(getApplicationContext());
+        ConfigurationManager.getInstance(getApplicationContext());
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         INaturalistApp.context = getApplicationContext();

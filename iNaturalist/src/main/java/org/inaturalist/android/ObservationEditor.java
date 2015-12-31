@@ -133,6 +133,7 @@ import org.jraf.android.backport.switchwidget.Switch;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.lucasr.twowayview.TwoWayView;
+import org.tatzpiteva.golan.ConfigurationManager;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -398,9 +399,9 @@ public class ObservationEditor extends SherlockFragmentActivity {
                 setResult(RESULT_OK, (new Intent()).setAction(mUri.toString()));
                 getIntent().setAction(Intent.ACTION_INSERT);
 
-                if (GlobalConfig.getInstance().getAutoJoinProject() > 0) {
+                if (ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject() > 0) {
                     mProjectIds = new ArrayList<>();
-                    mProjectIds.add(GlobalConfig.getInstance().getAutoJoinProject());
+                    mProjectIds.add(ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject());
                 }
                 break;
             case ObservationPhoto.OBSERVATION_PHOTOS_URI_CODE:

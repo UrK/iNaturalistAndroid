@@ -28,9 +28,7 @@ public class ConfigParser {
             }
         }
 
-        Config rv = new Config();
-        rv.autoProjects = autoProjects;
-        return rv;
+        return new Config(autoProjects);
     }
 
     private static Config.AutoProject parseProject(JSONObject jobj) {
@@ -41,7 +39,11 @@ public class ConfigParser {
         Config.AutoProject rv = new Config.AutoProject();
 
         try {
-            rv.id = jobj.getString("id");
+            String strId = jobj.getString("id");
+            if (strId != null) {
+                rv.id = Integer.valueOf(strId);
+            }
+
             rv.title = jobj.getString("title");
 
             String strSmartFlag = jobj.getString("smart_flag");

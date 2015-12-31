@@ -9,6 +9,9 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.tatzpiteva.golan.Config;
+import org.tatzpiteva.golan.ConfigHelper;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockFragment;
@@ -102,22 +105,29 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
 
             for (int i = 0; i < projectList.length(); i++) {
                 try {
-                    mProjects.add(projectList.getJSONObject(i));
-                    projectIds.add(projectList.getJSONObject(i).getInt("id"));
+                    final JSONObject projeJson = projectList.getJSONObject(i);
+                    mProjects.add(projeJson);
+
+                    final int projId = projeJson.getInt("id");
+                    projectIds.add(projId);
+
+                    if (ConfigHelper.isProjectAutoAdd(projId)) {
+                        mObservationProjects.add(projId);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-            
+
             Collections.sort(mProjects, new Comparator<JSONObject>() {
                 @Override
                 public int compare(JSONObject lhs, JSONObject rhs) {
                     try {
-                        if (lhs.getInt("id") == GlobalConfig.getInstance().getAutoJoinProject() &&
-                                rhs.getInt("id") != GlobalConfig.getInstance().getAutoJoinProject()) {
+                        if (ConfigHelper.isProjectAutoAdd(lhs.getInt("id")) &&
+                                !ConfigHelper.isProjectAutoAdd(rhs.getInt("id"))) {
                             return -1;
-                        } else if (lhs.getInt("id") != GlobalConfig.getInstance().getAutoJoinProject() &&
-                                rhs.getInt("id") == GlobalConfig.getInstance().getAutoJoinProject()) {
+                        } else if (!ConfigHelper.isProjectAutoAdd(lhs.getInt("id")) &&
+                                ConfigHelper.isProjectAutoAdd(rhs.getInt("id"))) {
                             return 1;
                         }
                         return lhs.getString("title").compareTo(rhs.getString("title"));
@@ -582,11 +592,11 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
     @Override
     public void onItemClick(AdapterView<?> arg0, View view, int arg2, long arg3) {
         BetterJSONObject project = (BetterJSONObject) view.getTag(R.id.TAG_PROJECT);
-        Integer projectId = Integer.valueOf(project.getInt("id"));
+        Integer projectId = project.getInt("id");
         
         /* prevent operations on auto-joined projects, so the user will not be able to deselect
          * this project */
-        if (projectId == GlobalConfig.getInstance().getAutoJoinProject()) {
+        if (ConfigHelper.preventProjectDeselection(projectId)) {
             return;
         }
 

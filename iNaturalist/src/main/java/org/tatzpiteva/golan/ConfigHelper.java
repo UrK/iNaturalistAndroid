@@ -15,7 +15,10 @@ public class ConfigHelper {
     public static Boolean isProjectAutoAdd(int projectId) {
         for (Config.AutoProject pj : ConfigurationManager.getInstance().getConfig().getAutoProjects()) {
             if (pj.id == projectId) {
-                return true;
+                if (pj.smart_flag == Config.SmartFlag.DEFAULT_READ_ONLY ||
+                        pj.smart_flag == Config.SmartFlag.DEFAULT_READ_WRITE) {
+                    return true;
+                }
             }
         }
         return false;

@@ -133,6 +133,7 @@ import org.jraf.android.backport.switchwidget.Switch;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.lucasr.twowayview.TwoWayView;
+import org.tatzpiteva.golan.Config;
 import org.tatzpiteva.golan.ConfigurationManager;
 
 import java.io.IOException;
@@ -399,10 +400,17 @@ public class ObservationEditor extends SherlockFragmentActivity {
                 setResult(RESULT_OK, (new Intent()).setAction(mUri.toString()));
                 getIntent().setAction(Intent.ACTION_INSERT);
 
+                mProjectIds = new ArrayList<>();
                 if (ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject() > 0) {
-                    mProjectIds = new ArrayList<>();
                     mProjectIds.add(ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject());
                 }
+
+                for (Config.AutoProject p : ConfigurationManager.getInstance().getConfig().getAutoProjects()) {
+                    if (p.smart_flag == Config.SmartFlag.DEFAULT_READ_ONLY ||
+                            p.smart_flag == Config.SmartFlag.DEFAULT_READ_WRITE)
+                    mProjectIds.add(p.id);
+                }
+
                 break;
             case ObservationPhoto.OBSERVATION_PHOTOS_URI_CODE:
                 mFileUri = (Uri) intent.getExtras().get("photoUri");

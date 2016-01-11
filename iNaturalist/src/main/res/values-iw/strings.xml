@@ -155,7 +155,7 @@
     <string name="search_guides">חיפוש מדריכים…</string>
     <string name="save_observation">שמירת תצפית</string>
     <string name="about">אודות</string>
-    <string name="check_list">צ׳ק ליסט</string>
+    <string name="check_list">מינים בפרוייקט</string>
     <string name="gps">GPS</string>
     <string name="geoprivacy">פרטיות מיקום</string>
     <string name="comments_ids">תגובות וזיהוי</string>
@@ -336,5 +336,6 @@
     <string name="coordinates_acc">Acc. </string>
     <string name="required">* שדה חובה</string>
     <string name="downloading_observations">מוריד תצפיות</string>
+    <string name="login_signup">כניסה/רישום</string>
 
 </resources>

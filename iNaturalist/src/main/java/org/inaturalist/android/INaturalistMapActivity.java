@@ -1,7 +1,6 @@
 package org.inaturalist.android;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,32 +15,26 @@ import android.app.NotificationManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 
-import org.inaturalist.android.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.tatzpiteva.golan.ConfigurationManager;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -72,9 +65,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.flurry.android.FlurryAgent;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -93,9 +83,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.LatLngBounds.Builder;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -135,7 +123,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 	private Integer mLocationId;
 	private String mProjectName;
 	private Integer mProjectId;
-	
+
 	private LocationClient mLocationClient;
 	private double mMinx;
 	private double mMaxx;
@@ -157,6 +145,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 	private ListView mObservationsList;
 	private ObservationGridAdapter mGridAdapter;
 	private boolean mClearMapLimit;
+	private boolean mUseDefaultProject;
 	private List<JSONObject> mObservations;
 	private int mPage;
 	private boolean mIsLoading;
@@ -222,6 +211,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 	    	mSearchType = savedInstanceState.getInt("mSearchType");
 	    	mViewType = savedInstanceState.getString("mViewType");
 	    	mClearMapLimit = savedInstanceState.getBoolean("mClearMapLimit");
+			mUseDefaultProject = savedInstanceState.getBoolean("mUseDefaultProject");
 
 	    	mTaxonId = (Integer) savedInstanceState.getSerializable("mTaxonId");
 	    	mTaxonName = savedInstanceState.getString("mTaxonName");
@@ -284,9 +274,11 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 	    	mTaxonId = null;
 	    	mUsername = null;
 	    	mLocationId = null;
-	    	mProjectId = null;
+			mProjectId = null;
+
 	    	mViewType = VIEW_TYPE_MAP;
 	    	mClearMapLimit = false;
+			mUseDefaultProject = true;
 	    	mPage = 1;
 	    	mIsLoading = false;
 	    }
@@ -349,6 +341,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
 				mCurrentSearch = mSearchText.getText().toString().trim();
+				mUseDefaultProject = false;
 				mSearchType = index;
 
 				mSearchToggle.performClick();
@@ -425,6 +418,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 				mLocationId = null;
 				mSearchType = FIND_NEAR_BY_OBSERVATIONS;
 				mPage = 1;
+				mUseDefaultProject = false;
 
 				refreshActiveFilters();
 				loadObservations();
@@ -508,12 +502,14 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
     
     @Override
     public void onTabChanged(String tag) {
-    	mViewType = tag;
+		String previousViewType = mViewType;
 
-    	refreshViewType();
+		mViewType = tag;
+
+    	refreshViewType(previousViewType);
     }
-    
-    private void refreshViewType() {
+
+    private void refreshViewType(@Nullable String previousViewType) {
     	if (mViewType.equals(VIEW_TYPE_MAP)) {
     		mTabHost.setCurrentTab(0);
     		mMapContainer.setVisibility(View.VISIBLE);
@@ -535,15 +531,23 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
     		mGridContainer.setVisibility(View.VISIBLE);
     		mListContainer.setVisibility(View.GONE);
 
+			/* switching from map view with empty search, preform additional search with default project filtering */
+			if (mUseDefaultProject && VIEW_TYPE_MAP.equals(previousViewType)) {
+				loadObservations();
+			}
     	} else if (mViewType.equals(VIEW_TYPE_LIST)) {
     		mTabHost.setCurrentTab(2);
     		mMapContainer.setVisibility(View.GONE);
     		mGridContainer.setVisibility(View.GONE);
     		mListContainer.setVisibility(View.VISIBLE);
+
+			/* switching from map view with empty search, preform additional search with default project filtering */
+			if (mUseDefaultProject && VIEW_TYPE_MAP.equals(previousViewType)) {
+				loadObservations();
+			}
     	}
-    	
+
     	refreshActiveFilters();
-   	
     }
 
      // Method to add a TabHost
@@ -669,7 +673,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
         if (mSearchType != NO_SEARCH) {
 	    	loadExistingObservations(true);
         	refreshActiveFilters();
-        	refreshViewType();
+        	refreshViewType(null);
         }
 
         if (mViewType.equals(VIEW_TYPE_LIST)) {
@@ -687,6 +691,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
         outState.putInt("mSearchType", mSearchType);
         outState.putString("mViewType", mViewType);
         outState.putBoolean("mClearMapLimit", mClearMapLimit);
+		outState.putBoolean("mUseDefaultProject", mUseDefaultProject);
 
         outState.putSerializable("mTaxonId", mTaxonId);
         outState.putString("mTaxonName", mTaxonName);
@@ -913,8 +918,35 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
         if (mTaxonId != null) mServiceIntent.putExtra("taxon_id", mTaxonId.intValue());
         if (mUsername != null) mServiceIntent.putExtra("username", mUsername);
         if (mLocationId != null) mServiceIntent.putExtra("location_id", mLocationId.intValue());
-        if (mProjectId != null) mServiceIntent.putExtra("project_id", mProjectId.intValue());
-        mServiceIntent.putExtra("clear_map_limit", mClearMapLimit);
+
+		boolean clearMapLimit = mClearMapLimit;
+
+		if (mProjectId != null) {
+			mServiceIntent.putExtra("project_id", mProjectId.intValue());
+		} else {
+			final int defaultProject = ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject();
+			if (mUseDefaultProject && defaultProject > 0 && !mViewType.equals(VIEW_TYPE_MAP)) {
+                mServiceIntent.putExtra("project_id", defaultProject);
+                clearMapLimit = true;
+
+                final JSONObject autoUserJoinProjectDetails =
+                        ConfigurationManager.getInstance().getConfig().getAutoUserJoinProjectDetails();
+
+                if (autoUserJoinProjectDetails != null) {
+                    try {
+                        mProjectName = autoUserJoinProjectDetails.getString("title");
+                    } catch (JSONException e) {
+                        mProjectName = null;
+                        Log.v(TAG, "Could not retrieve project name");
+                    }
+                } else {
+                    mProjectName = null;
+                }
+            }
+		}
+
+
+		mServiceIntent.putExtra("clear_map_limit", clearMapLimit);
 
         startService(mServiceIntent);
     }
@@ -1391,6 +1423,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 					case FIND_PROJECTS:
 						mProjectName = item.getString("title");
 						mProjectId = item.getInt("id");
+						mUseDefaultProject = false;
 						
 						if (!item.isNull("place_id")) {
 							// Project has a place associated to it - get its coordinates
@@ -1503,8 +1536,11 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
    		if (mProjectId != null) {
   			if (filterText.length() > 0) filterText += " " + getResources().getString(R.string.and) + " ";
  			filterText += String.format(getResources().getString(R.string.in_project), mProjectName);
- 		}
- 		
+ 		} else if (mUseDefaultProject && !mViewType.equals(VIEW_TYPE_MAP)) {
+			if (filterText.length() > 0) filterText += " " + getResources().getString(R.string.and) + " ";
+			filterText += String.format(getResources().getString(R.string.in_project), mProjectName);
+		}
+
  		if (filterText.length() > 0) {
  			filterText = Character.toUpperCase(filterText.charAt(0)) + filterText.substring(1); // Upper case first letter
  			mActiveFiltersDescription.setText(filterText);
@@ -1513,7 +1549,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
  			mActiveFilters.setVisibility(View.GONE);
  		}
  		
- 		if (mViewType.equals(VIEW_TYPE_MAP)) {
+ 		if (mViewType.equals(VIEW_TYPE_MAP) || mUseDefaultProject) {
  			mRestricToMap.setVisibility(View.GONE);
  		} else {
  			mRestricToMap.setVisibility(mClearMapLimit ? View.GONE : View.VISIBLE);

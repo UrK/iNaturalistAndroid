@@ -2,6 +2,10 @@ package org.tatzpiteva.golan;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.Collection;
 
@@ -94,6 +98,7 @@ public class Config {
 
     private Collection<AutoProject> autoProjects;
     private int autoUserJoinProject;
+    private JSONObject autoUserJoinProjectDetails;
 
     @Override
     public String toString() {
@@ -117,5 +122,16 @@ public class Config {
         return autoProjects;
     }
 
-    public int getAutoUserJoinProject() { return autoUserJoinProject; }
+    public int getAutoUserJoinProject() {
+        return autoUserJoinProject;
+    }
+
+    @Nullable
+    public JSONObject getAutoUserJoinProjectDetails() {
+        return autoUserJoinProjectDetails;
+    }
+
+    public void setAutoUserJoinProjectDetails(@Nullable JSONObject projDetails) {
+        autoUserJoinProjectDetails = projDetails;
+    }
 }

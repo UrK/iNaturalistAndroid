@@ -1,11 +1,16 @@
 package org.tatzpiteva.golan;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import org.inaturalist.android.INaturalistService;
+import org.inaturalist.android.SerializableJSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -27,6 +32,34 @@ public class ConfigurationManager {
     // endregion
 
     // region helper classes and interfaces
+
+    private class ProjectDetailsReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            /* this is different get request, just drop it and continue waiting for the one issued by this instance */
+            if (intent.getExtras().getInt(INaturalistService.PROJECT_ID) !=
+                    ConfigurationManager.this.getConfig().getAutoUserJoinProject()) {
+                return;
+            }
+
+            context.unregisterReceiver(this);
+
+            SerializableJSONArray projs =
+                    (SerializableJSONArray) intent.getExtras().getSerializable(INaturalistService.PROJECTS_RESULT);
+
+            if (projs == null || projs.getJSONArray() == null || projs.getJSONArray().length() == 0) {
+                // TODO: inform about an error
+                return;
+            }
+
+            try {
+                ConfigurationManager.this.getConfig().setAutoUserJoinProjectDetails(projs.getJSONArray().getJSONObject(0));
+            } catch (JSONException e) {
+                Log.e(TAG, "Unable to retrieve auto-project configuration", e);
+            }
+        }
+    }
 
     // endregion
 
@@ -101,7 +134,27 @@ public class ConfigurationManager {
                 cacheConfig(stringData);
             }
             this.config = config;
+            retrieveAutoUserJoinProjectDetails();
         }
+    }
+
+    private void retrieveAutoUserJoinProjectDetails() {
+        if (context == null) {
+            return;
+        }
+
+        context.registerReceiver(
+                new ProjectDetailsReceiver(),
+                new IntentFilter(INaturalistService.ACTION_GET_PROJECT_DETAILS_RESULT));
+
+        Intent serviceIntent = new Intent(
+                INaturalistService.ACTION_GET_PROJECT_DETAILS, null, context, INaturalistService.class);
+
+        serviceIntent.putExtra(
+                INaturalistService.PROJECT_ID,
+                ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject());
+
+        context.startService(serviceIntent);
     }
 
     private void cacheConfig(@NonNull String stringData) {

@@ -32,7 +32,7 @@ public class ConfigHelper {
      *  user
      */
     public static Boolean preventProjectDeselection(int projectId) {
-        for (Config.AutoProject pj : ConfigurationManager.getInstance().getConfig().getAutoProjects()) {
+        for (Config.AutoProject pj : ConfigurationManager.getInstance().getConfig().getAutoProjects ()) {
             if (pj.id == projectId) {
                 return pj.smart_flag == Config.SmartFlag.DEFAULT_READ_ONLY;
             }

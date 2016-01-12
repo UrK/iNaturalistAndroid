@@ -181,6 +181,8 @@ public class INaturalistService extends IntentService implements ConnectionCallb
     public static String ACTION_GET_USER_DETAILS_RESULT = "get_user_details_result";
     public static String ACTION_GUIDE_XML_RESULT = "guide_xml_result";
     public static String ACTION_GUIDE_XML = "guide_xml";
+    public static String ACTION_GET_PROJECT_DETAILS = "get_project_details";
+    public static String ACTION_GET_PROJECT_DETAILS_RESULT = "get_project_details_result";
     public static String GUIDES_RESULT = "guides_result";
     public static String ACTION_REGISTER_USER_RESULT = "register_user_result";
     public static String TAXA_GUIDE_RESULT = "taxa_guide_result";
@@ -460,16 +462,24 @@ public class INaturalistService extends IntentService implements ConnectionCallb
                 leaveProject(id);
                 
             } else if (action.equals(ACTION_PULL_OBSERVATIONS)) {
-            	// Download observations without uploading any new ones
+                // Download observations without uploading any new ones
                 mIsSyncing = true;
                 mApp.setIsSyncing(mIsSyncing);
 
                 getUserObservations(0);
 
-                 // Update last sync time
+                // Update last sync time
                 long lastSync = System.currentTimeMillis();
                 mPreferences.edit().putLong("last_sync_time", lastSync).commit();
-                 
+            } else if (action.equals(ACTION_GET_PROJECT_DETAILS)) {
+
+                SerializableJSONArray projects = getProjectDetails(intent.getExtras().getInt(PROJECT_ID));
+
+                Intent reply = new Intent(ACTION_GET_PROJECT_DETAILS_RESULT);
+                reply.putExtra(PROJECTS_RESULT, projects);
+                reply.putExtra(PROJECT_ID, intent.getExtras().getInt(PROJECT_ID));
+                sendBroadcast(reply);
+
             } else {
                 mIsSyncing = true;
                 mApp.setIsSyncing(mIsSyncing);
@@ -497,7 +507,7 @@ public class INaturalistService extends IntentService implements ConnectionCallb
             }
         }
     }
-    
+
     private void syncObservations() throws AuthenticationException {
         deleteObservations(); // Delete locally-removed observations
         saveJoinedProjects();
@@ -1263,6 +1273,20 @@ public class INaturalistService extends IntentService implements ConnectionCallb
             
             return getNearByProjects(location);
         }
+    }
+
+    private SerializableJSONArray getProjectDetails(int projectId) throws AuthenticationException {
+        String inatNetwork = mApp.getInaturalistNetworkMember();
+        String inatHost = mApp.getStringResourceByName("inat_host_" + inatNetwork);
+        String url = "http://" + inatHost + "/projects/" + Integer.toString(projectId) + ".json";
+
+        JSONArray json = get(url);
+
+        if (json == null) {
+            return new SerializableJSONArray();
+        }
+
+        return new SerializableJSONArray(json);
     }
 
     private SerializableJSONArray getFeaturedProjects() throws AuthenticationException {

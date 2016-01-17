@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
 <string name="acc">Acc</string>
-<string name="app_name">=تطسبيطفع</string>
+<string name="app_name">تطسبيطفع</string>
 <string name="google_login">تسجيل الدخول بواسطة جوجل+</string>
 <string name="email_address">البريد الإلكتروني</string>
 <string name="observations_menu_add">اضف</string>
@@ -105,7 +105,7 @@
 <string name="com_facebook_usersettingsfragment_not_logged_in">لم تقم بتسجيل الدخول</string>
 <string name="com_facebook_placepicker_subtitle_format">%1$s • %2$,dكانت هناك</string>
 <string name="com_facebook_placepicker_subtitle_catetory_only_format">%1$s</string>
-<string name="com_facebook_placepicker_subtitle_were_here_only_format">%1$s • %2$,d היו כאן</string>
+<string name="com_facebook_placepicker_subtitle_were_here_only_format">%1$s • %2$,d كانو هنا</string>
 <string name="com_facebook_picker_done_button_text">انهاء</string>
 <string name="com_facebook_choose_friends">اختيار أصدقاء</string>
 <string name="com_facebook_nearby">قريب</string>
@@ -315,7 +315,7 @@
 <string name="no_results">لا يوجد نتائج للبحث</string>
 
 <string-array name="geoprivacy_items">
-    <item>גלוי</item>
+    <item>مرئي</item>
     <item>ضبابي</item>
     <item>خصوصي</item>
 </string-array>
@@ -345,6 +345,6 @@
 <string name="coordinates_lon">Lon:</string>
 <string name="coordinates_acc">Acc.</string>
 <string name="required">* حقل اجباري</string>
-<string name="downloading_observations">מוריד תצפיות</string>
+<string name="downloading_observations">   تحميل ارصاد</string>
 
 </resources>

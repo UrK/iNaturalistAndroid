@@ -145,7 +145,6 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 	private ListView mObservationsList;
 	private ObservationGridAdapter mGridAdapter;
 	private boolean mClearMapLimit;
-	private boolean mUseDefaultProject;
 	private List<JSONObject> mObservations;
 	private int mPage;
 	private boolean mIsLoading;
@@ -172,6 +171,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
     private int mObservationGridOffset;
     private int mObservationGridIndex;
 
+	public final static String INTENT_PARAM_PROJECT_ID = "INTENT_PARAM_PROJECT_ID";
 
     @Override
 	protected void onStart()
@@ -211,7 +211,6 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 	    	mSearchType = savedInstanceState.getInt("mSearchType");
 	    	mViewType = savedInstanceState.getString("mViewType");
 	    	mClearMapLimit = savedInstanceState.getBoolean("mClearMapLimit");
-			mUseDefaultProject = savedInstanceState.getBoolean("mUseDefaultProject");
 
 	    	mTaxonId = (Integer) savedInstanceState.getSerializable("mTaxonId");
 	    	mTaxonName = savedInstanceState.getString("mTaxonName");
@@ -273,12 +272,10 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 	    	mSearchType = NO_SEARCH;
 	    	mTaxonId = null;
 	    	mUsername = null;
+	    	mClearMapLimit = false;
 	    	mLocationId = null;
 			mProjectId = null;
-
 	    	mViewType = VIEW_TYPE_MAP;
-	    	mClearMapLimit = false;
-			mUseDefaultProject = true;
 	    	mPage = 1;
 	    	mIsLoading = false;
 	    }
@@ -341,7 +338,6 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
 				mCurrentSearch = mSearchText.getText().toString().trim();
-				mUseDefaultProject = false;
 				mSearchType = index;
 
 				mSearchToggle.performClick();
@@ -418,7 +414,6 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 				mLocationId = null;
 				mSearchType = FIND_NEAR_BY_OBSERVATIONS;
 				mPage = 1;
-				mUseDefaultProject = false;
 
 				refreshActiveFilters();
 				loadObservations();
@@ -499,8 +494,8 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 
 
     }
-    
-    @Override
+
+	@Override
     public void onTabChanged(String tag) {
 		String previousViewType = mViewType;
 
@@ -530,21 +525,11 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
     		mMapContainer.setVisibility(View.GONE);
     		mGridContainer.setVisibility(View.VISIBLE);
     		mListContainer.setVisibility(View.GONE);
-
-			/* switching from map view with empty search, preform additional search with default project filtering */
-			if (mUseDefaultProject && VIEW_TYPE_MAP.equals(previousViewType)) {
-				loadObservations();
-			}
     	} else if (mViewType.equals(VIEW_TYPE_LIST)) {
     		mTabHost.setCurrentTab(2);
     		mMapContainer.setVisibility(View.GONE);
     		mGridContainer.setVisibility(View.GONE);
     		mListContainer.setVisibility(View.VISIBLE);
-
-			/* switching from map view with empty search, preform additional search with default project filtering */
-			if (mUseDefaultProject && VIEW_TYPE_MAP.equals(previousViewType)) {
-				loadObservations();
-			}
     	}
 
     	refreshActiveFilters();
@@ -691,7 +676,6 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
         outState.putInt("mSearchType", mSearchType);
         outState.putString("mViewType", mViewType);
         outState.putBoolean("mClearMapLimit", mClearMapLimit);
-		outState.putBoolean("mUseDefaultProject", mUseDefaultProject);
 
         outState.putSerializable("mTaxonId", mTaxonId);
         outState.putString("mTaxonName", mTaxonName);
@@ -923,28 +907,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 
 		if (mProjectId != null) {
 			mServiceIntent.putExtra("project_id", mProjectId.intValue());
-		} else {
-			final int defaultProject = ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject();
-			if (mUseDefaultProject && defaultProject > 0 && !mViewType.equals(VIEW_TYPE_MAP)) {
-                mServiceIntent.putExtra("project_id", defaultProject);
-                clearMapLimit = true;
-
-                final JSONObject autoUserJoinProjectDetails =
-                        ConfigurationManager.getInstance().getConfig().getAutoUserJoinProjectDetails();
-
-                if (autoUserJoinProjectDetails != null) {
-                    try {
-                        mProjectName = autoUserJoinProjectDetails.getString("title");
-                    } catch (JSONException e) {
-                        mProjectName = null;
-                        Log.v(TAG, "Could not retrieve project name");
-                    }
-                } else {
-                    mProjectName = null;
-                }
-            }
 		}
-
 
 		mServiceIntent.putExtra("clear_map_limit", clearMapLimit);
 
@@ -1423,8 +1386,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 					case FIND_PROJECTS:
 						mProjectName = item.getString("title");
 						mProjectId = item.getInt("id");
-						mUseDefaultProject = false;
-						
+
 						if (!item.isNull("place_id")) {
 							// Project has a place associated to it - get its coordinates
 							int placeId = item.getInt("place_id");
@@ -1536,10 +1498,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
    		if (mProjectId != null) {
   			if (filterText.length() > 0) filterText += " " + getResources().getString(R.string.and) + " ";
  			filterText += String.format(getResources().getString(R.string.in_project), mProjectName);
- 		} else if (mUseDefaultProject && !mViewType.equals(VIEW_TYPE_MAP)) {
-			if (filterText.length() > 0) filterText += " " + getResources().getString(R.string.and) + " ";
-			filterText += String.format(getResources().getString(R.string.in_project), mProjectName);
-		}
+ 		}
 
  		if (filterText.length() > 0) {
  			filterText = Character.toUpperCase(filterText.charAt(0)) + filterText.substring(1); // Upper case first letter
@@ -1549,12 +1508,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
  			mActiveFilters.setVisibility(View.GONE);
  		}
  		
- 		if (mViewType.equals(VIEW_TYPE_MAP) || mUseDefaultProject) {
- 			mRestricToMap.setVisibility(View.GONE);
- 		} else {
- 			mRestricToMap.setVisibility(mClearMapLimit ? View.GONE : View.VISIBLE);
- 		}
- 		
+		mRestricToMap.setVisibility(mClearMapLimit ? View.GONE : View.VISIBLE);
  	}
  	
  	
@@ -1942,4 +1896,12 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
         SharedPreferences prefs = getSharedPreferences("iNaturalistPreferences", MODE_PRIVATE);
         return prefs.getString("username", null) != null;
     }
+
+	protected void setProject(Integer projectId, String projectName) {
+		mProjectId = projectId;
+		mProjectName = projectName;
+		if (mProjectId > 0) {
+			mClearMapLimit = true;
+		}
+	}
  }

@@ -346,5 +346,6 @@
 <string name="coordinates_acc">Acc.</string>
 <string name="required">* حقل اجباري</string>
 <string name="downloading_observations">   تحميل ارصاد</string>
+<string name="menu_explore_text_golan">פרוייקט גולן</string>
 
 </resources>

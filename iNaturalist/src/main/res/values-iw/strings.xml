@@ -337,5 +337,6 @@
     <string name="required">* שדה חובה</string>
     <string name="downloading_observations">מוריד תצפיות</string>
     <string name="login_signup">כניסה/רישום</string>
+    <string name="menu_explore_text_golan">פרוייקט גולן</string>
 
 </resources>

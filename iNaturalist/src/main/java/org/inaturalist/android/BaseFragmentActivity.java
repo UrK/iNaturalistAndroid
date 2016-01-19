@@ -33,6 +33,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.tatzpiteva.golan.ConfigurationManager;
+
 /**
  * Utility class for implementing the side-menu (navigation drawer) used throughout the app
  *
@@ -224,6 +228,12 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
                 startActivityIfNew(new Intent(BaseFragmentActivity.this, ProjectsActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
             }
         });
+        findViewById(R.id.menu_explore_golan).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityIfNew(new Intent(BaseFragmentActivity.this, INaturalistMapActivityWithDefaultProject.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+            }
+        });
         findViewById(R.id.menu_guides).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -293,8 +303,20 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
         }
     }
 
+    private void startGolanActivity() {
+        final Intent intent = new Intent(this, INaturalistMapActivityWithDefaultProject.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        intent.putExtra(
+                INaturalistMapActivity.INTENT_PARAM_PROJECT_ID,
+                ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject());
+
+        startActivityIfNew(intent);
+    }
+
     private void startActivityIfNew(Intent intent) {
-        if (intent.getComponent().getClassName().equals(this.getClass().getName())) {
+        if (intent.getComponent().getClassName().equals(this.getClass().getName()) &&
+                getIntent().getIntExtra(INaturalistMapActivity.INTENT_PARAM_PROJECT_ID, -1) != intent.getIntExtra(INaturalistMapActivity.INTENT_PARAM_PROJECT_ID, -1)) {
             // Activity is already loaded
             mDrawerLayout.closeDrawer(mSideMenu);
             return;

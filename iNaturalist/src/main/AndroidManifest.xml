@@ -172,6 +172,11 @@
         </activity>
         <activity
             android:configChanges="orientation"
+            android:label="@string/map"
+            android:name=".INaturalistMapActivityWithDefaultProject" >
+        </activity>
+        <activity
+            android:configChanges="orientation"
             android:label="@string/choose_location"
             android:name=".LocationChooserActivity" >
         </activity>

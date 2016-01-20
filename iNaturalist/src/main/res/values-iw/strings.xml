@@ -203,7 +203,7 @@
     <string name="alert_title_use">השתמשו</string>
     <string name="inat_network_settings">הגדרות רשת של iNaturalist</string>
     <string name="network_restart">הגדרות רשת השנתו. נא להפעיל את האפליקציה מחדש.</string>
-    <string name="explore">מפה</string>
+    <string name="explore">מה סביבי?</string>
     <string name="explore_description">מיפוי תצפיות בקרבתך</string>
     <string name="restricted_to_current_map_area">מוגבל לאיזור מפה נוכחי</string>
     <string name="search">חיפוש</string>
@@ -337,6 +337,7 @@
     <string name="required">* שדה חובה</string>
     <string name="downloading_observations">מוריד תצפיות</string>
     <string name="login_signup">כניסה/רישום</string>
-    <string name="menu_explore_text_golan">פרוייקט גולן</string>
+    <string name="menu_explore_text_golan">תצפיטבע</string>
+    <string name="gallery">גלריה</string>
 
 </resources>

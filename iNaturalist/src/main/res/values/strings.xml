@@ -420,6 +420,7 @@
     <string name="required">* Required</string>
     <string name="inat_support_email_address">support@tatzpiteva.org.il</string>
     <string name="downloading_observations">Downloading observations...</string>
-    <string name="menu_explore_text_golan">Project Golan</string>
+    <string name="menu_explore_text_golan">Tatzpiteva</string>
+    <string name="gallery">Gallery</string>
 </resources>
 

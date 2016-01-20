@@ -203,7 +203,6 @@
 <string name="alert_title_use">استعمال</string>
 <string name="inat_network_settings">إعدادات الشبكة iNaturalist</string>
 <string name="network_restart">اعدادات الشبكه تغير. الرجاء تفعيل التطبيق مرة أخرى.</string>
-<string name="explore">خريطة</string>
 <string name="explore_description">ارصاد  بالقرب منك</string>
 <string name="restricted_to_current_map_area">منطقة محدودة خريطة الحالية</string>
 <string name="search">بحث</string>
@@ -346,6 +345,9 @@
 <string name="coordinates_acc">Acc.</string>
 <string name="required">* حقل اجباري</string>
 <string name="downloading_observations">   تحميل ارصاد</string>
-<string name="menu_explore_text_golan">פרוייקט גולן</string>
+
+<string name="menu_explore_text_golan">تطسبيطفع</string>
+<string name="gallery">גלריה</string>
+<string name="explore">מה סביבי?</string>
 
 </resources>

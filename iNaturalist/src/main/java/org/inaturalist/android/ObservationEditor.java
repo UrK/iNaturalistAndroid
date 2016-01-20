@@ -401,14 +401,18 @@ public class ObservationEditor extends SherlockFragmentActivity {
                 getIntent().setAction(Intent.ACTION_INSERT);
 
                 mProjectIds = new ArrayList<>();
-                if (ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject() > 0) {
-                    mProjectIds.add(ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject());
+                final int aup = ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject();
+                if (aup > 0 && !mProjectIds.contains(aup)) {
+                    mProjectIds.add(aup);
                 }
 
                 for (Config.AutoProject p : ConfigurationManager.getInstance().getConfig().getAutoProjects()) {
                     if (p.smart_flag == Config.SmartFlag.DEFAULT_READ_ONLY ||
-                            p.smart_flag == Config.SmartFlag.DEFAULT_READ_WRITE)
-                    mProjectIds.add(p.id);
+                            p.smart_flag == Config.SmartFlag.DEFAULT_READ_WRITE) {
+                        if (!mProjectIds.contains(p.id)) {
+                            mProjectIds.add(p.id);
+                        }
+                    }
                 }
 
                 break;

@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,7 +71,7 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
     
     private INaturalistApp mApp;
     private int mObservationId;
-    private ArrayList<Integer> mObservationProjects;
+    private Set<Integer> mObservationProjects;
 
     private ProjectReceiver mProjectReceiver;
     private boolean mIsConfirmation;
@@ -110,10 +113,6 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
 
                     final int projId = projeJson.getInt("id");
                     projectIds.add(projId);
-
-                    if (ConfigHelper.isProjectAutoAdd(projId)) {
-                        mObservationProjects.add(projId);
-                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -202,7 +201,7 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
 
                 Intent intent = new Intent();
                 Bundle bundle = new Bundle();
-                bundle.putIntegerArrayList(PROJECT_IDS, mObservationProjects);
+                bundle.putIntegerArrayList(PROJECT_IDS, new ArrayList<>(mObservationProjects));
                 bundle.putSerializable(PROJECT_FIELDS, mProjectFieldValues);
                 intent.putExtras(bundle);
 
@@ -243,12 +242,12 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
         
         if (savedInstanceState == null) {
             mObservationId = (int) intent.getIntExtra(INaturalistService.OBSERVATION_ID, 0);
-            mObservationProjects = intent.getIntegerArrayListExtra(INaturalistService.PROJECT_ID);
+            mObservationProjects = new HashSet<>(intent.getIntegerArrayListExtra(INaturalistService.PROJECT_ID));
             mIsConfirmation = intent.getBooleanExtra(ProjectSelectorActivity.IS_CONFIRMATION, false);
             mProjectFieldValues = (HashMap<Integer, ProjectFieldValue>) intent.getSerializableExtra(ProjectSelectorActivity.PROJECT_FIELDS);
         } else {
             mObservationId = (int) savedInstanceState.getInt(INaturalistService.OBSERVATION_ID, 0);
-            mObservationProjects = savedInstanceState.getIntegerArrayList(INaturalistService.PROJECT_ID);
+            mObservationProjects = new HashSet<>(savedInstanceState.getIntegerArrayList(INaturalistService.PROJECT_ID));
             mIsConfirmation = savedInstanceState.getBoolean(ProjectSelectorActivity.IS_CONFIRMATION);
             mShownSearchBox = savedInstanceState.getBoolean("mShownSearchBox");
             mProjectFieldValues = (HashMap<Integer, ProjectFieldValue>) savedInstanceState.getSerializable(ProjectSelectorActivity.PROJECT_FIELDS);
@@ -274,7 +273,7 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
                 public void onClick(View v) {
                     Intent intent = new Intent();
                     Bundle bundle = new Bundle();
-                    bundle.putIntegerArrayList(PROJECT_IDS, mObservationProjects);
+                    bundle.putIntegerArrayList(PROJECT_IDS, new ArrayList<>(mObservationProjects));
                     intent.putExtras(bundle);
 
                     setResult(RESULT_OK, intent);
@@ -319,7 +318,7 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(INaturalistService.OBSERVATION_ID, mObservationId);
-        outState.putIntegerArrayList(INaturalistService.PROJECT_ID, mObservationProjects);
+        outState.putIntegerArrayList(INaturalistService.PROJECT_ID, new ArrayList<>(mObservationProjects));
         outState.putBoolean(ProjectSelectorActivity.IS_CONFIRMATION, mIsConfirmation);
         outState.putBoolean("mShownSearchBox", mShownSearchBox);
 
@@ -602,7 +601,7 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
 
         if (mObservationProjects.contains(projectId)) {
             mObservationProjects.remove(projectId);
-        } else {
+        } else if (!mObservationProjects.contains(projectId)) {
             mObservationProjects.add(projectId);
         }
 

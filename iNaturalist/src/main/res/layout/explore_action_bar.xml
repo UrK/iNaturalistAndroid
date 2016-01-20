@@ -11,6 +11,7 @@
         style="@android:style/TextAppearance.Medium"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
+        android:id="@+id/explore_title"
         />
     
     <ImageButton android:src="@drawable/ic_fa_search"

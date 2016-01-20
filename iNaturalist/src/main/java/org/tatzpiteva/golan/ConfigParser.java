@@ -55,6 +55,10 @@ public class ConfigParser {
             if (strMenuFlag != null) {
                 rv.menu_flag = Config.SmartFlag.fromInt(Integer.valueOf(strMenuFlag));
             }
+
+            rv.latitude = jobj.getDouble("latitude");
+            rv.longitude = jobj.getDouble("longitude");
+            rv.zoomLevel = (float) jobj.getDouble("zoom_level");
         } catch (JSONException e) {
             Log.e(TAG, "Invalid auto project JSON: " + jobj.toString());
             return null;

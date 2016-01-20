@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Collection;
@@ -49,6 +48,9 @@ public class Config {
         public int id;
         public String title;
         public String slug;
+        public Double latitude;
+        public Double longitude;
+        public Float zoomLevel;
         public SmartFlag smart_flag;
         public SmartFlag menu_flag;
 
@@ -60,6 +62,9 @@ public class Config {
             slug = in.readString();
             smart_flag = SmartFlag.fromInt(in.readInt());
             menu_flag = SmartFlag.fromInt(in.readInt());
+            latitude = in.readDouble();
+            longitude = in.readDouble();
+            zoomLevel = in.readFloat();
         }
 
         public static final Creator<AutoProject> CREATOR = new Creator<AutoProject>() {
@@ -87,6 +92,9 @@ public class Config {
             parcel.writeString(slug);
             parcel.writeInt(smart_flag.getValue());
             parcel.writeInt(menu_flag.getValue());
+            parcel.writeDouble(latitude);
+            parcel.writeDouble(longitude);
+            parcel.writeFloat(zoomLevel);
         }
 
         @Override

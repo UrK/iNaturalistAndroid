@@ -18,7 +18,6 @@ import android.graphics.Typeface;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tatzpiteva.golan.ConfigurationManager;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -123,6 +122,9 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 	private Integer mLocationId;
 	private String mProjectName;
 	private Integer mProjectId;
+	private Integer mLockedToProjectId;
+	private LatLng mLockedProjectLocation;
+	private Float mLockedProjectZoom;
 
 	private LocationClient mLocationClient;
 	private double mMinx;
@@ -149,6 +151,8 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 	private int mPage;
 	private boolean mIsLoading;
 	private ObservationListAdapter mListAdapter;
+
+	private Boolean mIsCameraPositionStabilized = false;
 	
 	private final static int NO_SEARCH = -1;
 	private final static int FIND_NEAR_BY_OBSERVATIONS = 0;
@@ -223,6 +227,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 
 	    	mProjectId = (Integer) savedInstanceState.getSerializable("mProjectId");
 	    	mProjectName = savedInstanceState.getString("mProjectName");
+			mLockedToProjectId = (Integer) savedInstanceState.getSerializable("mLockedProjectId");
 
 	    	mMinx = savedInstanceState.getDouble("minx");
 	    	mMaxx = savedInstanceState.getDouble("maxx");
@@ -275,6 +280,12 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 	    	mClearMapLimit = false;
 	    	mLocationId = null;
 			mProjectId = null;
+
+			mLockedToProjectId = getIntent().getIntExtra(INTENT_PARAM_PROJECT_ID, -1);
+			if (mLockedToProjectId == -1) {
+				mLockedToProjectId = null;
+			}
+
 	    	mViewType = VIEW_TYPE_MAP;
 	    	mPage = 1;
 	    	mIsLoading = false;
@@ -283,7 +294,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
         mTopActionBar = getSupportActionBar();
         mTopActionBar.setDisplayShowCustomEnabled(true);
         mTopActionBar.setCustomView(R.layout.explore_action_bar);
-        
+
         mSearchBar = (View)findViewById(R.id.search_bar);
         mSearchBarBackground = (View)findViewById(R.id.search_bar_background);
         mSearchBarBackground.setOnClickListener(new OnClickListener() {
@@ -501,7 +512,10 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 
 		mViewType = tag;
 
+		mIsCameraPositionStabilized = false;
+
     	refreshViewType(previousViewType);
+
     }
 
     private void refreshViewType(@Nullable String previousViewType) {
@@ -688,6 +702,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 
         outState.putSerializable("mProjectId", mProjectId);
         outState.putString("mProjectName", mProjectName);
+		outState.putSerializable("mLockedToProjectId", mLockedToProjectId);
 
 		if (mMap != null) {
 			VisibleRegion vr = mMap.getProjection().getVisibleRegion();
@@ -757,35 +772,52 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
                 mMap.setOnMarkerClickListener(this);
                 mMap.setOnInfoWindowClickListener(this);
                 mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                
+
+				if (mLockedToProjectId != null &&
+						mLockedProjectLocation != null &&
+						mLockedProjectLocation.latitude != 0 &&
+						mLockedProjectLocation.longitude != 0 &&
+						mLockedProjectZoom != null) {
+					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLockedProjectLocation, mLockedProjectZoom));
+
+				}
+
                 mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
-                	@Override
-                	public void onCameraChange(CameraPosition arg0) {
-                		mClearMapLimit = false;
-                		mActiveSearch = false;
-                		mPage = 1;
-                		loadObservations();
-                	}
-                });
+					@Override
+					public void onCameraChange(CameraPosition arg0) {
+						/* there are two calls at the init that have to be discarded: one with coordinates 0, 0 and the
+						 * second: with real coordinates that came from the GPS. These two should not trigger map
+						 * filtering */
+						if (arg0.target.latitude != 0 && arg0.target.longitude != 0) {
+							if (mIsCameraPositionStabilized) {
+								mClearMapLimit = false;
+							}
+							mIsCameraPositionStabilized = true;
+						}
+						mActiveSearch = false;
+						mPage = 1;
+						loadObservations();
+					}
+				});
 
                 if ((mMiny != 0) && (mMinx != 0) && (mMaxy != 0) && (mMaxx != 0)) {
                 	mMap.setOnMapLoadedCallback(new OnMapLoadedCallback() {
-                		@Override
-                		public void onMapLoaded() {
-                			LatLngBounds bounds = new LatLngBounds(new LatLng(mMiny, mMinx), new LatLng(mMaxy, mMaxx));
-                			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
-                		}
-                	});
+						@Override
+						public void onMapLoaded() {
+							LatLngBounds bounds = new LatLngBounds(new LatLng(mMiny, mMinx), new LatLng(mMaxy, mMaxx));
+							mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
+						}
+					});
                 } else {
                 	mMap.setOnMapLoadedCallback(new OnMapLoadedCallback() {
-                		@Override
-                		public void onMapLoaded() {
-                			if (mSearchType == NO_SEARCH) {
-                				loadObservations();
-                				refreshActiveFilters();
-                			}
-                		}
-                	});
+						@Override
+						public void onMapLoaded() {
+							if (mSearchType == NO_SEARCH) {
+								loadObservations();
+								refreshActiveFilters();
+							}
+						}
+					});
 
                 }
 
@@ -905,7 +937,10 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 
 		boolean clearMapLimit = mClearMapLimit;
 
-		if (mProjectId != null) {
+		if (mLockedToProjectId != null) {
+			mServiceIntent.putExtra("project_id", mLockedToProjectId.intValue());
+			clearMapLimit = true;
+		} else if (mProjectId != null) {
 			mServiceIntent.putExtra("project_id", mProjectId.intValue());
 		}
 
@@ -1508,7 +1543,7 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
  			mActiveFilters.setVisibility(View.GONE);
  		}
  		
-		mRestricToMap.setVisibility(mClearMapLimit ? View.GONE : View.VISIBLE);
+		mRestricToMap.setVisibility(mClearMapLimit || mLockedToProjectId != null ? View.GONE : View.VISIBLE);
  	}
  	
  	
@@ -1606,7 +1641,9 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
  			.build();
 
  			CameraUpdate camUpdate = CameraUpdateFactory.newCameraPosition(camPos);
- 			mMap.moveCamera(camUpdate);
+			if (mLockedProjectLocation == null) {
+				mMap.moveCamera(camUpdate);
+			}
  		}
 
  		reloadObservations();
@@ -1897,11 +1934,27 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
         return prefs.getString("username", null) != null;
     }
 
-	protected void setProject(Integer projectId, String projectName) {
-		mProjectId = projectId;
+	protected void lockProject(
+			Integer projectId, final String projectName, final double latitude, final double longitude, final float zoomLevel) {
+		mLockedToProjectId = projectId;
 		mProjectName = projectName;
-		if (mProjectId > 0) {
-			mClearMapLimit = true;
-		}
+
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (latitude != 0 && longitude != 0 && zoomLevel != 0) {
+					mLockedProjectLocation = new LatLng(latitude, longitude);
+					mLockedProjectZoom = zoomLevel;
+					if (mMap != null) {
+						mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), zoomLevel));
+					}
+				}
+
+				TextView tv = (TextView) mTopActionBar.getCustomView().findViewById(R.id.explore_title);
+				if (tv != null) {
+					tv.setText(projectName);
+				}
+			}
+		});
 	}
  }

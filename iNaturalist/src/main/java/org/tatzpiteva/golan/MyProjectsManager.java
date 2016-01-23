@@ -23,6 +23,12 @@ import java.util.Set;
  */
 public class MyProjectsManager {
 
+    // region Constants
+
+    public static final String ACTION_MY_PROJECTS_LOADED = "MyProjectsManager_ACTION_MY_PROJECTS_LOADED";
+
+    // endregion
+
     // region Helper classes
 
     public static class Project {
@@ -127,6 +133,11 @@ public class MyProjectsManager {
             }
 
             projects.add(project);
+
+            /* all pending projects have been processed, broadcast event */
+            if (pendingDetails.isEmpty()) {
+                context.sendBroadcast(new Intent(ACTION_MY_PROJECTS_LOADED));
+            }
         }
     }
 
@@ -184,7 +195,7 @@ public class MyProjectsManager {
         getMyProjects();
     }
 
-    public static MyProjectsManager getInstance() {
+    @NonNull public static MyProjectsManager getInstance() {
         if (instance == null) {
             throw new IllegalArgumentException(
                     "MyProjectsManager.getInstance(Context) have to be called at least once before calling " +
@@ -193,7 +204,7 @@ public class MyProjectsManager {
         return instance;
     }
 
-    public static MyProjectsManager getInstance(Context context) {
+    @NonNull public static MyProjectsManager getInstance(Context context) {
         if (instance == null) {
             synchronized (MyProjectsManager.class) {
                 if (instance == null) {
@@ -208,8 +219,17 @@ public class MyProjectsManager {
 
     // region Interface methods
 
-    @Nullable public Collection<Project> getProjects() {
+    @NonNull public Collection<Project> getProjects() {
         return this.projects;
+    }
+
+    @Nullable public Project getProject(int id) {
+        for (Project p : projects) {
+            if (p.id == id) {
+                return p;
+            }
+        }
+        return null;
     }
 
     // endregion

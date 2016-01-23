@@ -33,9 +33,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.tatzpiteva.golan.ConfigurationManager;
+import org.tatzpiteva.golan.MyProjectsManager;
 
 /**
  * Utility class for implementing the side-menu (navigation drawer) used throughout the app
@@ -301,21 +300,54 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
                 ((ImageView) findViewById(R.id.menu_settings_icon)).setAlpha(1.0f);
             }
         }
-        fillMyProjecs();
+        fillMyProjects();
     }
 
-    private void fillMyProjecs() {
-        View mv = findViewById(R.id.menu_dynamic_projects);
+    private void fillMyProjects() {
+        addMyProjectsToMenu();
 
+        IntentFilter filter = new IntentFilter(MyProjectsManager.ACTION_MY_PROJECTS_LOADED);
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, final Intent intent) {
+                unregisterReceiver(this);
+                addMyProjectsToMenu();
+            }
+        }, filter);
     }
 
-    private void startGolanActivity() {
+    private void addMyProjectsToMenu() {
+        final LinearLayout mv = (LinearLayout) findViewById(R.id.menu_dynamic_projects);
+        mv.post(new Runnable() {
+            @Override
+            public void run() {
+                mv.removeAllViews();
+                mv.setVisibility(MyProjectsManager.getInstance().getProjects().size() > 0 ? View.VISIBLE : View.GONE);
+
+                for (MyProjectsManager.Project p : MyProjectsManager.getInstance().getProjects()) {
+                    TextView tv = new TextView(BaseFragmentActivity.this);
+                    tv.setText(p.title);
+                    tv.setLayoutParams(new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    tv.setTag(p.id);
+                    mv.addView(tv);
+
+                    tv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            startProjectActivity((Integer) view.getTag());
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void startProjectActivity(int projectId) {
         final Intent intent = new Intent(this, INaturalistMapActivityWithDefaultProject.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        intent.putExtra(
-                INaturalistMapActivity.INTENT_PARAM_PROJECT_ID,
-                ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject());
+        intent.putExtra(INaturalistMapActivity.INTENT_PARAM_PROJECT_ID, projectId);
 
         startActivityIfNew(intent);
     }

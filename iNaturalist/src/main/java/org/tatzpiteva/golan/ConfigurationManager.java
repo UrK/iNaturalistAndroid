@@ -12,6 +12,7 @@ import android.util.Log;
 import org.inaturalist.android.INaturalistService;
 import org.inaturalist.android.SerializableJSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -38,12 +39,13 @@ public class ConfigurationManager {
         @Override
         public void onReceive(Context context, Intent intent) {
             /* this is different get request, just drop it and continue waiting for the one issued by this instance */
-            if (intent.getExtras().getInt(INaturalistService.PROJECT_ID) !=
-                    ConfigurationManager.this.getConfig().getAutoUserJoinProject()) {
+
+            int returnedProjectId = intent.getExtras().getInt(INaturalistService.PROJECT_ID);
+            Config.AutoProject autoProject = ConfigHelper.findAutoProject(returnedProjectId);
+
+            if (returnedProjectId != getConfig().getAutoUserJoinProject() && autoProject == null) {
                 return;
             }
-
-            context.unregisterReceiver(this);
 
             SerializableJSONArray projs =
                     (SerializableJSONArray) intent.getExtras().getSerializable(INaturalistService.PROJECTS_RESULT);
@@ -54,9 +56,26 @@ public class ConfigurationManager {
             }
 
             try {
-                ConfigurationManager.this.getConfig().setAutoUserJoinProjectDetails(projs.getJSONArray().getJSONObject(0));
+                JSONObject projDetails = projs.getJSONArray().getJSONObject(0);
+
+                if (getConfig().getAutoUserJoinProject() == returnedProjectId) {
+                    ConfigurationManager.this.getConfig().setAutoUserJoinProjectDetails(projDetails);
+                }
+
+                if (ConfigHelper.addDetailsToProject(returnedProjectId, projDetails)) {
+                    Log.v(TAG, "Successfully added details to project " + returnedProjectId);
+                } else {
+                    Log.i(TAG, "Failed to add details to project " + returnedProjectId);
+                }
+
             } catch (JSONException e) {
                 Log.e(TAG, "Unable to retrieve auto-project configuration", e);
+            }
+
+            /* if all has been retrieved: auto user join project and all the auto-projects, unregister the receiver, as
+             * there is no need to listen for project details retrieval events */
+            if (getConfig().getAutoUserJoinProjectDetails() != null && ConfigHelper.allAutoProjectHaveDetails()) {
+                context.unregisterReceiver(this);
             }
         }
     }
@@ -120,10 +139,6 @@ public class ConfigurationManager {
         super.finalize();
     }
 
-    public void destroy() {
-        context = null;
-    }
-
     // endregion
 
     // region Utilities
@@ -135,6 +150,7 @@ public class ConfigurationManager {
             }
             this.config = config;
             retrieveAutoUserJoinProjectDetails();
+            retrieveAutoProjectDetails();
         }
     }
 
@@ -155,6 +171,25 @@ public class ConfigurationManager {
                 ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject());
 
         context.startService(serviceIntent);
+    }
+
+    private void retrieveAutoProjectDetails() {
+        if (context == null || config == null || config.getAutoProjects() == null) {
+            return;
+        }
+
+        context.registerReceiver(
+                new ProjectDetailsReceiver(),
+                new IntentFilter(INaturalistService.ACTION_GET_PROJECT_DETAILS_RESULT));
+
+        for (Config.AutoProject p : config.getAutoProjects()) {
+            Intent serviceIntent = new Intent(
+                    INaturalistService.ACTION_GET_PROJECT_DETAILS, null, context, INaturalistService.class);
+
+            serviceIntent.putExtra(INaturalistService.PROJECT_ID, p.id);
+
+            context.startService(serviceIntent);
+        }
     }
 
     private void cacheConfig(@NonNull String stringData) {

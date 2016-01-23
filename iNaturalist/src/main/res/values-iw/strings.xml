@@ -339,5 +339,6 @@
     <string name="login_signup">כניסה/רישום</string>
     <string name="menu_explore_text_golan">תצפיטבע</string>
     <string name="gallery">גלריה</string>
+    <string name="menu_my_projects">פרוייקטים שלי</string>
 
 </resources>

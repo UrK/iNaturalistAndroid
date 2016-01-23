@@ -405,6 +405,9 @@ public class LoginSignupActivity extends Activity implements SignInTask.SignInTa
     public void onLoginSuccessful() {
         mSignInTask.pause();
 
+        /* broadcast login event */
+        // TODO:
+
         /* on registration join the new user to specified projects right away */
         if (mIsSignup && ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject() > 0) {
 

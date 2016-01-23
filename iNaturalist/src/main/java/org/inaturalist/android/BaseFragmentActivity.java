@@ -301,6 +301,12 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
                 ((ImageView) findViewById(R.id.menu_settings_icon)).setAlpha(1.0f);
             }
         }
+        fillMyProjecs();
+    }
+
+    private void fillMyProjecs() {
+        View mv = findViewById(R.id.menu_dynamic_projects);
+
     }
 
     private void startGolanActivity() {

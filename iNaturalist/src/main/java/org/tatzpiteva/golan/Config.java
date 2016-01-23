@@ -53,8 +53,11 @@ public class Config {
         public Float zoomLevel;
         public SmartFlag smart_flag;
         public SmartFlag menu_flag;
+        public Boolean detailsRetrieved;
 
-        public AutoProject() { }
+        public AutoProject() {
+            detailsRetrieved = false;
+        }
 
         protected AutoProject(Parcel in) {
             id = in.readInt();
@@ -65,6 +68,7 @@ public class Config {
             latitude = in.readDouble();
             longitude = in.readDouble();
             zoomLevel = in.readFloat();
+            detailsRetrieved = (in.readInt() != 0);
         }
 
         public static final Creator<AutoProject> CREATOR = new Creator<AutoProject>() {
@@ -95,6 +99,7 @@ public class Config {
             parcel.writeDouble(latitude);
             parcel.writeDouble(longitude);
             parcel.writeFloat(zoomLevel);
+            parcel.writeInt(detailsRetrieved ? 1 : 0);
         }
 
         @Override

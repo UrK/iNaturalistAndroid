@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import org.inaturalist.android.INaturalistService.LoginType;
 import org.tatzpiteva.golan.ConfigurationManager;
+import org.tatzpiteva.golan.MyProjectsManager;
 
 import android.app.Activity;
 import android.app.Application;
@@ -79,6 +80,7 @@ public class INaturalistApp extends Application {
         Fabric.with(this, new Crashlytics());
         FacebookSdk.sdkInitialize(getApplicationContext());
         ConfigurationManager.getInstance(getApplicationContext());
+        MyProjectsManager.getInstance(getApplicationContext());
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         INaturalistApp.context = getApplicationContext();

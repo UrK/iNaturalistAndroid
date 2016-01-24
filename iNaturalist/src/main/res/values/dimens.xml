@@ -3,4 +3,5 @@
     <dimen name="actionbar_height">45dip</dimen>
     <dimen name="actionbar_item_height">45dip</dimen>
     <dimen name="actionbar_item_width">45dip</dimen>
+    <dimen name="side_menu_text_size">16sp</dimen>
 </resources>

@@ -1935,14 +1935,25 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
     }
 
 	protected void lockProject(
-			Integer projectId, final String projectName, final double latitude, final double longitude, final float zoomLevel) {
+			Integer projectId,
+			final String projectName,
+			final Double latitude,
+			final Double longitude,
+			final Float zoomLevel) {
+
 		mLockedToProjectId = projectId;
 		mProjectName = projectName;
 
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (latitude != 0 && longitude != 0 && zoomLevel != 0) {
+				if (latitude != null &&
+						longitude != null &&
+						zoomLevel != null &&
+						latitude != 0 &&
+						longitude != 0 &&
+						zoomLevel != 0) {
+
 					mLockedProjectLocation = new LatLng(latitude, longitude);
 					mLockedProjectZoom = zoomLevel;
 					if (mMap != null) {
@@ -1956,5 +1967,8 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 				}
 			}
 		});
+		if (mApp != null) {
+			loadObservations();
+		}
 	}
  }

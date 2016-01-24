@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -324,18 +325,18 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
                 mv.removeAllViews();
                 mv.setVisibility(MyProjectsManager.getInstance().getProjects().size() > 0 ? View.VISIBLE : View.GONE);
 
-                for (MyProjectsManager.Project p : MyProjectsManager.getInstance().getProjects()) {
-                    TextView tv = new TextView(BaseFragmentActivity.this);
-                    tv.setText(p.title);
-                    tv.setLayoutParams(new LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                    tv.setTag(p.id);
-                    mv.addView(tv);
+                for (final MyProjectsManager.Project p : MyProjectsManager.getInstance().getProjects()) {
+                    LinearLayout projItemLayout = (LinearLayout)
+                            getLayoutInflater().inflate(R.layout.side_menu_item, null);
 
-                    tv.setOnClickListener(new View.OnClickListener() {
+                    ((TextView) projItemLayout.findViewById(R.id.side_menu_item_text)).setText(p.title);
+
+                    mv.addView(projItemLayout);
+
+                    projItemLayout.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            startProjectActivity((Integer) view.getTag());
+                            startProjectActivity(p.id);
                         }
                     });
                 }
@@ -353,8 +354,14 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
     }
 
     private void startActivityIfNew(Intent intent) {
-        if (intent.getComponent().getClassName().equals(this.getClass().getName()) &&
-                getIntent().getIntExtra(INaturalistMapActivity.INTENT_PARAM_PROJECT_ID, -1) != intent.getIntExtra(INaturalistMapActivity.INTENT_PARAM_PROJECT_ID, -1)) {
+        if (intent.getComponent().getClassName().equals(this.getClass().getName())) {
+
+            int currentProjectId = getIntent().getIntExtra(INaturalistMapActivity.INTENT_PARAM_PROJECT_ID, -1);
+            int requestedProjectId = intent.getIntExtra(INaturalistMapActivity.INTENT_PARAM_PROJECT_ID, -1);
+
+            if (currentProjectId != requestedProjectId) {
+                this.onNewIntent(intent);
+            }
             // Activity is already loaded
             mDrawerLayout.closeDrawer(mSideMenu);
             return;

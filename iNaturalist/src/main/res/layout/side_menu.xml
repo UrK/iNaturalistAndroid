@@ -147,7 +147,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="@dimen/side_menu_text_size"
                 android:textColor="#000000"
                 android:layout_marginStart="30dp"
                 android:text="@string/explore"/>
@@ -174,7 +174,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="@dimen/side_menu_text_size"
                 android:textColor="#000000"
                 android:layout_marginStart="30dp"
                 android:text="@string/menu_explore_text_golan"/>
@@ -201,7 +201,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="@dimen/side_menu_text_size"
                 android:textColor="#000000"
                 android:layout_marginStart="30dp"
                 android:text="@string/projects"/>
@@ -227,7 +227,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="@dimen/side_menu_text_size"
                 android:textColor="#000000"
                 android:layout_marginStart="30dp"
                 android:text="@string/guides"/>
@@ -253,7 +253,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="@dimen/side_menu_text_size"
                 android:textColor="#000000"
                 android:layout_marginStart="30dp"
                 android:text="@string/activity"/>
@@ -283,7 +283,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="@dimen/side_menu_text_size"
                 android:textColor="#000000"
                 android:layout_marginStart="30dp"
                 android:text="@string/settings"/>
@@ -296,6 +296,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textAllCaps="true"
+                android:textSize="@dimen/side_menu_text_size"
+                android:gravity="center"
                 android:text="@string/menu_my_projects"/>
             <LinearLayout
                 android:layout_width="match_parent"

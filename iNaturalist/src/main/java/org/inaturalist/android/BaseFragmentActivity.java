@@ -228,12 +228,6 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
                 startActivityIfNew(new Intent(BaseFragmentActivity.this, ProjectsActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
             }
         });
-        findViewById(R.id.menu_explore_golan).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityIfNew(new Intent(BaseFragmentActivity.this, INaturalistMapActivityWithDefaultProject.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
-            }
-        });
         findViewById(R.id.menu_guides).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

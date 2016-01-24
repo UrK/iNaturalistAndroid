@@ -56,6 +56,9 @@ public class SignInTask extends AsyncTask<String, Void, String> {
     private static final int REQUEST_CODE_LOGIN = 0x1000;
     private static final int REQUEST_CODE_ADD_ACCOUNT = 0x1001;
 
+    public static final String ACTION_RESULT_SIGNED_IN = "SigninTask_ACTION_RESULT_SIGNED_IN";
+    public static final String ACTION_PARAM_USERNAME = "SiginTask_ACTION_PARAM_USERNAME";
+
     private String mGoogleUsername;
 
     public interface SignInTaskStatus {
@@ -207,6 +210,10 @@ public class SignInTask extends AsyncTask<String, Void, String> {
         mPrefEditor.commit();
 
         mCallback.onLoginSuccessful();
+
+        final Intent broadcastIntent = new Intent(ACTION_RESULT_SIGNED_IN);
+        broadcastIntent.putExtra(ACTION_PARAM_USERNAME, mUsername);
+        mActivity.sendBroadcast(broadcastIntent);
 
         // Run the first observation sync
         Intent serviceIntent = new Intent(INaturalistService.ACTION_FIRST_SYNC, null, mActivity, INaturalistService.class);

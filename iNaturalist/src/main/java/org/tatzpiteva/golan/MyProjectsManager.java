@@ -10,10 +10,15 @@ import android.support.annotation.Nullable;
 
 import org.inaturalist.android.INaturalistService;
 import org.inaturalist.android.SerializableJSONArray;
+import org.inaturalist.android.SignInTask;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,18 +31,18 @@ public class MyProjectsManager {
     // region Constants
 
     public static final String ACTION_MY_PROJECTS_LOADED = "MyProjectsManager_ACTION_MY_PROJECTS_LOADED";
+    private static final String SHARED_CONFIG = "MyProjectsManager_ProjectCache";
 
     // endregion
 
     // region Helper classes
 
-    public static class Project {
+    public static class Project implements Serializable {
         public int id;
         public String title;
         public Double latitude;
         public Double longitude;
         public Float zoomLevel;
-        public boolean detailsRetrieved;
 
         @Override
         public boolean equals(Object o) {
@@ -239,7 +244,7 @@ public class MyProjectsManager {
     private void getMyProjects() {
         SharedPreferences prefs = context.getSharedPreferences("iNaturalistPreferences", Context.MODE_PRIVATE);
         if (prefs.getString("username", null) == null) {
-            projects = null;
+            projects.clear();
             return;
         }
 
@@ -247,8 +252,10 @@ public class MyProjectsManager {
                 new Intent(INaturalistService.ACTION_GET_JOINED_PROJECTS, null, context, INaturalistService.class);
         context.startService(serviceIntent);
 
-        IntentFilter filter = new IntentFilter(INaturalistService.ACTION_JOINED_PROJECTS_RESULT);
-        context.registerReceiver(new MyProjectsReceiver(), filter);
+        context.registerReceiver(
+                new MyProjectsReceiver(), new IntentFilter(INaturalistService.ACTION_JOINED_PROJECTS_RESULT));
+
+        context.registerReceiver(new UserLoginListener(), new IntentFilter(SignInTask.ACTION_RESULT_SIGNED_IN));
     }
 
     // endregion

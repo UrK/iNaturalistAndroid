@@ -249,6 +249,7 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
         });
 
         findViewById(R.id.menu_guides).setVisibility(View.GONE);
+        findViewById(R.id.menu_projects).setVisibility(View.GONE);
 
         findViewById(R.id.menu_activity).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -274,6 +275,13 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
             @Override
             public void onClick(View view) {
                 startActivityIfNew(new Intent(BaseFragmentActivity.this, ObservationListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+            }
+        });
+
+        findViewById(R.id.menu_tatzpiteva).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startProjectActivity(ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject());
             }
         });
 
@@ -345,14 +353,13 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
         mv.post(new Runnable() {
             @Override
             public void run() {
-                findViewById(R.id.my_projects_activity_indicator).setVisibility(View.GONE);
+                Collection<MyProjectsManager.Project> projects = MyProjectsManager.getInstance().getProjects();
+                findViewById(R.id.my_projects_activity_indicator).setVisibility(
+                        projects.size() > 0 ? View.GONE : View.VISIBLE);
                 mv.removeAllViews();
-                mv.setVisibility(MyProjectsManager.getInstance().getProjects().size() > 0 ? View.VISIBLE : View.GONE);
+                mv.setVisibility(projects.size() > 0 ? View.VISIBLE : View.GONE);
 
-                final MyProjectsManager.Project[] sortedArray =
-                        sortProjectsArray(MyProjectsManager.getInstance().getProjects());
-
-                for (final MyProjectsManager.Project p : sortedArray) {
+                for (final MyProjectsManager.Project p : sortProjectsArray(projects)) {
                     LinearLayout projItemLayout = (LinearLayout)
                             getLayoutInflater().inflate(R.layout.side_menu_item, null);
 

@@ -39,6 +39,10 @@ import android.widget.Toast;
 import org.tatzpiteva.golan.ConfigurationManager;
 import org.tatzpiteva.golan.MyProjectsManager;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+
 /**
  * Utility class for implementing the side-menu (navigation drawer) used throughout the app
  *
@@ -319,6 +323,23 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
         super.onStop();
     }
 
+    private MyProjectsManager.Project[] sortProjectsArray(Collection<MyProjectsManager.Project> projects) {
+        final MyProjectsManager.Project[] toSort = projects.toArray(new MyProjectsManager.Project[projects.size()]);
+        Arrays.sort(toSort, new Comparator<MyProjectsManager.Project>() {
+            @Override
+            public int compare(MyProjectsManager.Project left, MyProjectsManager.Project right) {
+                if (left.id == ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject()) {
+                    return -1;
+                }
+                if (right.id == ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject()) {
+                    return 1;
+                }
+                return left.id > right.id ? 1 : -1;
+            }
+        });
+        return toSort;
+    }
+
     private void fillMyProjects() {
         final LinearLayout mv = (LinearLayout) findViewById(R.id.menu_dynamic_projects);
         mv.post(new Runnable() {
@@ -327,7 +348,10 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
                 mv.removeAllViews();
                 mv.setVisibility(MyProjectsManager.getInstance().getProjects().size() > 0 ? View.VISIBLE : View.GONE);
 
-                for (final MyProjectsManager.Project p : MyProjectsManager.getInstance().getProjects()) {
+                final MyProjectsManager.Project[] sortedArray =
+                        sortProjectsArray(MyProjectsManager.getInstance().getProjects());
+
+                for (final MyProjectsManager.Project p : sortedArray) {
                     LinearLayout projItemLayout = (LinearLayout)
                             getLayoutInflater().inflate(R.layout.side_menu_item, null);
 

@@ -345,6 +345,7 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
         mv.post(new Runnable() {
             @Override
             public void run() {
+                findViewById(R.id.my_projects_activity_indicator).setVisibility(View.GONE);
                 mv.removeAllViews();
                 mv.setVisibility(MyProjectsManager.getInstance().getProjects().size() > 0 ? View.VISIBLE : View.GONE);
 

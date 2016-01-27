@@ -151,25 +151,25 @@ public class INaturalistPrefsActivity extends BaseFragmentActivity implements Si
 		}
 	    
 	    mHelp.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(INaturalistPrefsActivity.this, TutorialActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                intent.putExtra("first_time", false);
-                startActivity(intent);
-            }
-        });
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(INaturalistPrefsActivity.this, TutorialActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+				intent.putExtra("first_time", false);
+				startActivity(intent);
+			}
+		});
 	    
 	    toggle();
 	    
         mSignInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(INaturalistPrefsActivity.this, OnboardingActivity.class);
-                intent.putExtra(OnboardingActivity.LOGIN, true);
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(INaturalistPrefsActivity.this, OnboardingActivity.class);
+				intent.putExtra(OnboardingActivity.LOGIN, true);
 
-                startActivityForResult(intent, REQUEST_CODE_LOGIN);
-            }
-        });
+				startActivityForResult(intent, REQUEST_CODE_LOGIN);
+			}
+		});
 
 		mSignUpButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -181,7 +181,7 @@ public class INaturalistPrefsActivity extends BaseFragmentActivity implements Si
         mSignOutButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-                mHelper.confirm(getString(R.string.signed_out),
+				mHelper.confirm(getString(R.string.signed_out),
 						getString(R.string.alert_sign_out),
 						new DialogInterface.OnClickListener() {
 							@Override
@@ -192,13 +192,21 @@ public class INaturalistPrefsActivity extends BaseFragmentActivity implements Si
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialogInterface, int i) {
-								dialogInterface.cancel();;
+								dialogInterface.cancel();
 							}
 						}
 				);
 			}
 		});
-        
+
+		findViewById(R.id.prefsMyProjectsButton).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				startActivityIfNew(new Intent(INaturalistPrefsActivity.this, ProjectsActivity.class)
+						.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+			}
+		});
+
 	    if (getIntent().getAction() != null && getIntent().getAction().equals(REAUTHENTICATE_ACTION)) {
 	    	signOut();
 	    	mHelper.alert(getString(R.string.username_invalid));

@@ -379,7 +379,7 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
         startActivityIfNew(intent);
     }
 
-    private void startActivityIfNew(Intent intent) {
+    protected void startActivityIfNew(Intent intent) {
         if (intent.getComponent().getClassName().equals(this.getClass().getName())) {
 
             int currentProjectId = getIntent().getIntExtra(INaturalistMapActivity.INTENT_PARAM_PROJECT_ID, -1);

@@ -194,7 +194,7 @@
     <string name="done">Done</string>
     <string name="please_sign_in_via_settings">You must be logged in to view your joined projects.</string>
     <string name="contact_support"><![CDATA[<a href="mailto:support@tatzpiteva.org.il">Contact support</a>]]></string>
-    <string name="credits">Designed and built by iNaturalist.org with support from the California Academy of Sciences</string>
+    <string name="credits">Designed and built by iNaturalist.org with support from the California Academy of Sciences. Development of Tatzpiteva version by Carmel.Coop</string>
     <string name="leave_project">Leave Project</string>
     <string name="leave_project_confirmation">Are you sure you want to leave this project?</string>
     <string name="discard_location_changes">Are you sure you want to discard unsaved changes?</string>

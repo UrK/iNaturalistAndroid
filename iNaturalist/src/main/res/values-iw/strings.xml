@@ -54,7 +54,7 @@
     <string name="you_are_here">מיקומכם הנוכחי</string>
     <string name="oh_no">אוי לא! %1$s</string>
     <string name="need_to_login">. להחחבר עכשיו?יש להחבר על מנת לראות את החדשות</string>
-    <string name="observations">תצפיות</string>
+    <string name="observations">התצפיות שלי</string>
     <string name="observations_description">רשימת תצפיות</string>
     <string name="map">מפה</string>
     <string name="map_description">מפת תצפיות</string>
@@ -186,7 +186,7 @@
     <string name="done">סיום</string>
     <string name="please_sign_in_via_settings">נא לבצע התחברות במסך הגדרות על מנת לראות את הפרוייקטים.</string>
     <string name="contact_support"><![CDATA[<a href="mailto:support@tatzpiteva.org.il">יצירת קשר עם תמיכה</a>]]></string>
-    <string name="credits">עוצב ופותח על ידי iNaturalist.org עם תמיכה של California Academy of Sciences</string>
+    <string name="credits">עוצב ופותח על ידי iNaturalist.org עם תמיכה של California Academy of Sciences. פיתוח גרסאת תצפיטבע על ידי Carmel.Coop</string>
     <string name="leave_project">לעזות פרוייקט</string>
     <string name="leave_project_confirmation">בטוח לעזוב את הפרוייקט?</string>
     <string name="discard_location_changes">האם אתם בטוחים שאתם רוצים לאבד את השינויים הלא שמורים?</string>

@@ -21,8 +21,10 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -54,6 +56,13 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
 	private INaturalistApp app;
 	private ActivityHelper mHelper;
     private UserDetailsReceiver mUserDetailsReceiver;
+
+    private BroadcastReceiver mProjectsChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, final Intent intent) {
+            fillMyProjects();
+        }
+    };
 
     public int getStatusBarHeight() {
         int result = 0;
@@ -298,20 +307,19 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
         fillMyProjects();
     }
 
-    private void fillMyProjects() {
-        addMyProjectsToMenu();
-
-        IntentFilter filter = new IntentFilter(MyProjectsManager.ACTION_MY_PROJECTS_LOADED);
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, final Intent intent) {
-                unregisterReceiver(this);
-                addMyProjectsToMenu();
-            }
-        }, filter);
+    @Override
+    protected void onStart() {
+        registerReceiver(mProjectsChangeReceiver, new IntentFilter(MyProjectsManager.ACTION_MY_PROJECTS_LOADED));
+        super.onStart();
     }
 
-    private void addMyProjectsToMenu() {
+    @Override
+    protected void onStop() {
+        unregisterReceiver(mProjectsChangeReceiver);
+        super.onStop();
+    }
+
+    private void fillMyProjects() {
         final LinearLayout mv = (LinearLayout) findViewById(R.id.menu_dynamic_projects);
         mv.post(new Runnable() {
             @Override
@@ -365,7 +373,6 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
         overridePendingTransition(R.anim.show, R.anim.hide);
         finish();
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

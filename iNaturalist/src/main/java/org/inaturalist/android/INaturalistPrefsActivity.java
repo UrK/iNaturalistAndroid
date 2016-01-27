@@ -36,6 +36,8 @@ public class INaturalistPrefsActivity extends BaseFragmentActivity implements Si
     private static final int REQUEST_CODE_LOGIN = 0x1000;
 
     private static final String GOOGLE_AUTH_TOKEN_TYPE = "oauth2:https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
+
+	public static final String ACTION_RESULT_LOGOUT = "INaturalistPrefsActivity_Logout";
     
 	private LinearLayout mSignInLayout;
 	private LinearLayout mSignOutLayout;
@@ -268,7 +270,9 @@ public class INaturalistPrefsActivity extends BaseFragmentActivity implements Si
 		Log.d(TAG, String.format("Deleted %d / %d / %d / %d unsynced observations", count1, count2, count3, count4));
 
 		toggle();
-        refreshUserDetails();
+		refreshUserDetails();
+
+		sendBroadcast(new Intent(ACTION_RESULT_LOGOUT));
 	}
 	
 	private boolean isNetworkAvailable() {

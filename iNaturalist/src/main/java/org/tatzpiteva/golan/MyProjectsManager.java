@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.inaturalist.android.INaturalistPrefsActivity;
 import org.inaturalist.android.INaturalistService;
 import org.inaturalist.android.SerializableJSONArray;
 import org.inaturalist.android.SignInTask;
@@ -15,9 +16,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -157,6 +155,7 @@ public class MyProjectsManager {
         @Override
         public void onReceive(Context context, Intent intent) {
             projects.clear();
+            context.sendBroadcast(new Intent(ACTION_MY_PROJECTS_LOADED));
         }
     }
 
@@ -256,6 +255,9 @@ public class MyProjectsManager {
                 new MyProjectsReceiver(), new IntentFilter(INaturalistService.ACTION_JOINED_PROJECTS_RESULT));
 
         context.registerReceiver(new UserLoginListener(), new IntentFilter(SignInTask.ACTION_RESULT_SIGNED_IN));
+
+        context.registerReceiver(
+                new UserLogoffListener(), new IntentFilter(INaturalistPrefsActivity.ACTION_RESULT_LOGOUT));
     }
 
     // endregion

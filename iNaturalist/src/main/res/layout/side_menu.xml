@@ -127,6 +127,12 @@
         android:layout_height="fill_parent">
 
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/menu_dynamic_projects"/>
+
+        <LinearLayout
             android:id="@+id/menu_explore"
             android:background="@drawable/side_menu_item_background"
             android:clickable="true"
@@ -260,29 +266,6 @@
                 android:textColor="#000000"
                 android:layout_marginStart="30dp"
                 android:text="@string/settings"/>
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1sp"
-            android:background="#dbdbdb" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAllCaps="true"
-                android:textSize="@dimen/side_menu_text_size"
-                android:gravity="center"
-                android:text="@string/menu_my_projects"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/menu_dynamic_projects"/>
         </LinearLayout>
 
      </LinearLayout>

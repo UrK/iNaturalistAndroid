@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 
 import android.app.NotificationManager;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 
@@ -64,6 +65,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
+import com.cocosw.bottomsheet.BottomSheet;
 import com.flurry.android.FlurryAgent;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -375,27 +377,27 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 			}
 		});
         mSearchText.setOnEditorActionListener(
-        		new EditText.OnEditorActionListener() {
-        			@Override
-        			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        				final boolean isEnterEvent = event != null
-        						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER;
-        				final boolean isEnterUpEvent = isEnterEvent && event.getAction() == KeyEvent.ACTION_UP;
-        				final boolean isEnterDownEvent = isEnterEvent && event.getAction() == KeyEvent.ACTION_DOWN;
+				new EditText.OnEditorActionListener() {
+					@Override
+					public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+						final boolean isEnterEvent = event != null
+								&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER;
+						final boolean isEnterUpEvent = isEnterEvent && event.getAction() == KeyEvent.ACTION_UP;
+						final boolean isEnterDownEvent = isEnterEvent && event.getAction() == KeyEvent.ACTION_DOWN;
 
-        				if (actionId == EditorInfo.IME_ACTION_SEARCH || isEnterUpEvent ) {
-        					// Do your action here
-        					mSearchResults.performItemClick(null, 0, 0);
-        					return true;
-        				} else if (isEnterDownEvent) {
-        					// Capture this event to receive ACTION_UP
-        					return true;
-        				} else {
-        					// We do not care on other actions
-        					return false;
-        				}
-        			}
-        		});
+						if (actionId == EditorInfo.IME_ACTION_SEARCH || isEnterUpEvent) {
+							// Do your action here
+							mSearchResults.performItemClick(null, 0, 0);
+							return true;
+						} else if (isEnterDownEvent) {
+							// Capture this event to receive ACTION_UP
+							return true;
+						} else {
+							// We do not care on other actions
+							return false;
+						}
+					}
+				});
 
         mActiveFilters = (View)findViewById(R.id.active_filters);
         mActiveFiltersDescription = (TextView)findViewById(R.id.filter_name);
@@ -471,20 +473,21 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
         });
 
         mObservationsList.setOnScrollListener(new OnScrollListener() {
-        	@Override
-        	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        		if((firstVisibleItem + visibleItemCount >= totalItemCount) && (totalItemCount > 0)) {
-        			// End has been reached - load more observations
-        			if ((mObservations != null) && (!mIsLoading) && (mPage >= 1)) {
-        				mPage++;
-        				reloadObservations();
-        			}
-        		}
-        	}
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+				if ((firstVisibleItem + visibleItemCount >= totalItemCount) && (totalItemCount > 0)) {
+					// End has been reached - load more observations
+					if ((mObservations != null) && (!mIsLoading) && (mPage >= 1)) {
+						mPage++;
+						reloadObservations();
+					}
+				}
+			}
 
-        	@Override
-        	public void onScrollStateChanged(AbsListView view, int scrollState){ }
-        }); 
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+			}
+		});
 
         
         mObservationsGrid.setOnScrollListener(new OnScrollListener() {
@@ -501,8 +504,36 @@ public class INaturalistMapActivity extends BaseFragmentActivity implements OnMa
 
         	@Override
         	public void onScrollStateChanged(AbsListView view, int scrollState){ }
-        }); 
+        });
 
+		View addButton = (View) findViewById(R.id.add_observation);
+		addButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new BottomSheet.Builder(INaturalistMapActivity.this).sheet(R.menu.observation_list_menu).listener(new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent;
+						switch (which) {
+							case R.id.camera:
+								intent = new Intent(Intent.ACTION_INSERT, Observation.CONTENT_URI, INaturalistMapActivity.this, ObservationEditor.class);
+								intent.putExtra(ObservationEditor.TAKE_PHOTO, true);
+								startActivity(intent);
+								break;
+							case R.id.upload_photo:
+								intent = new Intent(Intent.ACTION_INSERT, Observation.CONTENT_URI, INaturalistMapActivity.this, ObservationEditor.class);
+								intent.putExtra(ObservationEditor.CHOOSE_PHOTO, true);
+								startActivity(intent);
+								break;
+							case R.id.text:
+								intent = new Intent(Intent.ACTION_INSERT, Observation.CONTENT_URI, INaturalistMapActivity.this, ObservationEditor.class);
+								startActivity(intent);
+								break;
+						}
+					}
+				}).show();
+			}
+		});
 
     }
 

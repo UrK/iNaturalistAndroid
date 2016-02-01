@@ -1,213 +1,229 @@
-<?xml version="1.0" encoding="utf-8"?> 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.inaturalist.android"
-    android:versionCode="101"
-    android:versionName="1.4.4" >
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="org.inaturalist.android"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          android:versionCode="101"
+          android:versionName="1.4.4">
 
-    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="22" />
+    <uses-sdk
+        android:minSdkVersion="10"
+        android:targetSdkVersion="22"/>
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+
     <permission
         android:name="org.tazpiteva.android.permission.MAPS_RECEIVE"
         android:protectionLevel="signature"/>
+
     <uses-permission android:name="org.tazpiteva.android.permission.MAPS_RECEIVE"/>
-    
+
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true"/>
 
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
     <application
-        android:theme="@style/iNatAppTheme"
+        android:name=".INaturalistApp"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".INaturalistApp" >
-        
-        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" /> 
-
+        android:theme="@style/iNatAppTheme">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="@string/gmaps2_api_key" />
+            android:value="@string/gmaps2_api_key"/>
 
         <activity
+            android:name=".TutorialActivity"
             android:configChanges="orientation"
-            android:label="@string/app_name"
-            android:name=".TutorialActivity" >
-           	<meta-data
-	            android:name="android.support.PARENT_ACTIVITY"
-	            android:value=".ObservationListActivity" /> 
+            android:label="@string/app_name">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ObservationListActivity"/>
         </activity>
         <activity
+            android:name=".GuideDetails"
             android:configChanges="orientation"
             android:label="@string/guides"
-            android:parentActivityName=".GuidesActivity"
-            android:name=".GuideDetails" >
-           	<meta-data
-	            android:name="android.support.PARENT_ACTIVITY"
-	            android:value=".GuidesActivity" /> 
+            android:parentActivityName=".GuidesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".GuidesActivity"/>
         </activity>
         <activity
+            android:name=".GuideTaxonActivity"
+            android:configChanges="orientation"
+            android:label="@string/app_name">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".GuideDetails"/>
+        </activity>
+        <activity
+            android:name=".ProjectDetails"
+            android:configChanges="orientation"
+            android:label="@string/projects">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ProjectsActivity"/>
+        </activity>
+        <activity
+            android:name=".ProjectsActivity"
+            android:configChanges="orientation"
+            android:label="@string/projects">
+        </activity>
+        <activity
+            android:name=".GuidesActivity"
+            android:configChanges="orientation"
+            android:label="@string/guides">
+        </activity>
+        <activity
+            android:name=".ProjectSelectorActivity"
             android:configChanges="orientation"
             android:label="@string/app_name"
-            android:name=".GuideTaxonActivity" >
-           	<meta-data
-	            android:name="android.support.PARENT_ACTIVITY"
-	            android:value=".GuideDetails" />
-        </activity>
-        
-        <activity
-            android:configChanges="orientation"
-            android:label="@string/projects"
-            android:name=".ProjectDetails" >
-           	<meta-data
-	            android:name="android.support.PARENT_ACTIVITY"
-	            android:value=".ProjectsActivity" /> 
-        </activity>
-         <activity
-            android:configChanges="orientation"
-            android:label="@string/projects"
-            android:name=".ProjectsActivity">
-        </activity>
-  		<activity
-            android:configChanges="orientation"
-            android:label="@string/guides"
-            android:name=".GuidesActivity">
-        </activity>
-        
-        <activity
-            android:configChanges="orientation"
-            android:label="@string/app_name"
-            android:theme="@style/iNatAppThemeCustomActionBar"
-            android:name=".ProjectSelectorActivity" >
-        </activity>
- 
-        <activity
-            android:configChanges="orientation"
-            android:label="@string/comments_ids"
-            android:name=".CommentsIdsActivity" >
-        </activity>
-         <activity
-            android:configChanges="orientation"
-            android:label="@string/add_id"
-            android:name=".IdentificationActivity" >
+            android:theme="@style/iNatAppThemeCustomActionBar">
         </activity>
         <activity
+            android:name=".CommentsIdsActivity"
             android:configChanges="orientation"
-            android:label="@string/app_name"
-            android:name=".TaxonSearchActivity" >
+            android:label="@string/comments_ids">
         </activity>
+        <activity
+            android:name=".IdentificationActivity"
+            android:configChanges="orientation"
+            android:label="@string/add_id">
+        </activity>
+        <activity
+            android:name=".TaxonSearchActivity"
+            android:configChanges="orientation"
+            android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name=".LoginSignupActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".OnboardingActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".ObservationListActivity"
+            android:configChanges="orientation"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
 
-        <activity
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:name=".LoginSignupActivity" >
-        </activity>
-
-        <activity
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:name=".OnboardingActivity" >
-        </activity>
-        <activity
-            android:configChanges="orientation"
-            android:label="@string/app_name"
-            android:name=".ObservationListActivity" >
-            <intent-filter >
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
+            android:name=".ObservationEditor"
             android:configChanges="orientation"
             android:label="@string/app_name"
-            android:theme="@style/iNatAppThemeCustomActionBar"
-            android:name=".ObservationEditor" >
-           	<meta-data
-	            android:name="android.support.PARENT_ACTIVITY"
-	            android:value=".ObservationListActivity" /> 
-            <intent-filter >
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
-                <action android:name="android.intent.action.INSERT" />
+            android:theme="@style/iNatAppThemeCustomActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ObservationListActivity"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.EDIT"/>
+                <action android:name="android.intent.action.INSERT"/>
 
-                <data android:mimeType="vnd.android.cursor.item/vnd.google.observation" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.google.observation" />
-                <data android:mimeType="vnd.android.cursor.item/vnd.google.observation_photo" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.google.observation_photo" />
-                <data android:mimeType="vnd.android.cursor.item/vnd.google.inatproject" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.google.inatproject" />
-                <data android:mimeType="vnd.android.cursor.item/vnd.google.projectobservation" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.google.projectobservation" />
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data android:mimeType="vnd.android.cursor.item/vnd.google.observation"/>
+                <data android:mimeType="vnd.android.cursor.dir/vnd.google.observation"/>
+                <data android:mimeType="vnd.android.cursor.item/vnd.google.observation_photo"/>
+                <data android:mimeType="vnd.android.cursor.dir/vnd.google.observation_photo"/>
+                <data android:mimeType="vnd.android.cursor.item/vnd.google.inatproject"/>
+                <data android:mimeType="vnd.android.cursor.dir/vnd.google.inatproject"/>
+                <data android:mimeType="vnd.android.cursor.item/vnd.google.projectobservation"/>
+                <data android:mimeType="vnd.android.cursor.dir/vnd.google.projectobservation"/>
             </intent-filter>
         </activity>
         <activity
+            android:name=".INaturalistPrefsActivity"
             android:configChanges="orientation"
-            android:label="@string/settings"
-            android:name=".INaturalistPrefsActivity" >
+            android:label="@string/settings">
         </activity>
         <!--
         <activity android:name="com.facebook.LoginActivity"
           android:theme="@android:style/Theme.Translucent.NoTitleBar"
-          android:label="@string/app_name" />-->
+          android:label="@string/app_name" />
+        -->
 
-        <activity android:name="com.facebook.FacebookActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:label="@string/app_name" />
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
+
+        <activity
+            android:name=".INaturalistMapActivity"
             android:configChanges="orientation"
-            android:label="@string/map"
-            android:name=".INaturalistMapActivity" >
+            android:label="@string/map">
         </activity>
         <activity
+            android:name=".INaturalistMapActivityWithDefaultProject"
             android:configChanges="orientation"
-            android:label="@string/map"
-            android:name=".INaturalistMapActivityWithDefaultProject" >
+            android:label="@string/map">
         </activity>
         <activity
+            android:name=".LocationChooserActivity"
             android:configChanges="orientation"
-            android:label="@string/choose_location"
-            android:name=".LocationChooserActivity" >
+            android:label="@string/choose_location">
         </activity>
         <activity
+            android:name=".WebActivity"
             android:configChanges="orientation"
-            android:label="@string/activity"
-            android:name=".WebActivity" >
+            android:label="@string/activity">
         </activity>
         <activity
-            android:configChanges="orientation"
-            android:name=".ObservationDetails" >
+            android:name=".ObservationDetails"
+            android:configChanges="orientation">
         </activity>
         <activity
-            android:configChanges="orientation"
-            android:name=".ObservationPhotosViewer" >
+            android:name=".ObservationPhotosViewer"
+            android:configChanges="orientation">
         </activity>
         <activity
-            android:configChanges="orientation"
-            android:name=".TaxonTagPhotosViewer" >
+            android:name=".TaxonTagPhotosViewer"
+            android:configChanges="orientation">
         </activity>
 
         <provider
-            android:authorities="org.tazpiteva.android.observation;org.tazpiteva.android.observation_photo;org.tazpiteva.android.project;org.tazpiteva.android.project_observation;org.tazpiteva.android.project_field;org.tazpiteva.android.project_field_value"
-            android:name=".ObservationProvider" >
+            android:name=".ObservationProvider"
+            android:authorities="org.tazpiteva.android.observation;org.tazpiteva.android.observation_photo;org.tazpiteva.android.project;org.tazpiteva.android.project_observation;org.tazpiteva.android.project_field;org.tazpiteva.android.project_field_value">
         </provider>
 
-        <service android:name=".INaturalistService" />
-        <meta-data android:name="com.crashlytics.ApiKey" android:value="7baaee0ca8a376b3d129b908c1e03be6ecbe5786"/>
+        <service android:name=".INaturalistService"/>
+
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="7baaee0ca8a376b3d129b908c1e03be6ecbe5786"/>
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="345e342e4072648b2f39f3eb6ba91e02002087e3" />
+            android:value="345e342e4072648b2f39f3eb6ba91e02002087e3"/>
+
+        <activity android:name="org.tatzpiteva.golan.LaunchScreenActivity"
+                  android:theme="@style/Theme.Sherlock.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

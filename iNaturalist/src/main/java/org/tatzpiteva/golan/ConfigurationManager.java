@@ -24,9 +24,12 @@ public class ConfigurationManager {
     // region Constants
 
     private final static String TAG = "ConfigurationManager";
-    private final static String API_SERVER_DEV = "http://golan.carmel.coop/json/projects";
-    private final static String API_SERVER_PROD = "http://tatzpiteva.org.il/json/projects";
+    private final static String API_SERVER_DEV = "http://golan.carmel.coop/json/";
+    private final static String API_SERVER_PROD = "http://tatzpiteva.org.il/json/";
     private final static String API_SERVER_CURRENT = API_SERVER_DEV;
+
+    private final static String API_ENDPOINT_PROJECTS = "projects";
+    private final static String API_ENDPOINT_LAUNCH_SCREEN_CAROUSEL = "app/about";
 
     private final static String SHARED_PREFS_CONFIG = "GolanConfigurationManagerConfig";
 
@@ -108,7 +111,7 @@ public class ConfigurationManager {
             }
         };
 
-        new ConfigDownloadTask(mDownloadListener).execute(API_SERVER_CURRENT);
+        new ConfigDownloadTask(mDownloadListener).execute(API_SERVER_CURRENT + API_ENDPOINT_PROJECTS);
     }
 
     public static ConfigurationManager getInstance() {

@@ -43,7 +43,7 @@
     <string name="error_couldnt_connect_to_server">Couldn\'t connect to server.</string>
     <string name="please_sign_in">Please sign in</string>
     <string name="please_sign_in_description">Please sign in to your iNaturalist account or sign up for a new one.</string>
-    
+
     <string name="photo_not_specified">Photo not specified</string>
     <string name="set_date">Set date</string>
     <string name="set_time">Set time</string>
@@ -55,7 +55,7 @@
     <string name="you_are_here">You are here!</string>
     <string name="oh_no">Oh no! %1$s</string>
     <string name="need_to_login">You need to log in to view your feed.  Log in now?</string>
-    
+
     <string name="observations">My Observations</string>
     <string name="observations_description">Observations list</string>
     <string name="map">Map</string>
@@ -67,7 +67,7 @@
     <string name="processing">Processing...</string>
     <string name="projects">Projects</string>
     <string name="projects_description">Projects</string>
-    
+
     <string name="delete_photo">Delete photo</string>
     <string name="menu">Menu</string>
     <string name="layers">Layers</string>
@@ -77,7 +77,7 @@
     <string name="view_on_inat">View on iNat</string>
     <string name="reload">Reload</string>
     <string name="view_in_browser">View in browser</string>
-    
+
     <string name="add_observation">Add observation</string>
     <string name="take_picture">Take picture</string>
     <string name="add_photo">Add photo</string>
@@ -90,14 +90,14 @@
     <string name="signed_in_as_plain">Signed in as</string>
     <string name="signed_out">Sign out</string>
     <string name="view">View</string>
-    
+
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="unknown">Unknown</string>
     <string name="brief_description">Brief description...</string>
     <string name="unknown_species">Unknown species</string>
     <string name="no_description">No description</string>
-    
+
     <string name="com_facebook_dialogloginactivity_ok_button">OK</string>
     <string name="com_facebook_loginview_log_out_button">Log Out</string>
     <string name="com_facebook_loginview_log_in_button">Log In</string>
@@ -183,13 +183,13 @@
     <string name="no_internet_projects">Projects require an Internet connection</string>
     <string name="import_metadata">Import metadata?</string>
     <string name="import_metadata_desc">Do you want to set the date, time, and location of this observation from the photo\'s metadata?</string>
-	<string name="language_settings">Language settings</string>
-	<string name="locale_gl">Galician</string>
-	<string name="locale_eu">Basque</string>
-	<string name="locale_en_rNZ">English (New Zealand)</string>
-	<string name="use_device_language_settings">Use device language settings</string>
-	<string name="language_restart">Language settings changed. Please restart the app for the changes to take place.</string>
-	<string name="restart_now">Restart now</string>
+    <string name="language_settings">Language settings</string>
+    <string name="locale_gl">Galician</string>
+    <string name="locale_eu">Basque</string>
+    <string name="locale_en_rNZ">English (New Zealand)</string>
+    <string name="use_device_language_settings">Use device language settings</string>
+    <string name="language_restart">Language settings changed. Please restart the app for the changes to take place.</string>
+    <string name="restart_now">Restart now</string>
     <string name="choose_location">Choose Location</string>
     <string name="done">Done</string>
     <string name="please_sign_in_via_settings">You must be logged in to view your joined projects.</string>
@@ -207,51 +207,51 @@
     <string name="sync_observations">Sync Observations</string>
 
     <string-array name="tutorial_images">
-	    <item>tutorial1</item>
-	    <item>tutorial2</item>
-	    <item>tutorial3</item>
-	    <item>tutorial4</item>
-	    <item>tutorial5</item>
-	    <item>tutorial6</item>
+        <item>tutorial1</item>
+        <item>tutorial2</item>
+        <item>tutorial3</item>
+        <item>tutorial4</item>
+        <item>tutorial5</item>
+        <item>tutorial6</item>
     </string-array>
 
     <string-array name="tutorial_images_naturalista">
-	    <item>tutorial1_naturalista</item>
-	    <item>tutorial2_naturalista</item>
-	    <item>tutorial3_naturalista</item>
-	    <item>tutorial4_naturalista</item>
-	    <item>tutorial5_naturalista</item>
-	    <item>tutorial6_naturalista</item>
+        <item>tutorial1_naturalista</item>
+        <item>tutorial2_naturalista</item>
+        <item>tutorial3_naturalista</item>
+        <item>tutorial4_naturalista</item>
+        <item>tutorial5_naturalista</item>
+        <item>tutorial6_naturalista</item>
     </string-array>
-    
+
     <string-array name="tutorial_images_naturewatchnz">
-	    <item>tutorial1_naturewatch</item>
-	    <item>tutorial2</item>
-	    <item>tutorial3</item>
-	    <item>tutorial4</item>
-	    <item>tutorial5</item>
-	    <item>tutorial6</item>
+        <item>tutorial1_naturewatch</item>
+        <item>tutorial2</item>
+        <item>tutorial3</item>
+        <item>tutorial4</item>
+        <item>tutorial5</item>
+        <item>tutorial6</item>
     </string-array>
 
     <string-array name="tutorial_images_inaturalistcanada">
-	    <item>tutorial1_inaturalistcanada</item>
-	    <item>tutorial2</item>
-	    <item>tutorial3</item>
-	    <item>tutorial4</item>
-	    <item>tutorial5</item>
-	    <item>tutorial6</item>
+        <item>tutorial1_inaturalistcanada</item>
+        <item>tutorial2</item>
+        <item>tutorial3</item>
+        <item>tutorial4</item>
+        <item>tutorial5</item>
+        <item>tutorial6</item>
     </string-array>
 
-    
+
     <string-array name="geoprivacy_items">
-	    <item>Open</item>
-	    <item>Private</item>
-    </string-array> 
+        <item>Open</item>
+        <item>Private</item>
+    </string-array>
     <string-array name="geoprivacy_values">
-	    <item>open</item>
-	    <item>private</item>
-    </string-array> 
-   
+        <item>open</item>
+        <item>private</item>
+    </string-array>
+
     <string name="alert_sign_out">Are you sure you want to sign out? This will delete all your observations on this device. It will not affect any observations you\'ve uploaded to iNaturalist.</string>
     <string name="alert_unsupported_media_type">Sorry, but at the moment we do not support uploading photos from Google Drive, Dropbox, etc.\nPlease download the photos to your local phone storage and try again.</string>
 
@@ -260,12 +260,12 @@
 
     <string name="inat_network_settings">iNaturalist Network Settings</string>
 
-	<string name="network_restart">Network settings changed. Please restart the app for the changes to take place.</string>
+    <string name="network_restart">Network settings changed. Please restart the app for the changes to take place.</string>
     <string-array name="id_please_items">
-      <item>YES</item>
-      <item>NO</item>
+        <item>YES</item>
+        <item>NO</item>
     </string-array>
-    
+
     <string name="explore">Explore</string>
     <string name="explore_description">Explore observations around you</string>
 
@@ -273,21 +273,21 @@
     <string name="search">Search</string>
 
     <string-array name="explore_results_empty">
-      <item><![CDATA[<i>Find observations near me</i>]]></item>
-      <item><![CDATA[<i>Find my observations</i>]]></item>
+        <item><![CDATA[<i>Find observations near me</i>]]></item>
+        <item><![CDATA[<i>Find my observations</i>]]></item>
     </string-array>
 
     <string-array name="explore_results_with_text">
-      <item><![CDATA[Find <b>organisms</b> named \'<i>%1$s</i>\']]></item>
-      <item><![CDATA[Find <b>people</b> named \'<i>%1$s</i>\']]></item>
-      <item><![CDATA[Find <b>locations</b> named \'<i>%1$s</i>\']]></item>
-      <item><![CDATA[Find <b>projects</b> named \'<i>%1$s</i>\']]></item>
+        <item><![CDATA[Find <b>organisms</b> named \'<i>%1$s</i>\']]></item>
+        <item><![CDATA[Find <b>people</b> named \'<i>%1$s</i>\']]></item>
+        <item><![CDATA[Find <b>locations</b> named \'<i>%1$s</i>\']]></item>
+        <item><![CDATA[Find <b>projects</b> named \'<i>%1$s</i>\']]></item>
     </string-array>
 
     <string name="searching_for_critters">Searching for organisms...</string>
     <string name="no_critters_found">No such organisms found</string>
     <string name="which_critter">Which organism?</string>
-    
+
     <string name="searching_for_people">Searching for people...</string>
     <string name="no_person_found">No such person found</string>
     <string name="which_person">Which person?</string>
@@ -310,7 +310,7 @@
     <string name="details">Details</string>
 
     <string name="accuracy">%1$dm accuracy</string>
-    
+
     <string name="must_login_to_show_my_observations">You must be logged in to view your observations</string>
     <string name="observation_photos">Observation Photos</string>
     <string name="must_login_to_add_comment">You must be logged in to add comments</string>
@@ -325,8 +325,8 @@
 
     <string name="id_please_tag">ID Please</string>
     <string name="research_tag">Research</string>
-    
-    
+
+
     <string name="sync_failed">Sync failed!</string>
     <string name="observation_sync_failed">Observation sync failed!</string>
     <string name="not_all_observations_were_synced">Not all observations were synced.</string>
@@ -423,5 +423,8 @@
     <string name="menu_explore_text_golan">Tatzpiteva</string>
     <string name="gallery">Gallery</string>
     <string name="menu_my_projects">My Projects</string>
+    <string name="recommended_observations">recommended observations</string>
+    <string name="launch_button_new_observation">New Observation</string>
+    <string name="launch_button_my_observations">My Observations</string>
 </resources>
 

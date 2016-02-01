@@ -3,4 +3,6 @@
     <color name="inatapptheme_color_disabled">#33669900</color>
     <color name="inatapptheme_color">#669900</color>
     <color name="inatapptheme_color_highlighted">#ff006616</color>
+    <color name="inatapptheme_color_grey_background">#e3e3e3</color>
+    <color name="inatapptheme_color_semitransparent_black">#7f000000</color>
 </resources>

@@ -340,5 +340,7 @@
     <string name="menu_explore_text_golan">תצפיטבע</string>
     <string name="gallery">גלריה</string>
     <string name="menu_my_projects">פרוייקטים שלי</string>
+    <string name="launch_button_new_observation">New Observation</string>
+    <string name="launch_button_my_observations">My Observations</string>
 
 </resources>

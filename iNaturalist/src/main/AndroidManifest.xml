@@ -223,6 +223,10 @@
 
         <activity android:name="org.tatzpiteva.golan.LaunchScreenActivity"
                   android:theme="@style/Theme.Sherlock.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
     </application>
 

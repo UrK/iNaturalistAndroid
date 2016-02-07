@@ -62,7 +62,7 @@ public class LaunchScreenLoader extends AsyncTaskLoader<LaunchScreenCarouselConf
             ByteArrayOutputStream jsonBuffer = new ByteArrayOutputStream();
             IOUtils.copyStreamToStream(connection.getInputStream(), jsonBuffer);
             stringData = jsonBuffer.toString("UTF-8");
-            return parseConfig(stringData);
+            return LaunchScreenConfigParser.parseConfig(stringData);
         } catch (IOException e) {
             Log.e(TAG, "Failed to retrieve configuration: " + e.getMessage());
             return null;
@@ -74,25 +74,4 @@ public class LaunchScreenLoader extends AsyncTaskLoader<LaunchScreenCarouselConf
         }
     }
 
-    private LaunchScreenCarouselConfig parseConfig(String jsonBuffer) throws JSONException {
-
-        JSONObject rootObject = new JSONObject(jsonBuffer);
-        JSONArray picsArray = rootObject.getJSONArray("pics");
-        for (int i = 0; i < picsArray.length(); i++) {
-            JSONObject picObject = picsArray.getJSONObject(i);
-
-        }
-
-        List<Config.AutoProject> autoProjects = new ArrayList<>(jarr.length());
-
-        for (int i = 0; i < jarr.length(); i++) {
-            Config.AutoProject ap = parseProject(jarr.getJSONObject(i));
-            if (ap != null) {
-                autoProjects.add(ap);
-            }
-        }
-
-        return new Config(autoProjects);
-
-    }
 }

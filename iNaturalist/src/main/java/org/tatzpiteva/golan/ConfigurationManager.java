@@ -231,6 +231,10 @@ public class ConfigurationManager {
         return config != null ? config : new Config();
     }
 
+    public String getAboutPicsUrl() {
+        return API_SERVER_CURRENT + API_ENDPOINT_LAUNCH_SCREEN_CAROUSEL;
+    }
+
     // endregion
 }
 

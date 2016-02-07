@@ -21,11 +21,20 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="wrap_content">
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:id="@+id/layout_view_carousel"/>
+        </HorizontalScrollView>
         <android.support.v4.view.ViewPager
             android:id="@+id/pager_launch_carousel"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="200dp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -57,6 +66,7 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:layout_marginTop="30dp"
+        android:id="@+id/button_new_observation"
         />
 
     <Button
@@ -71,6 +81,7 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:layout_marginTop="30dp"
+        android:id="@+id/button_my_observations"
         />
 
     <Button
@@ -85,6 +96,7 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:layout_marginTop="30dp"
+        android:id="@+id/button_tatzpiteva"
         />
 
 </LinearLayout>

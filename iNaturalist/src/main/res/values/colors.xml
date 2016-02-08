@@ -9,4 +9,5 @@
     <color name="side_menu_header_bg">#666666</color>
     <color name="side_menu_header_bg_pressed">#ff3e3e3e</color>
     <color name="side_menu_item_bg_current">#ededed</color>
+    <color name="launch_screen_button_focused">#aeaeae</color>
 </resources>

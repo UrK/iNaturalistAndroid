@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cocosw.bottomsheet.BottomSheet;
-import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 import org.inaturalist.android.Observation;
 import org.inaturalist.android.ObservationEditor;
@@ -29,33 +28,32 @@ public class LaunchScreenActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch_screen);
 
+        final ViewPagerAdapter pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+
         this.configManager = new LaunchScreenCarouselManager();
         this.configManager.retrieveCarouselItems(this);
         this.configManager.setOnConfigRefreshListener(new LaunchScreenCarouselManager.ConfigRefreshListener() {
             @Override
             public void onCarouselConfigRefresh(LaunchScreenCarouselConfig config) {
-                LinearLayout layoutPics = (LinearLayout) findViewById(R.id.layout_view_carousel);
-                layoutPics.removeAllViewsInLayout();
+                ((ViewPagerAdapter) viewPager.getAdapter()).setConfig(config);
 
-                for (LaunchScreenCarouselConfig.Pic pic : config.getPics()) {
-                    ImageView iv = new ImageView(LaunchScreenActivity.this);
-                    iv.setLayoutParams(new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
-                    iv.setAdjustViewBounds(true);
-                    UrlImageViewHelper.setUrlDrawable(iv, pic.getUrl());
-                    layoutPics.addView(iv);
-
-                    iv.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
-                        }
-                    });
-                }
+//                LinearLayout layoutPics = (LinearLayout) findViewById(R.id.layout_view_carousel);
+//                layoutPics.removeAllViewsInLayout();
+//
+//                for (LaunchScreenCarouselConfig.Pic pic : config.getPics()) {
+//                    ImageView iv = new ImageView(LaunchScreenActivity.this);
+//                    iv.setLayoutParams(new LinearLayout.LayoutParams(
+//                            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
+//                    iv.setAdjustViewBounds(true);
+//                    layoutPics.addView(iv);
+//                }
             }
         });
 
-        findViewById(R.id.button_new_observation).setOnClickListener(new View.OnClickListener() {
+        this.viewPager = (ViewPager) findViewById(R.id.pager_launch_carousel);
+        this.viewPager.setAdapter(pagerAdapter);
+
+        findViewById(R.id.button_launch_screen_new_obs).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new BottomSheet.Builder(LaunchScreenActivity.this).sheet(R.menu.observation_list_menu).listener(new DialogInterface.OnClickListener() {
@@ -82,5 +80,33 @@ public class LaunchScreenActivity extends FragmentActivity {
                 }).show();
             }
         });
+    }
+    
+    public class ViewPagerAdapter extends FragmentStatePagerAdapter {
+
+        private LaunchScreenCarouselConfig config;
+
+        public ViewPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            if (this.config == null || this.config.getPics() == null) {
+                return null;
+            }
+
+            return LaunchScreenImageFragment.newInsance(this.config.getPics().get(position).getUrl());
+        }
+
+        @Override
+        public int getCount() {
+            return (this.config == null || this.config.getPics() == null) ? 0 : this.config.getPics().size();
+        }
+
+        public void setConfig(LaunchScreenCarouselConfig config) {
+            this.config = config;
+            notifyDataSetChanged();
+        }
     }
 }

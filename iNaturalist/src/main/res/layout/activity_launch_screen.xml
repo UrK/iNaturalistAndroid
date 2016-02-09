@@ -17,7 +17,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/imageView"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/logo_launch_screen"/>
+        android:src="@drawable/logo_launch_screen"
+        android:layout_margin="10dp"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -40,6 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:background="@color/inatapptheme_color_semitransparent_black">
             <TextView
                 android:layout_width="wrap_content"

@@ -12,7 +12,10 @@ import org.json.JSONObject;
 public class LaunchScreenConfigParser {
     public static LaunchScreenCarouselConfig parseConfig(String jsonBuffer) throws JSONException {
         JSONObject rootObject = new JSONObject(jsonBuffer);
-        JSONArray picsArray = rootObject.getJSONArray("pics");
+
+        JSONArray picsArray = rootObject.has("mobile_pics") ?
+                rootObject.getJSONArray("mobile_pics") :  rootObject.getJSONArray("pics");
+
         LaunchScreenCarouselConfig rv = new LaunchScreenCarouselConfig();
         for (int i = 0; i < picsArray.length(); i++) {
             JSONObject picObject = picsArray.getJSONObject(i);

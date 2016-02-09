@@ -35,7 +35,8 @@
         <android.support.v4.view.ViewPager
             android:id="@+id/pager_launch_carousel"
             android:layout_width="match_parent"
-            android:layout_height="200dp"/>
+            android:layout_height="200dp"
+            android:background="#32000000"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

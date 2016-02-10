@@ -1,7 +1,12 @@
 package org.tatzpiteva.golan;
 
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,18 +16,30 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cocosw.bottomsheet.BottomSheet;
 
+import org.inaturalist.android.BaseFragmentActivity;
+import org.inaturalist.android.INaturalistMapActivity;
+import org.inaturalist.android.INaturalistMapActivityWithDefaultProject;
+import org.inaturalist.android.INaturalistService;
 import org.inaturalist.android.Observation;
+import org.inaturalist.android.ObservationDetails;
 import org.inaturalist.android.ObservationEditor;
 import org.inaturalist.android.ObservationListActivity;
 import org.inaturalist.android.R;
 
-public class LaunchScreenActivity extends FragmentActivity {
+import java.util.Collection;
+
+public class LaunchScreenActivity extends FragmentActivity implements
+        LaunchScreenImageFragment.LaunchScreenImageTapped {
 
     private final Integer CAROUSEL_AUTO_SCROLL_DELAY = 5000;
 
@@ -35,6 +52,9 @@ public class LaunchScreenActivity extends FragmentActivity {
     private final Runnable carouselNextItem = new Runnable() {
         @Override
         public void run() {
+            if (config == null || config.getPics() == null) {
+                return;
+            }
             int currentItem = viewPager.getCurrentItem();
             currentItem++;
             if (currentItem >= config.getPics().size()) {
@@ -48,6 +68,13 @@ public class LaunchScreenActivity extends FragmentActivity {
                     viewPager.setCurrentItem(finalCurrentItem);
                 }
             });
+        }
+    };
+
+    private final BroadcastReceiver mProjectsChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            fillMyProjects();
         }
     };
 
@@ -70,17 +97,6 @@ public class LaunchScreenActivity extends FragmentActivity {
                 LaunchScreenActivity.this.config = config;
                 ((ViewPagerAdapter) viewPager.getAdapter()).setConfig(config);
                 setupDots();
-
-//                LinearLayout layoutPics = (LinearLayout) findViewById(R.id.layout_view_carousel);
-//                layoutPics.removeAllViewsInLayout();
-//
-//                for (LaunchScreenCarouselConfig.Pic pic : config.getPics()) {
-//                    ImageView iv = new ImageView(LaunchScreenActivity.this);
-//                    iv.setLayoutParams(new LinearLayout.LayoutParams(
-//                            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
-//                    iv.setAdjustViewBounds(true);
-//                    layoutPics.addView(iv);
-//                }
             }
         });
 
@@ -144,10 +160,73 @@ public class LaunchScreenActivity extends FragmentActivity {
         findViewById(R.id.button_launch_screen_tatzpiteva).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                startProjectActivity(ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject());
             }
         });
 
         carouselHandler.postDelayed(carouselNextItem, CAROUSEL_AUTO_SCROLL_DELAY);
+        fillMyProjects();
+
+        registerReceiver(mProjectsChangeReceiver, new IntentFilter(MyProjectsManager.ACTION_MY_PROJECTS_LOADED));
+    }
+
+    private void startProjectActivity(int projectId) {
+        final Intent intent = new Intent(LaunchScreenActivity.this, INaturalistMapActivityWithDefaultProject.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        intent.putExtra(INaturalistMapActivity.INTENT_PARAM_PROJECT_ID, projectId);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mProjectsChangeReceiver);
+    }
+
+    private void fillMyProjects() {
+        Collection<MyProjectsManager.Project> projects = MyProjectsManager.getInstance().getProjects();
+        if (projects.size() == 0) {
+            return;
+        }
+        LinearLayout buttonsLayout = (LinearLayout) findViewById(R.id.layout_project_buttons);
+        buttonsLayout.removeAllViewsInLayout();
+        for (final MyProjectsManager.Project p : projects) {
+            Button b = new Button(this);
+
+            final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(
+                    0,
+                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics()),
+                    0,
+                    0);
+
+            b.setLayoutParams(lp);
+            b.setText(p.title);
+
+            b.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_button_launch_project, 0, 0, 0);
+            b.setBackgroundResource(R.drawable.button_launch_screen);
+            b.setTextColor(getResources().getColor(android.R.color.black));
+            b.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+            b.setCompoundDrawablePadding((int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics()));
+            b.setPaddingRelative(
+                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics()),
+                    0,
+                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics()),
+                    0);
+
+            b.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startProjectActivity(p.id);
+                }
+            });
+
+            buttonsLayout.addView(b);
+        }
+
     }
 
     private void setupDots() {
@@ -178,6 +257,18 @@ public class LaunchScreenActivity extends FragmentActivity {
         }
     }
 
+    //region LaunchScreenImageFragment.LaunchScreenImageTapped
+
+    @Override
+    public void onLaunchScreenImageTapped(int observationId) {
+//        Intent intent = new Intent(this, ObservationDetails.class);
+//        intent.putExtra("observation", Integer.toString(observationId));
+//        startActivity(intent);
+    }
+
+    //endregion
+
+
     public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
         private LaunchScreenCarouselConfig config;
@@ -192,7 +283,8 @@ public class LaunchScreenActivity extends FragmentActivity {
                 return null;
             }
 
-            return LaunchScreenImageFragment.newInsance(this.config.getPics().get(position).getUrl());
+            final LaunchScreenCarouselConfig.Pic pic = this.config.getPics().get(position);
+            return LaunchScreenImageFragment.newInsance(pic.getId(), pic.getUrl());
         }
 
         @Override

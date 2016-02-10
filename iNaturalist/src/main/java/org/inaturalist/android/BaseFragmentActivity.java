@@ -378,7 +378,7 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
         });
     }
 
-    private void startProjectActivity(int projectId) {
+    protected void startProjectActivity(int projectId) {
         final Intent intent = new Intent(this, INaturalistMapActivityWithDefaultProject.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 

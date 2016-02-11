@@ -31,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -51,6 +52,9 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
 	
     static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1;
     static final int SELECT_IMAGE_REQUEST_CODE = 2;
+
+    private static final int SIDEBAR_PROJECTS_LIMIT = 5;
+
 	private static final String TAG = "BaseFragmentActivity";
 
 	private DrawerLayout mDrawerLayout;
@@ -64,7 +68,13 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
     private BroadcastReceiver mProjectsChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent intent) {
-            fillMyProjects();
+            final LinearLayout mv = (LinearLayout) findViewById(R.id.menu_dynamic_projects);
+            mv.post(new Runnable() {
+                @Override
+                public void run() {
+                    fillMyProjects();
+                }
+            });
         }
     };
 
@@ -349,33 +359,47 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
     }
 
     private void fillMyProjects() {
-        final LinearLayout mv = (LinearLayout) findViewById(R.id.menu_dynamic_projects);
-        mv.post(new Runnable() {
-            @Override
-            public void run() {
-                Collection<MyProjectsManager.Project> projects = MyProjectsManager.getInstance().getProjects();
-                findViewById(R.id.my_projects_activity_indicator).setVisibility(
-                        projects.size() > 0 ? View.GONE : View.VISIBLE);
-                mv.removeAllViews();
-                mv.setVisibility(projects.size() > 0 ? View.VISIBLE : View.GONE);
+        LinearLayout mv = (LinearLayout) findViewById(R.id.menu_dynamic_projects);
+        Collection<MyProjectsManager.Project> projects = MyProjectsManager.getInstance().getProjects();
+        findViewById(R.id.my_projects_activity_indicator).setVisibility(
+                projects.size() > 0 ? View.GONE : View.VISIBLE);
+        mv.removeAllViews();
+        mv.setVisibility(projects.size() > 0 ? View.VISIBLE : View.GONE);
 
-                for (final MyProjectsManager.Project p : sortProjectsArray(projects)) {
-                    LinearLayout projItemLayout = (LinearLayout)
-                            getLayoutInflater().inflate(R.layout.side_menu_item, null);
+        int projectsCount = 0;
 
-                    ((TextView) projItemLayout.findViewById(R.id.side_menu_item_text)).setText(p.title);
-
-                    mv.addView(projItemLayout);
-
-                    projItemLayout.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            startProjectActivity(p.id);
-                        }
-                    });
-                }
+        for (final MyProjectsManager.Project p : sortProjectsArray(projects)) {
+            LinearLayout projItemLayout = (LinearLayout)
+                    getLayoutInflater().inflate(R.layout.side_menu_item, null);
+            if (projectsCount == SIDEBAR_PROJECTS_LIMIT) {
+                Button moreButton = new Button(this);
+                moreButton.setText(R.string.side_menu_more);
+                moreButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        View v = findViewById(R.id.menu_dynamic_projects_extra);
+                        v.setLayoutParams(new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+                        ((LinearLayout) view.getParent()).removeView(view);
+                    }
+                });
+                mv.addView(moreButton);
+                mv = (LinearLayout) findViewById(R.id.menu_dynamic_projects_extra);
             }
-        });
+
+            ((TextView) projItemLayout.findViewById(R.id.side_menu_item_text)).setText(p.title);
+
+            mv.addView(projItemLayout);
+
+            projItemLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startProjectActivity(p.id);
+                }
+            });
+
+            projectsCount ++;
+        }
     }
 
     protected void startProjectActivity(int projectId) {

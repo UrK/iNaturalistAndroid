@@ -2,11 +2,14 @@ package org.tatzpiteva.golan;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import org.inaturalist.android.INaturalistPrefsActivity;
 import org.inaturalist.android.INaturalistService;
@@ -16,6 +19,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,8 +43,10 @@ public class MyProjectsManager {
 
     // region Constants
 
+    private static final String TAG = "MyProjectsManager";
     public static final String ACTION_MY_PROJECTS_LOADED = "MyProjectsManager_ACTION_MY_PROJECTS_LOADED";
     private static final String SHARED_CONFIG = "MyProjectsManager_ProjectCache";
+    private static final String PROJECTS_CACHE = "projects_cache";
 
     // endregion
 
@@ -143,6 +154,8 @@ public class MyProjectsManager {
 
             projects.add(project);
 
+            saveProjectsCache(context);
+
             /* all pending projects have been processed, broadcast event */
             if (pendingDetails.isEmpty()) {
                 context.sendBroadcast(new Intent(ACTION_MY_PROJECTS_LOADED));
@@ -201,6 +214,8 @@ public class MyProjectsManager {
 
         IntentFilter filter = new IntentFilter(INaturalistService.ACTION_JOINED_PROJECTS_RESULT);
         context.registerReceiver(new JoinProjectReceiver(), filter);
+
+        loadProjectsCache(context);
 
         getMyProjects();
     }
@@ -264,6 +279,25 @@ public class MyProjectsManager {
 
         context.registerReceiver(
                 new UserLogoffListener(), new IntentFilter(INaturalistPrefsActivity.ACTION_RESULT_LOGOUT));
+    }
+
+    private void saveProjectsCache(Context context) {
+        context.deleteFile(PROJECTS_CACHE);
+
+        try (ObjectOutputStream ow = new ObjectOutputStream(context.openFileOutput(PROJECTS_CACHE, Context.MODE_PRIVATE))) {
+            ow.writeObject(projects);
+            ow.close();
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to save projects cache: ", e);
+        }
+    }
+
+    private void loadProjectsCache(Context context) {
+        try (ObjectInputStream is = new ObjectInputStream(context.openFileInput(PROJECTS_CACHE))) {
+            projects = (HashSet<Project>) is.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            Log.e(TAG, "Failed to read projects cache", e);
+        }
     }
 
     // endregion

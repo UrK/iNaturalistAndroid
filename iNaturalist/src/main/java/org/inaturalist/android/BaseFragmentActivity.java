@@ -358,12 +358,21 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
         return toSort;
     }
 
+    private boolean isLoggedIn() {
+        SharedPreferences prefs = getSharedPreferences("iNaturalistPreferences", MODE_PRIVATE);
+        return prefs.getString("username", null) != null;
+    }
+
     private void fillMyProjects() {
         LinearLayout mv = (LinearLayout) findViewById(R.id.menu_dynamic_projects);
         Collection<MyProjectsManager.Project> projects = MyProjectsManager.getInstance().getProjects();
         findViewById(R.id.my_projects_activity_indicator).setVisibility(
                 projects.size() > 0 ? View.GONE : View.VISIBLE);
-        mv.removeAllViews();
+
+        findViewById(R.id.projects_loading_progress_bar).setVisibility(
+                isLoggedIn() ? View.VISIBLE : View.INVISIBLE);
+
+        mv.removeAllViewsInLayout();
         mv.setVisibility(projects.size() > 0 ? View.VISIBLE : View.GONE);
 
         int projectsCount = 0;
@@ -385,6 +394,7 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
                 });
                 mv.addView(moreButton);
                 mv = (LinearLayout) findViewById(R.id.menu_dynamic_projects_extra);
+                mv.removeAllViewsInLayout();
             }
 
             ((TextView) projItemLayout.findViewById(R.id.side_menu_item_text)).setText(p.title);

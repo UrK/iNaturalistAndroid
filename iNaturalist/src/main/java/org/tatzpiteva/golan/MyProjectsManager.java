@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -71,6 +72,7 @@ public class MyProjectsManager {
 
             context.unregisterReceiver(this);
 
+
             context.registerReceiver(
                     new ProjectDetailsReceiver(),
                     new IntentFilter(INaturalistService.ACTION_GET_PROJECT_DETAILS_RESULT));
@@ -78,6 +80,8 @@ public class MyProjectsManager {
             SerializableJSONArray serializableArray =
                     (SerializableJSONArray) intent.getSerializableExtra(INaturalistService.PROJECTS_RESULT);
             JSONArray projectArray = serializableArray.getJSONArray();
+
+            downloadedProjects = new HashSet<>(projectArray.length());
 
             for (int i = 0; i < projectArray.length(); i++) {
                 JSONObject jp;
@@ -152,12 +156,13 @@ public class MyProjectsManager {
                 /* non critical data can be omitted from project details */
             }
 
-            projects.add(project);
+            downloadedProjects.add(project);
 
             saveProjectsCache(context);
 
             /* all pending projects have been processed, broadcast event */
             if (pendingDetails.isEmpty()) {
+                projects = downloadedProjects;
                 context.sendBroadcast(new Intent(ACTION_MY_PROJECTS_LOADED));
             }
         }
@@ -173,6 +178,7 @@ public class MyProjectsManager {
     private class UserLogoffListener extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            deleteProjectsCache(context);
             projects.clear();
             context.sendBroadcast(new Intent(ACTION_MY_PROJECTS_LOADED));
         }
@@ -201,6 +207,7 @@ public class MyProjectsManager {
     private static MyProjectsManager instance;
     @NonNull private final Context context;
     @NonNull private Set<Project> projects;
+    @NonNull private Set<Project> downloadedProjects;
     @NonNull private final Set<Integer> pendingDetails;
 
     // endregion
@@ -281,14 +288,25 @@ public class MyProjectsManager {
                 new UserLogoffListener(), new IntentFilter(INaturalistPrefsActivity.ACTION_RESULT_LOGOUT));
     }
 
-    private void saveProjectsCache(Context context) {
+    private void deleteProjectsCache(Context context) {
         context.deleteFile(PROJECTS_CACHE);
+    }
 
-        try (ObjectOutputStream ow = new ObjectOutputStream(context.openFileOutput(PROJECTS_CACHE, Context.MODE_PRIVATE))) {
+    private void saveProjectsCache(Context context) {
+        deleteProjectsCache(context);
+
+        FileOutputStream fileOutputStream = null;
+
+        try {
+            fileOutputStream = context.openFileOutput(PROJECTS_CACHE, Context.MODE_PRIVATE);
+            ObjectOutputStream ow;
+            ow = new ObjectOutputStream(fileOutputStream);
             ow.writeObject(projects);
             ow.close();
         } catch (IOException e) {
-            Log.e(TAG, "Failed to save projects cache: ", e);
+            if (fileOutputStream != null) {
+                try { fileOutputStream.close(); } catch (IOException ignored) { }
+            }
         }
     }
 

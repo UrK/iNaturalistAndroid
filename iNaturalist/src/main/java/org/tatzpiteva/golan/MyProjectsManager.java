@@ -2,11 +2,9 @@ package org.tatzpiteva.golan;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -19,23 +17,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * Manager of own user projects
@@ -46,6 +38,10 @@ public class MyProjectsManager {
 
     private static final String TAG = "MyProjectsManager";
     public static final String ACTION_MY_PROJECTS_LOADED = "MyProjectsManager_ACTION_MY_PROJECTS_LOADED";
+
+    public static final String ACTION_MY_PROJECTS_LOADING_STARTED =
+            "MyProjectsManager_ACTION_MY_PROJECTS_LOADING_STARTED";
+
     private static final String SHARED_CONFIG = "MyProjectsManager_ProjectCache";
     private static final String PROJECTS_CACHE = "projects_cache";
 
@@ -158,11 +154,11 @@ public class MyProjectsManager {
 
             downloadedProjects.add(project);
 
-            saveProjectsCache(context);
 
             /* all pending projects have been processed, broadcast event */
             if (pendingDetails.isEmpty()) {
-                projects = downloadedProjects;
+                projects = new LinkedHashSet<>(Arrays.asList(sortProjectsArray(downloadedProjects)));
+                saveProjectsCache(context);
                 context.sendBroadcast(new Intent(ACTION_MY_PROJECTS_LOADED));
             }
         }
@@ -219,8 +215,16 @@ public class MyProjectsManager {
         this.pendingDetails = new HashSet<>();
         this.projects = new HashSet<>();
 
-        IntentFilter filter = new IntentFilter(INaturalistService.ACTION_JOINED_PROJECTS_RESULT);
-        context.registerReceiver(new JoinProjectReceiver(), filter);
+        context.registerReceiver(new JoinProjectReceiver(),
+                new IntentFilter(INaturalistService.ACTION_JOINED_PROJECTS_RESULT));
+
+        context.registerReceiver(
+                new MyProjectsReceiver(), new IntentFilter(INaturalistService.ACTION_JOINED_PROJECTS_RESULT));
+
+        context.registerReceiver(new UserLoginListener(), new IntentFilter(SignInTask.ACTION_RESULT_SIGNED_IN));
+
+        context.registerReceiver(
+                new UserLogoffListener(), new IntentFilter(INaturalistPrefsActivity.ACTION_RESULT_LOGOUT));
 
         loadProjectsCache(context);
 
@@ -268,6 +272,23 @@ public class MyProjectsManager {
 
     // region Utilities
 
+    private Project[] sortProjectsArray(Collection<MyProjectsManager.Project> projects) {
+        final MyProjectsManager.Project[] toSort = projects.toArray(new MyProjectsManager.Project[projects.size()]);
+        Arrays.sort(toSort, new Comparator<MyProjectsManager.Project>() {
+            @Override
+            public int compare(MyProjectsManager.Project left, MyProjectsManager.Project right) {
+                if (left.id == ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject()) {
+                    return -1;
+                }
+                if (right.id == ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject()) {
+                    return 1;
+                }
+                return left.id > right.id ? 1 : -1;
+            }
+        });
+        return toSort;
+    }
+
     private void getMyProjects() {
         SharedPreferences prefs = context.getSharedPreferences("iNaturalistPreferences", Context.MODE_PRIVATE);
         if (prefs.getString("username", null) == null) {
@@ -279,13 +300,7 @@ public class MyProjectsManager {
                 new Intent(INaturalistService.ACTION_GET_JOINED_PROJECTS, null, context, INaturalistService.class);
         context.startService(serviceIntent);
 
-        context.registerReceiver(
-                new MyProjectsReceiver(), new IntentFilter(INaturalistService.ACTION_JOINED_PROJECTS_RESULT));
-
-        context.registerReceiver(new UserLoginListener(), new IntentFilter(SignInTask.ACTION_RESULT_SIGNED_IN));
-
-        context.registerReceiver(
-                new UserLogoffListener(), new IntentFilter(INaturalistPrefsActivity.ACTION_RESULT_LOGOUT));
+        context.sendBroadcast(new Intent(ACTION_MY_PROJECTS_LOADING_STARTED));
     }
 
     private void deleteProjectsCache(Context context) {

@@ -344,23 +344,6 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
         super.onStop();
     }
 
-    private MyProjectsManager.Project[] sortProjectsArray(Collection<MyProjectsManager.Project> projects) {
-        final MyProjectsManager.Project[] toSort = projects.toArray(new MyProjectsManager.Project[projects.size()]);
-        Arrays.sort(toSort, new Comparator<MyProjectsManager.Project>() {
-            @Override
-            public int compare(MyProjectsManager.Project left, MyProjectsManager.Project right) {
-                if (left.id == ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject()) {
-                    return -1;
-                }
-                if (right.id == ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject()) {
-                    return 1;
-                }
-                return left.id > right.id ? 1 : -1;
-            }
-        });
-        return toSort;
-    }
-
     private boolean isLoggedIn() {
         SharedPreferences prefs = getSharedPreferences("iNaturalistPreferences", MODE_PRIVATE);
         return prefs.getString("username", null) != null;
@@ -380,7 +363,7 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
 
         int projectsCount = 0;
 
-        for (final MyProjectsManager.Project p : sortProjectsArray(projects)) {
+        for (final MyProjectsManager.Project p : projects) {
             LinearLayout projItemLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.side_menu_item, null);
             if (projectsCount == SIDEBAR_PROJECTS_LIMIT) {
                 LinearLayout moreButton = (LinearLayout) getLayoutInflater().inflate(R.layout.side_menu_item, null);
@@ -418,32 +401,6 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
 
             projectsCount ++;
         }
-    }
-
-    @NonNull
-    private Button createMoreButton() {
-        Button moreButton = new Button(this, null, R.style.SideBarButtonstyle);
-        moreButton.setText(getString(R.string.side_menu_more));
-
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                (int) getResources().getDimension(R.dimen.side_bar_button_height));
-
-        lp.setMarginStart((int) getResources().getDimension(R.dimen.side_bar_button_margin_start));
-        lp.gravity = Gravity.CENTER_VERTICAL;
-
-        moreButton.setLayoutParams(lp);
-
-        moreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                View v = findViewById(R.id.menu_dynamic_projects_extra);
-                v.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-                ((LinearLayout) view.getParent()).removeView(view);
-            }
-        });
-        return moreButton;
     }
 
     protected void startProjectActivity(int projectId) {

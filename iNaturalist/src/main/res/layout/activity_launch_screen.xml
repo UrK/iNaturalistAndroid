@@ -27,37 +27,32 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <!--<HorizontalScrollView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="200dp">-->
-                <!--<LinearLayout-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:orientation="horizontal"-->
-                    <!--android:id="@+id/layout_view_carousel"/>-->
-            <!--</HorizontalScrollView>-->
             <android.support.v4.view.ViewPager
                 android:id="@+id/pager_launch_carousel"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:background="#32000000"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/recommended_observations"
+                android:gravity="center"
+                android:layout_gravity="top"
+                android:background="@color/inatapptheme_color_semitransparent_black"
+                android:textColor="@android:color/white"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center_horizontal"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:background="@color/inatapptheme_color_semitransparent_black">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/recommended_observations"
-                    android:textColor="@android:color/white"/>
                 <LinearLayout
                     android:id="@+id/launch_carousel_dots"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"/>
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp"/>
             </LinearLayout>
         </FrameLayout>
 
@@ -90,6 +85,54 @@
             android:paddingEnd="20dp"
             android:layout_marginTop="30dp"
             />
+
+        <Button
+            android:id="@+id/button_launch_screen_explore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/explore"
+            android:drawableStart="@drawable/ic_button_launch_project"
+            android:background="@drawable/button_launch_screen"
+            android:textColor="@android:color/black"
+            android:gravity="start|center_vertical"
+            android:drawablePadding="20dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginTop="30dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="30dp">
+            <View
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/menu_my_projects"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:textSize="16dp"
+                android:textColor="@android:color/black"/>
+            <View
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+
+            <ProgressBar
+                android:id="@+id/progress_launch_screen_loading"
+                android:layout_marginStart="2dp"
+                android:layout_height="24dp"
+                android:layout_width="24dp"
+                android:indeterminateOnly="true"
+                android:keepScreenOn="true"/>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layout_project_buttons"

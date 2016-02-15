@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -50,6 +51,8 @@ public class LaunchScreenActivity extends FragmentActivity implements
     private LaunchScreenCarouselConfig config;
     private Handler carouselHandler;
     private boolean exitPending;
+    private ProgressDialog showObservationProgress;
+    private Button buttonTatzpiteva;
 
     private final Runnable carouselNextItem = new Runnable() {
         @Override
@@ -76,7 +79,25 @@ public class LaunchScreenActivity extends FragmentActivity implements
     private final BroadcastReceiver mProjectsChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    findViewById(R.id.progress_launch_screen_loading).setVisibility(View.GONE);
+                }
+            });
             fillMyProjects();
+        }
+    };
+
+    private final BroadcastReceiver mProjectsLoadingStartListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    findViewById(R.id.progress_launch_screen_loading).setVisibility(View.VISIBLE);
+                }
+            });
         }
     };
 
@@ -84,6 +105,18 @@ public class LaunchScreenActivity extends FragmentActivity implements
         @Override
         public void onReceive(Context context, Intent intent) {
             unregisterReceiver(this);
+
+            if (LaunchScreenActivity.this.showObservationProgress != null) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (LaunchScreenActivity.this.showObservationProgress != null) {
+                            LaunchScreenActivity.this.showObservationProgress.dismiss();
+                            LaunchScreenActivity.this.showObservationProgress = null;
+                        }
+                    }
+                });
+            }
 
             Observation observation = (Observation) intent.getSerializableExtra(INaturalistService.OBSERVATION_RESULT);
             Intent detailsIntent = new Intent(LaunchScreenActivity.this, ObservationDetails.class)
@@ -195,10 +228,22 @@ public class LaunchScreenActivity extends FragmentActivity implements
             }
         });
 
+        findViewById(R.id.button_launch_screen_explore).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startExploreActivity();
+            }
+        });
+
+        buttonTatzpiteva = (Button) findViewById(R.id.button_launch_screen_tatzpiteva);
+
         carouselHandler.postDelayed(carouselNextItem, CAROUSEL_AUTO_SCROLL_DELAY);
         fillMyProjects();
 
         registerReceiver(mProjectsChangeReceiver, new IntentFilter(MyProjectsManager.ACTION_MY_PROJECTS_LOADED));
+
+        registerReceiver(mProjectsLoadingStartListener,
+                new IntentFilter(MyProjectsManager.ACTION_MY_PROJECTS_LOADING_STARTED));
     }
 
     private void startProjectActivity(int projectId) {
@@ -209,18 +254,34 @@ public class LaunchScreenActivity extends FragmentActivity implements
         startActivity(intent);
     }
 
+    private void startExploreActivity() {
+        startActivity(new Intent(LaunchScreenActivity.this, INaturalistMapActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+    }
+
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        unregisterReceiver(mProjectsLoadingStartListener);
         unregisterReceiver(mProjectsChangeReceiver);
+        super.onDestroy();
     }
 
     private void fillMyProjects() {
         Collection<MyProjectsManager.Project> projects = MyProjectsManager.getInstance().getProjects();
-        if (projects.size() == 0) {
+
+        LinearLayout buttonsLayout = (LinearLayout) findViewById(R.id.layout_project_buttons);
+
+        /* if the user is logged out, show only Tatzpiteva button */
+        if (!isLoggedIn()) {
+            buttonsLayout.removeAllViewsInLayout();
+            buttonsLayout.addView(buttonTatzpiteva);
             return;
         }
-        LinearLayout buttonsLayout = (LinearLayout) findViewById(R.id.layout_project_buttons);
+
+        if (projects.size() == 0) {
+            findViewById(R.id.progress_launch_screen_loading).setVisibility(isLoggedIn() ? View.VISIBLE : View.GONE);
+            return;
+        }
         buttonsLayout.removeAllViewsInLayout();
         for (final MyProjectsManager.Project p : projects) {
             Button b = new Button(this);
@@ -260,6 +321,11 @@ public class LaunchScreenActivity extends FragmentActivity implements
 
     }
 
+    private boolean isLoggedIn() {
+        SharedPreferences prefs = getSharedPreferences("iNaturalistPreferences", MODE_PRIVATE);
+        return prefs.getString("username", null) != null;
+    }
+
     private void setupDots() {
         dotsLayout.removeAllViewsInLayout();
         if (this.config == null) {
@@ -296,13 +362,11 @@ public class LaunchScreenActivity extends FragmentActivity implements
                 INaturalistService.ACTION_GET_OBSERVATION, null, this, INaturalistService.class);
 
         serviceIntent.putExtra(INaturalistService.OBSERVATION_ID, observationId);
+        registerReceiver(mObservationDetailsReceiver, new IntentFilter(INaturalistService.ACTION_OBSERVATION_RESULT));
         startService(serviceIntent);
 
-        registerReceiver(mObservationDetailsReceiver, new IntentFilter(INaturalistService.ACTION_OBSERVATION_RESULT));
-
-//        Intent intent = new Intent(this, ObservationDetails.class);
-//        intent.putExtra("observation", Integer.toString(observationId));
-//        startActivity(intent);
+        this.showObservationProgress = ProgressDialog.show(this, getString(R.string.loading),
+                getString(R.string.loading_observation_details));
     }
 
     //endregion

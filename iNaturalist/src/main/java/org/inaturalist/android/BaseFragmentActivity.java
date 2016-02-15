@@ -21,15 +21,18 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ActionMenuView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -378,11 +381,15 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
         int projectsCount = 0;
 
         for (final MyProjectsManager.Project p : sortProjectsArray(projects)) {
-            LinearLayout projItemLayout = (LinearLayout)
-                    getLayoutInflater().inflate(R.layout.side_menu_item, null);
+            LinearLayout projItemLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.side_menu_item, null);
             if (projectsCount == SIDEBAR_PROJECTS_LIMIT) {
-                Button moreButton = new Button(this);
-                moreButton.setText(R.string.side_menu_more);
+                LinearLayout moreButton = (LinearLayout) getLayoutInflater().inflate(R.layout.side_menu_item, null);
+
+                ((TextView) moreButton.findViewById(R.id.side_menu_item_text)).setText(
+                        getString(R.string.side_menu_more));
+
+                moreButton.findViewById(R.id.side_menu_item_icon).setVisibility(View.GONE);
+
                 moreButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -392,6 +399,7 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
                         ((LinearLayout) view.getParent()).removeView(view);
                     }
                 });
+//                Button moreButton = createMoreButton();
                 mv.addView(moreButton);
                 mv = (LinearLayout) findViewById(R.id.menu_dynamic_projects_extra);
                 mv.removeAllViewsInLayout();
@@ -410,6 +418,32 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
 
             projectsCount ++;
         }
+    }
+
+    @NonNull
+    private Button createMoreButton() {
+        Button moreButton = new Button(this, null, R.style.SideBarButtonstyle);
+        moreButton.setText(getString(R.string.side_menu_more));
+
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                (int) getResources().getDimension(R.dimen.side_bar_button_height));
+
+        lp.setMarginStart((int) getResources().getDimension(R.dimen.side_bar_button_margin_start));
+        lp.gravity = Gravity.CENTER_VERTICAL;
+
+        moreButton.setLayoutParams(lp);
+
+        moreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View v = findViewById(R.id.menu_dynamic_projects_extra);
+                v.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+                ((LinearLayout) view.getParent()).removeView(view);
+            }
+        });
+        return moreButton;
     }
 
     protected void startProjectActivity(int projectId) {

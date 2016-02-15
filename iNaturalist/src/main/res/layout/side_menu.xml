@@ -145,7 +145,7 @@
                     android:gravity="center_vertical"
                     android:padding="10dp"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp">
+                    android:layout_height="@dimen/side_bar_button_height">
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
@@ -162,20 +162,24 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_marginStart="7dp"
+                    android:padding="10dp"
+                    android:layout_gravity="start"
                     android:orientation="horizontal"
                     android:id="@+id/projects_loading_progress_bar">
 
                     <ProgressBar
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/side_bar_button_icon_size"
+                        android:layout_width="@dimen/side_bar_button_icon_size"
                         android:indeterminateOnly="true"
                         android:keepScreenOn="true"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:layout_marginStart="30dp"
+                        android:textSize="@dimen/side_menu_text_size"
                         android:text="@string/loading"
                         android:gravity="center"/>
                 </LinearLayout>
@@ -207,7 +211,7 @@
             android:gravity="center_vertical"
             android:padding="10dp"
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="@dimen/side_bar_button_height">
             <ImageView
                 android:id="@+id/menu_explore_icon"
                 android:layout_width="24dp"
@@ -234,7 +238,7 @@
             android:gravity="center_vertical"
             android:padding="10dp"
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="@dimen/side_bar_button_height">
             <ImageView
                 android:id="@+id/menu_projects_icon"
                 android:layout_width="24dp"
@@ -261,7 +265,7 @@
             android:gravity="center_vertical"
             android:padding="10dp"
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="@dimen/side_bar_button_height">
             <ImageView
                 android:id="@+id/menu_guides_icon"
                 android:layout_width="24dp"
@@ -287,7 +291,7 @@
             android:gravity="center_vertical"
             android:padding="10dp"
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="@dimen/side_bar_button_height">
             <ImageView
                 android:id="@+id/menu_activity_icon"
                 android:layout_width="24dp"
@@ -317,7 +321,7 @@
             android:gravity="center_vertical"
             android:padding="10dp"
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="@dimen/side_bar_button_height">
             <ImageView
                 android:id="@+id/menu_settings_icon"
                 android:layout_width="24dp"

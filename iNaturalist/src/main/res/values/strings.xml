@@ -426,7 +426,7 @@
     <string name="recommended_observations">recommended observations</string>
     <string name="launch_button_new_observation">New Observation</string>
     <string name="launch_button_my_observations">My Observations</string>
-    <string name="side_menu_more">More</string>
+    <string name="side_menu_more">More projects…</string>
     <string name="exit_confirmation_message">Press \"Back\" again to exit</string>
 </resources>
 

@@ -340,7 +340,9 @@
     <string name="menu_explore_text_golan">תצפיטבע</string>
     <string name="gallery">גלריה</string>
     <string name="menu_my_projects">פרוייקטים שלי</string>
-    <string name="launch_button_new_observation">New Observation</string>
-    <string name="launch_button_my_observations">My Observations</string>
+    <string name="launch_button_new_observation">תצפית חדשה</string>
+    <string name="launch_button_my_observations">תצפיות שלי</string>
+    <string name="side_menu_more">עוד פרוייקטים…</string>
+    <string name="exit_confirmation_message">לחץ כפתור /״חזור/״ פעם נוספת כדי לצאת</string>
 
 </resources>

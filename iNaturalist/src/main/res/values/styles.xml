@@ -19,4 +19,7 @@
         <item name="android:textColor">#ffffff</item>
         <item name="android:textSize">14sp</item>
     </style>
+    <style name="SideBarButtonstyle" parent="Widget.Sherlock.ActionButton">
+        <item name="android:gravity">start</item>
+    </style>
 </resources>

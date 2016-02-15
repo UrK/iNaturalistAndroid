@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.cocosw.bottomsheet.BottomSheet;
 
@@ -48,6 +49,7 @@ public class LaunchScreenActivity extends FragmentActivity implements
     private LinearLayout dotsLayout;
     private LaunchScreenCarouselConfig config;
     private Handler carouselHandler;
+    private boolean exitPending;
 
     private final Runnable carouselNextItem = new Runnable() {
         @Override
@@ -77,6 +79,35 @@ public class LaunchScreenActivity extends FragmentActivity implements
             fillMyProjects();
         }
     };
+
+    private final BroadcastReceiver mObservationDetailsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            unregisterReceiver(this);
+
+            Observation observation = (Observation) intent.getSerializableExtra(INaturalistService.OBSERVATION_RESULT);
+            Intent detailsIntent = new Intent(LaunchScreenActivity.this, ObservationDetails.class)
+                    .putExtra("observation", observation.toJSONObject().toString());
+            startActivity(detailsIntent);
+        }
+    };
+
+    @Override
+    public void onBackPressed() {
+        if (this.exitPending) {
+            super.onBackPressed();
+        }
+        else {
+            Toast.makeText(this, R.string.exit_confirmation_message, Toast.LENGTH_SHORT).show();
+            this.exitPending = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    LaunchScreenActivity.this.exitPending = false;
+                }
+            }, 2500);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -261,6 +292,14 @@ public class LaunchScreenActivity extends FragmentActivity implements
 
     @Override
     public void onLaunchScreenImageTapped(int observationId) {
+        Intent serviceIntent = new Intent(
+                INaturalistService.ACTION_GET_OBSERVATION, null, this, INaturalistService.class);
+
+        serviceIntent.putExtra(INaturalistService.OBSERVATION_ID, observationId);
+        startService(serviceIntent);
+
+        registerReceiver(mObservationDetailsReceiver, new IntentFilter(INaturalistService.ACTION_OBSERVATION_RESULT));
+
 //        Intent intent = new Intent(this, ObservationDetails.class);
 //        intent.putExtra("observation", Integer.toString(observationId));
 //        startActivity(intent);

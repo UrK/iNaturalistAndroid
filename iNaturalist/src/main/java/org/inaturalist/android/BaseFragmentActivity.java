@@ -21,20 +21,13 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ActionMenuView;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -43,9 +36,7 @@ import android.widget.Toast;
 import org.tatzpiteva.golan.ConfigurationManager;
 import org.tatzpiteva.golan.MyProjectsManager;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 
 /**
  * Utility class for implementing the side-menu (navigation drawer) used throughout the app
@@ -67,15 +58,29 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
 	private INaturalistApp app;
 	private ActivityHelper mHelper;
     private UserDetailsReceiver mUserDetailsReceiver;
+    private View mLoadingProgressView;
+    private LinearLayout mDynamicProjectsLayout;
+    private View mTatzpitevaProjectSelector;
 
     private BroadcastReceiver mProjectsChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent intent) {
-            final LinearLayout mv = (LinearLayout) findViewById(R.id.menu_dynamic_projects);
-            mv.post(new Runnable() {
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     fillMyProjects();
+                }
+            });
+        }
+    };
+
+    private BroadcastReceiver mProjectsLoadingStartListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, final Intent intent) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mLoadingProgressView.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -113,6 +118,8 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mSideMenu = (LinearLayout) findViewById(R.id.left_drawer);
+        mLoadingProgressView = findViewById(R.id.projects_loading_progress_bar);
+        mDynamicProjectsLayout = (LinearLayout) findViewById(R.id.menu_dynamic_projects);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_menu_black_24dp, 0, 0) {
             public void onDrawerClosed(View view) {
@@ -291,7 +298,8 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
             }
         });
 
-        findViewById(R.id.menu_tatzpiteva).setOnClickListener(new View.OnClickListener() {
+        mTatzpitevaProjectSelector = findViewById(R.id.menu_tatzpiteva);
+        mTatzpitevaProjectSelector.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startProjectActivity(ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject());
@@ -334,13 +342,17 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
 
     @Override
     protected void onStart() {
-        registerReceiver(mProjectsChangeReceiver, new IntentFilter(MyProjectsManager.ACTION_MY_PROJECTS_LOADED));
         super.onStart();
+
+        registerReceiver(mProjectsChangeReceiver, new IntentFilter(MyProjectsManager.ACTION_MY_PROJECTS_LOADED));
+        registerReceiver(mProjectsLoadingStartListener,
+                new IntentFilter(MyProjectsManager.ACTION_MY_PROJECTS_LOADING_STARTED));
     }
 
     @Override
     protected void onStop() {
         unregisterReceiver(mProjectsChangeReceiver);
+        unregisterReceiver(mProjectsLoadingStartListener);
         super.onStop();
     }
 
@@ -350,16 +362,18 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
     }
 
     private void fillMyProjects() {
-        LinearLayout mv = (LinearLayout) findViewById(R.id.menu_dynamic_projects);
         Collection<MyProjectsManager.Project> projects = MyProjectsManager.getInstance().getProjects();
-        findViewById(R.id.my_projects_activity_indicator).setVisibility(
-                projects.size() > 0 ? View.GONE : View.VISIBLE);
 
-        findViewById(R.id.projects_loading_progress_bar).setVisibility(
-                isLoggedIn() ? View.VISIBLE : View.INVISIBLE);
+        mLoadingProgressView.setVisibility(View.GONE);
 
-        mv.removeAllViewsInLayout();
-        mv.setVisibility(projects.size() > 0 ? View.VISIBLE : View.GONE);
+        if (!isLoggedIn()) {
+            mDynamicProjectsLayout.removeAllViewsInLayout();
+            mTatzpitevaProjectSelector.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        mDynamicProjectsLayout.removeAllViewsInLayout();
+        mDynamicProjectsLayout.setVisibility(projects.size() > 0 ? View.VISIBLE : View.GONE);
 
         int projectsCount = 0;
 
@@ -382,15 +396,14 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
                         ((LinearLayout) view.getParent()).removeView(view);
                     }
                 });
-//                Button moreButton = createMoreButton();
-                mv.addView(moreButton);
-                mv = (LinearLayout) findViewById(R.id.menu_dynamic_projects_extra);
-                mv.removeAllViewsInLayout();
+                mDynamicProjectsLayout.addView(moreButton);
+                mDynamicProjectsLayout = (LinearLayout) findViewById(R.id.menu_dynamic_projects_extra);
+                mDynamicProjectsLayout.removeAllViewsInLayout();
             }
 
             ((TextView) projItemLayout.findViewById(R.id.side_menu_item_text)).setText(p.title);
 
-            mv.addView(projItemLayout);
+            mDynamicProjectsLayout.addView(projItemLayout);
 
             projItemLayout.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -69,7 +69,6 @@ public class MyProjectsManager {
 
             context.unregisterReceiver(this);
 
-
             context.registerReceiver(
                     new ProjectDetailsReceiver(),
                     new IntentFilter(INaturalistService.ACTION_GET_PROJECT_DETAILS_RESULT));

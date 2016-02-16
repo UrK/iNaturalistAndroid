@@ -8,6 +8,8 @@ import android.os.Bundle;
 
 public class LaunchScreenCarouselManager implements LoaderManager.LoaderCallbacks<LaunchScreenCarouselConfig> {
 
+    private static final String CONFIG_CACHE_FILE = "launch_screen_cache";
+
     public interface ConfigRefreshListener {
         void onCarouselConfigRefresh(LaunchScreenCarouselConfig config);
     }
@@ -38,6 +40,9 @@ public class LaunchScreenCarouselManager implements LoaderManager.LoaderCallback
 
     @Override
     public void onLoadFinished(Loader<LaunchScreenCarouselConfig> loader, LaunchScreenCarouselConfig config) {
+
+//        context.openFileOutput(CONFIG_CACHE_FILE)
+
         this.context = null;
 
         if (listener != null) {

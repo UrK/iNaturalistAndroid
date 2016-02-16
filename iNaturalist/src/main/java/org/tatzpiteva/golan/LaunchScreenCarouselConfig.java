@@ -1,10 +1,11 @@
 package org.tatzpiteva.golan;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LaunchScreenCarouselConfig {
-    public static class Pic {
+public class LaunchScreenCarouselConfig implements Serializable {
+    public static class Pic implements Serializable {
         private int id;
         private String name;
         private String url;

@@ -17,6 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -42,7 +44,6 @@ public class MyProjectsManager {
     public static final String ACTION_MY_PROJECTS_LOADING_STARTED =
             "MyProjectsManager_ACTION_MY_PROJECTS_LOADING_STARTED";
 
-    private static final String SHARED_CONFIG = "MyProjectsManager_ProjectCache";
     private static final String PROJECTS_CACHE = "projects_cache";
 
     // endregion
@@ -152,8 +153,12 @@ public class MyProjectsManager {
                 /* non critical data can be omitted from project details */
             }
 
-            downloadedProjects.add(project);
+            if (downloadedProjects == null) {
+                Log.e(TAG, "Null downloaded projects configuration");
+                return;
+            }
 
+            downloadedProjects.add(project);
 
             /* all pending projects have been processed, broadcast event */
             if (pendingDetails.isEmpty()) {
@@ -203,7 +208,7 @@ public class MyProjectsManager {
     private static MyProjectsManager instance;
     @NonNull private final Context context;
     @NonNull private Set<Project> projects;
-    @NonNull private Set<Project> downloadedProjects;
+    @Nullable private Set<Project> downloadedProjects;
     @NonNull private final Set<Integer> pendingDetails;
 
     // endregion
@@ -272,7 +277,7 @@ public class MyProjectsManager {
 
     // region Utilities
 
-    private Project[] sortProjectsArray(Collection<MyProjectsManager.Project> projects) {
+    private Project[] sortProjectsArray(@NonNull Collection<MyProjectsManager.Project> projects) {
         final MyProjectsManager.Project[] toSort = projects.toArray(new MyProjectsManager.Project[projects.size()]);
         Arrays.sort(toSort, new Comparator<MyProjectsManager.Project>() {
             @Override
@@ -326,10 +331,25 @@ public class MyProjectsManager {
     }
 
     private void loadProjectsCache(Context context) {
-        try (ObjectInputStream is = new ObjectInputStream(context.openFileInput(PROJECTS_CACHE))) {
+        FileInputStream inputStream;
+
+        try {
+            inputStream = context.openFileInput(PROJECTS_CACHE);
+        } catch (FileNotFoundException e) {
+            Log.i(TAG, "Projects cache file not found");
+            return;
+        }
+
+        ObjectInputStream is;
+        try {
+            is = new ObjectInputStream(inputStream);
             projects = (HashSet<Project>) is.readObject();
-        } catch (IOException | ClassNotFoundException e) {
+            is.close();
+        } catch (ClassNotFoundException | IOException e) {
             Log.e(TAG, "Failed to read projects cache", e);
+        } finally {
+            try { inputStream.close(); }
+            catch (IOException ignored) { }
         }
     }
 

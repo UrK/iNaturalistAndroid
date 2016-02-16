@@ -372,6 +372,10 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
             return;
         }
 
+        if (MyProjectsManager.getInstance().isLoading()) {
+            mLoadingProgressView.setVisibility(View.VISIBLE);
+        }
+
         mDynamicProjectsLayout.removeAllViewsInLayout();
         mDynamicProjectsLayout.setVisibility(projects.size() > 0 ? View.VISIBLE : View.GONE);
 
@@ -488,6 +492,7 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
         super.onResume();
         if (app == null) { app = (INaturalistApp) getApplicationContext(); }
         refreshUserDetails();
+        fillMyProjects();
     }
     
     @Override

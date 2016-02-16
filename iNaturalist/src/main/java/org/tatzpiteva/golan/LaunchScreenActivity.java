@@ -153,17 +153,6 @@ public class LaunchScreenActivity extends FragmentActivity implements
 
         this.dotsLayout = (LinearLayout) findViewById(R.id.launch_carousel_dots);
 
-        this.configManager = new LaunchScreenCarouselManager();
-        this.configManager.retrieveCarouselItems(this);
-        this.configManager.setOnConfigRefreshListener(new LaunchScreenCarouselManager.ConfigRefreshListener() {
-            @Override
-            public void onCarouselConfigRefresh(LaunchScreenCarouselConfig config) {
-                LaunchScreenActivity.this.config = config;
-                ((ViewPagerAdapter) viewPager.getAdapter()).setConfig(config);
-                setupDots();
-            }
-        });
-
         this.viewPager = (ViewPager) findViewById(R.id.pager_launch_carousel);
         this.viewPager.setAdapter(pagerAdapter);
         this.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -183,6 +172,25 @@ public class LaunchScreenActivity extends FragmentActivity implements
             @Override
             public void onPageSelected(int position) {
                 setupDots();
+            }
+        });
+
+        /* setup configuration manager */
+        this.configManager = new LaunchScreenCarouselManager(this);
+        if (this.configManager.getCachedConfig() != null) {
+            this.config = this.configManager.getCachedConfig();
+            ((ViewPagerAdapter) viewPager.getAdapter()).setConfig(config);
+            setupDots();
+        }
+        this.configManager.retrieveCarouselItems(this);
+        this.configManager.setOnConfigRefreshListener(new LaunchScreenCarouselManager.ConfigRefreshListener() {
+            @Override
+            public void onCarouselConfigRefresh(LaunchScreenCarouselConfig config) {
+                if (config != null) {
+                    LaunchScreenActivity.this.config = config;
+                    ((ViewPagerAdapter) viewPager.getAdapter()).setConfig(config);
+                    setupDots();
+                }
             }
         });
 

@@ -141,6 +141,7 @@ public class ProjectDetailsCheckList extends SherlockFragment {
                         startActivity(intent);
                     }
                 });
+                addObservation.setVisibility(View.GONE);
 
             } else {
             	// Regular taxon item            
@@ -174,6 +175,7 @@ public class ProjectDetailsCheckList extends SherlockFragment {
             		}
             	});
 
+                addObservation.setVisibility(View.GONE);
             	view.setTag(item);
             }
 

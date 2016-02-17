@@ -75,6 +75,12 @@ public class MyProjectsManager {
 
             SerializableJSONArray serializableArray =
                     (SerializableJSONArray) intent.getSerializableExtra(INaturalistService.PROJECTS_RESULT);
+
+            if (serializableArray == null) {
+                Log.w(TAG, "Invalid projects list (null)");
+                return;
+            }
+
             JSONArray projectArray = serializableArray.getJSONArray();
 
             downloadedProjects = new HashSet<>(projectArray.length());

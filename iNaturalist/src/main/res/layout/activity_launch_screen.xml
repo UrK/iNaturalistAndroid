@@ -75,7 +75,7 @@
             android:id="@+id/button_launch_screen_my_obs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/launch_button_my_observations"
+            android:text="@string/observations"
             android:drawableStart="@drawable/ic_button_launch_my_obs"
             android:background="@drawable/button_launch_screen"
             android:textColor="@android:color/black"

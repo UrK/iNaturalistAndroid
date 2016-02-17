@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jraf.android.backport.switchwidget.Switch;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.lucasr.twowayview.TwoWayView;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -81,6 +82,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.Html;
 import android.text.InputType;
@@ -134,6 +136,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.lucasr.twowayview.TwoWayView;
 import org.tatzpiteva.golan.Config;
+import org.tatzpiteva.golan.ConfigHelper;
 import org.tatzpiteva.golan.ConfigurationManager;
 
 import java.io.IOException;
@@ -263,9 +266,24 @@ public class ObservationEditor extends SherlockFragmentActivity {
         		projectList = serializableArray.getJSONArray();
         	}
 
+            /* initialize list of projects to assign to this observation and add Tatzpiteva right away, so that every
+             * new observation will be assigned to Tatzpiteva */
+            mProjectIds = new ArrayList<>();
+            final int aup = ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject();
+            if (aup > 0 && !mProjectIds.contains(aup)) {
+                mProjectIds.add(aup);
+            }
+
             for (int i = 0; i < projectList.length(); i++) {
                 try {
-                    mProjects.add(new BetterJSONObject(projectList.getJSONObject(i)));
+                    final JSONObject jsonProject = projectList.getJSONObject(i);
+                    final int projectId = jsonProject.getInt("id");
+
+                    if (ConfigHelper.isProjectAutoAdd(projectId) && !mProjectIds.contains(projectId)) {
+                        mProjectIds.add(projectId);
+                    }
+
+                    mProjects.add(new BetterJSONObject(jsonProject));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -399,22 +417,6 @@ public class ObservationEditor extends SherlockFragmentActivity {
                 }
                 setResult(RESULT_OK, (new Intent()).setAction(mUri.toString()));
                 getIntent().setAction(Intent.ACTION_INSERT);
-
-                mProjectIds = new ArrayList<>();
-                final int aup = ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject();
-                if (aup > 0 && !mProjectIds.contains(aup)) {
-                    mProjectIds.add(aup);
-                }
-
-                for (Config.AutoProject p : ConfigurationManager.getInstance().getConfig().getAutoProjects()) {
-                    if (p.smart_flag == Config.SmartFlag.DEFAULT_READ_ONLY ||
-                            p.smart_flag == Config.SmartFlag.DEFAULT_READ_WRITE) {
-                        if (!mProjectIds.contains(p.id)) {
-                            mProjectIds.add(p.id);
-                        }
-                    }
-                }
-
                 break;
             case ObservationPhoto.OBSERVATION_PHOTOS_URI_CODE:
                 mFileUri = (Uri) intent.getExtras().get("photoUri");
@@ -781,9 +783,9 @@ public class ObservationEditor extends SherlockFragmentActivity {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         
-        
+
         if (mProjectIds == null) {
-        	if ((intent != null) && (intent.hasExtra(OBSERVATION_PROJECT))) {
+        	if (intent.hasExtra(OBSERVATION_PROJECT)) {
         		Integer projectId = intent.getIntExtra(OBSERVATION_PROJECT, 0);
         		mProjectIds = new ArrayList<Integer>();
         		mProjectIds.add(projectId);
@@ -803,6 +805,11 @@ public class ObservationEditor extends SherlockFragmentActivity {
         		}
         		c.close();
         	}
+
+            /* make sure Tatzpiteva is always in the list */
+            if (!mProjectIds.contains(ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject())) {
+                mProjectIds.add(ConfigurationManager.getInstance().getConfig().getAutoUserJoinProject());
+            }
         }
 
         refreshProjectFields();
@@ -1369,7 +1376,9 @@ public class ObservationEditor extends SherlockFragmentActivity {
             mTimeSetByUser = datetime;
         }
     };
+
     private ArrayList<Integer> mProjectIds;
+
     private Hashtable<Integer, ProjectField> mProjectFields;
     private HashMap<Integer, ProjectFieldValue> mProjectFieldValues = null;
 

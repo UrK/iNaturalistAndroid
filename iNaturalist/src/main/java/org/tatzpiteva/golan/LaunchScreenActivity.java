@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.cocosw.bottomsheet.BottomSheet;
 
+import org.inaturalist.android.INaturalistApp;
 import org.inaturalist.android.INaturalistMapActivity;
 import org.inaturalist.android.INaturalistMapActivityWithDefaultProject;
 import org.inaturalist.android.INaturalistPrefsActivity;
@@ -38,6 +39,7 @@ import org.inaturalist.android.Observation;
 import org.inaturalist.android.ObservationDetails;
 import org.inaturalist.android.ObservationEditor;
 import org.inaturalist.android.ObservationListActivity;
+import org.inaturalist.android.OnboardingActivity;
 import org.inaturalist.android.R;
 
 import java.util.Collection;
@@ -148,6 +150,14 @@ public class LaunchScreenActivity extends FragmentActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch_screen);
+
+        INaturalistApp app = (INaturalistApp) getApplication();
+        if (!isLoggedIn() && !app.shownOnboarding()) {
+            app.setShownOnboarding(true);
+            Intent intent = new Intent(this, OnboardingActivity.class);
+            intent.putExtra(OnboardingActivity.SHOW_SKIP, true);
+            startActivity(intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+        }
 
         final ViewPagerAdapter pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 

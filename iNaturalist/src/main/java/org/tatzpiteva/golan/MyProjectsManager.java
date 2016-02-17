@@ -69,6 +69,8 @@ public class MyProjectsManager {
         @Override
         public void onReceive(Context context, Intent intent) {
 
+            context.unregisterReceiver(this);
+
             context.registerReceiver(
                     new ProjectDetailsReceiver(),
                     new IntentFilter(INaturalistService.ACTION_GET_PROJECT_DETAILS_RESULT));
@@ -215,9 +217,6 @@ public class MyProjectsManager {
         this.pendingDetails = new HashSet<>();
         this.projects = new HashSet<>();
 
-        context.registerReceiver(
-                new MyProjectsReceiver(), new IntentFilter(INaturalistService.ACTION_JOINED_PROJECTS_RESULT));
-
         context.registerReceiver(new UserLoginListener(), new IntentFilter(SignInTask.ACTION_RESULT_SIGNED_IN));
 
         context.registerReceiver(
@@ -301,6 +300,9 @@ public class MyProjectsManager {
         }
 
         mIsLoading = true;
+
+        context.registerReceiver(
+                new MyProjectsReceiver(), new IntentFilter(INaturalistService.ACTION_JOINED_PROJECTS_RESULT));
 
         Intent serviceIntent =
                 new Intent(INaturalistService.ACTION_GET_JOINED_PROJECTS, null, context, INaturalistService.class);

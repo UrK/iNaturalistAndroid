@@ -154,5 +154,13 @@
                 android:layout_marginTop="30dp"
                 />
         </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings"
+            android:gravity="center"
+            android:layout_margin="20dp"
+            android:id="@+id/launch_screen_settings_text"/>
     </LinearLayout>
 </ScrollView>

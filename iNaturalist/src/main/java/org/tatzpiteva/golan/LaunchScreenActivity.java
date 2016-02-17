@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +16,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -24,13 +25,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.bottomsheet.BottomSheet;
 
-import org.inaturalist.android.BaseFragmentActivity;
 import org.inaturalist.android.INaturalistMapActivity;
 import org.inaturalist.android.INaturalistMapActivityWithDefaultProject;
+import org.inaturalist.android.INaturalistPrefsActivity;
 import org.inaturalist.android.INaturalistService;
 import org.inaturalist.android.Observation;
 import org.inaturalist.android.ObservationDetails;
@@ -240,6 +242,19 @@ public class LaunchScreenActivity extends FragmentActivity implements
             @Override
             public void onClick(View view) {
                 startExploreActivity();
+            }
+        });
+
+        /* setup settings button: underline its text and add click handler */
+        TextView settingsButton = (TextView) findViewById(R.id.launch_screen_settings_text);
+        SpannableString buttonText = new SpannableString(settingsButton.getText());
+        buttonText.setSpan(new UnderlineSpan(), 0, buttonText.length(), 0);
+        settingsButton.setText(buttonText);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(LaunchScreenActivity.this, INaturalistPrefsActivity.class)
+                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
             }
         });
 

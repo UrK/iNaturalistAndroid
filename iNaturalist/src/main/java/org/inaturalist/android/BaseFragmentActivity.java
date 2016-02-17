@@ -389,7 +389,8 @@ public class BaseFragmentActivity extends SherlockFragmentActivity {
                 ((TextView) moreButton.findViewById(R.id.side_menu_item_text)).setText(
                         getString(R.string.side_menu_more));
 
-                moreButton.findViewById(R.id.side_menu_item_icon).setVisibility(View.GONE);
+                ((ImageView) moreButton.findViewById(R.id.side_menu_item_icon))
+                        .setImageResource(R.drawable.ic_button_more_projects);
 
                 moreButton.setOnClickListener(new View.OnClickListener() {
                     @Override

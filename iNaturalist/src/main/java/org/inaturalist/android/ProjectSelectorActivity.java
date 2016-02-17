@@ -633,10 +633,12 @@ public class ProjectSelectorActivity extends SherlockFragmentActivity implements
             }
             for (int projectId : finalProjectFields.keySet()) {
                 List<ProjectFieldViewer> fields = finalProjectFields.get(projectId);
-                for (ProjectFieldViewer fieldViewer : fields) {
-                    if (!fieldViewer.isValid()) {
-                        Toast.makeText(this, String.format(getString(R.string.invalid_project_field), fieldViewer.getField().name), Toast.LENGTH_LONG).show();
-                        return false;
+                if (fields != null) {
+                    for (ProjectFieldViewer fieldViewer : fields) {
+                        if (!fieldViewer.isValid()) {
+                            Toast.makeText(this, String.format(getString(R.string.invalid_project_field), fieldViewer.getField().name), Toast.LENGTH_LONG).show();
+                            return false;
+                        }
                     }
                 }
             }

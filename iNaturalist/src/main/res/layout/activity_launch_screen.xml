@@ -155,12 +155,27 @@
                 />
         </LinearLayout>
 
-        <TextView
+        <View
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginTop="30dp"/>
+
+        <Button
+            android:id="@+id/launch_screen_settings_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings"
-            android:gravity="center"
-            android:layout_margin="20dp"
-            android:id="@+id/launch_screen_settings_text"/>
+            android:drawableStart="@drawable/ic_button_launch_my_obs"
+            android:background="@drawable/button_launch_screen"
+            android:textColor="@android:color/black"
+            android:gravity="start|center_vertical"
+            android:drawablePadding="20dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginTop="30dp"
+            />
+
     </LinearLayout>
 </ScrollView>

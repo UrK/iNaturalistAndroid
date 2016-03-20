@@ -258,11 +258,7 @@ public class LaunchScreenActivity extends FragmentActivity implements
         });
 
         /* setup settings button: underline its text and add click handler */
-        TextView settingsButton = (TextView) findViewById(R.id.launch_screen_settings_text);
-        SpannableString buttonText = new SpannableString(settingsButton.getText());
-        buttonText.setSpan(new UnderlineSpan(), 0, buttonText.length(), 0);
-        settingsButton.setText(buttonText);
-        settingsButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.launch_screen_settings_text).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(LaunchScreenActivity.this, INaturalistPrefsActivity.class)

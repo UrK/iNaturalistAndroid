@@ -58,6 +58,8 @@ public class LaunchScreenActivity extends FragmentActivity implements
     private ProgressDialog showObservationProgress;
     private Button buttonTatzpiteva;
 
+    private final static int REQUEST_CODE_NEW_OBSERVATION = 0x341;
+
     private final Runnable carouselNextItem = new Runnable() {
         @Override
         public void run() {
@@ -217,16 +219,16 @@ public class LaunchScreenActivity extends FragmentActivity implements
                             case R.id.camera:
                                 intent = new Intent(Intent.ACTION_INSERT, Observation.CONTENT_URI, LaunchScreenActivity.this, ObservationEditor.class);
                                 intent.putExtra(ObservationEditor.TAKE_PHOTO, true);
-                                startActivity(intent);
+                                startActivityForResult(intent, REQUEST_CODE_NEW_OBSERVATION);
                                 break;
                             case R.id.upload_photo:
                                 intent = new Intent(Intent.ACTION_INSERT, Observation.CONTENT_URI, LaunchScreenActivity.this, ObservationEditor.class);
                                 intent.putExtra(ObservationEditor.CHOOSE_PHOTO, true);
-                                startActivity(intent);
+                                startActivityForResult(intent, REQUEST_CODE_NEW_OBSERVATION);
                                 break;
                             case R.id.text:
                                 intent = new Intent(Intent.ACTION_INSERT, Observation.CONTENT_URI, LaunchScreenActivity.this, ObservationEditor.class);
-                                startActivity(intent);
+                                startActivityForResult(intent, REQUEST_CODE_NEW_OBSERVATION);
                                 break;
                         }
                     }
@@ -237,7 +239,7 @@ public class LaunchScreenActivity extends FragmentActivity implements
         findViewById(R.id.button_launch_screen_my_obs).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(LaunchScreenActivity.this, ObservationListActivity.class));
+                launchMyObservations();
             }
         });
 
@@ -277,6 +279,18 @@ public class LaunchScreenActivity extends FragmentActivity implements
 
         registerReceiver(mProjectsLoadingStartListener,
                 new IntentFilter(MyProjectsManager.ACTION_MY_PROJECTS_LOADING_STARTED));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_NEW_OBSERVATION:
+                launchMyObservations();
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
+        }
     }
 
     private void startProjectActivity(int projectId) {
@@ -385,6 +399,10 @@ public class LaunchScreenActivity extends FragmentActivity implements
             iv.setLayoutParams(lp);
             dotsLayout.addView(iv);
         }
+    }
+
+    private void launchMyObservations() {
+        startActivity(new Intent(LaunchScreenActivity.this, ObservationListActivity.class));
     }
 
     //region LaunchScreenImageFragment.LaunchScreenImageTapped

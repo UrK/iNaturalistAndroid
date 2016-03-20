@@ -353,6 +353,6 @@
 <string name="launch_button_new_observation">תצפית חדשה</string>
 <string name="side_menu_more">עוד פרוייקטים…</string>
 <string name="loading_observation_details">טוען את פרטי התצפית</string>
-<string name="recommended_observations">תצפיות מומלצות</string>
+<string name="recommended_observations">מבחר תצפיות</string>
 
 </resources>

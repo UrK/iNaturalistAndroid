@@ -96,6 +96,7 @@ public class Observation implements BaseColumns, Serializable {
     public String user_login_was;
     public Boolean is_deleted_was;
     public SerializableJSONArray projects;
+    public SerializableJSONArray observation_photos;
 
 
     public static final String TAG = "Observation";
@@ -376,8 +377,8 @@ public class Observation implements BaseColumns, Serializable {
         
         try {
             this.photos = new ArrayList<ObservationPhoto>();
-            JSONArray photos;
-            photos = o.getJSONObject().getJSONArray("observation_photos");
+            JSONArray photos = o.getJSONObject().getJSONArray("observation_photos");
+            this.observation_photos = new SerializableJSONArray(photos);
             for (int i = 0; i < photos.length(); i++) {
                 BetterJSONObject json = new BetterJSONObject((JSONObject)photos.get(i));
                 ObservationPhoto photo = new ObservationPhoto(json);
@@ -437,6 +438,7 @@ public class Observation implements BaseColumns, Serializable {
         bo.put("user_login", user_login);
         bo.put("identifications_count", identifications_count);
         bo.put("comment_count", comments_count);
+        bo.put("observation_photos", observation_photos.getJSONArray());
 
         return bo.getJSONObject();
     }

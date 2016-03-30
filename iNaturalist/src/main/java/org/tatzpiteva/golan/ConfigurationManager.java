@@ -26,7 +26,7 @@ public class ConfigurationManager {
     private final static String TAG = "ConfigurationManager";
     private final static String API_SERVER_DEV = "http://golan.carmel.coop/json/";
     private final static String API_SERVER_PROD = "http://tatzpiteva.org.il/json/";
-    private final static String API_SERVER_CURRENT = API_SERVER_DEV;
+    private final static String API_SERVER_CURRENT = API_SERVER_PROD;
 
     private final static String API_ENDPOINT_PROJECTS = "projects";
     private final static String API_ENDPOINT_LAUNCH_SCREEN_CAROUSEL = "app/about";

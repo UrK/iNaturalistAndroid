@@ -343,7 +343,7 @@
     <string name="launch_button_new_observation">תצפית חדשה</string>
     <string name="launch_button_my_observations">תצפיות שלי</string>
     <string name="side_menu_more">עוד פרוייקטים…</string>
-    <string name="exit_confirmation_message">לחץ כפתור /״חזור/״ פעם נוספת כדי לצאת</string>
+    <string name="exit_confirmation_message">לחץ כפתור &quot;חזור&quot; פעם נוספת כדי לצאת</string>
     <string name="loading_observation_details">טוען את פרטי התצפית</string>
     <string name="recommended_observations">מבחר תצפיות</string>
 

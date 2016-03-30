@@ -142,7 +142,7 @@ public class INaturalistApp extends Application {
 	/** Returns the set inat network member */
 	public String getInaturalistNetworkMember() {
     	SharedPreferences settings = getPrefs();
-        return settings.getString("pref_network_member", null);
+        return settings.getString("pref_network_member", getINatNetworks()[0]);
 	}
 	   
 	
